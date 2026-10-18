@@ -1,0 +1,674 @@
+[
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_0",
+    "chunk_index": 0,
+    "text": "Preprint\nGEOSTATE: LEARNING VIEW-DECOUPLED\nGEOMETRY STATES FOR 3D WORLD MODELING\nHongchang Liu1, Jian Liu1, Yujuan Ding2, Liang Peng3,\nXun Jiang1, Fei Ma4, Xing Xu1, Yi Bin1,∗\n1Tongji University\n2Hong Kong Polytechnic University\n3Tencent\n4Guangdong Laboratory of Artificial Intelligence and Digital Economy (SZ)\nHongchang_Liu@outlook.com, yi.bin@hotmail.com\nABSTRACT\nRecent 3D world models increasingly use features from geometry foundation\nmodels (GFMs) as predictive world states, benefiting from their rich geomet-\nric priors.\nHowever, the view dependence of these features entangles scene\ndynamics with camera-induced variation, making the resulting state evolution\nharder to predict. We propose GeoState, a view-decoupled geometry represen-\ntation for predictive 3D world modeling that separates scene-state evolution from\ncamera-dependent observation. Specifically, a scene tokenizer aggregates multi-\nview GFM features into a view-decoupled scene state, which a geometry decoder"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_1",
+    "chunk_index": 1,
+    "text": "camera-dependent observation. Specifically, a scene tokenizer aggregates multi-\nview GFM features into a view-decoupled scene state, which a geometry decoder\nqueries using camera rays. An autoregressive world model then predicts future\nscene states, while camera motion is modeled separately. The predicted states\ncan therefore be decoded under either predicted or externally specified cameras,\nwhile retaining a single context-derived scale throughout the rollout without per-\nframe scale alignment. Experiments show that GeoState outperforms prior 3D\nworld models on Waymo, supports geometrically consistent cross-view query-\ning, and generalizes zero-shot to KITTI and nuScenes. Project page: https:\n//hongchang-liu.github.io/GeoState-project-page/.\n1\nINTRODUCTION\nLearning to predict how the physical world evolves is a central goal of world modeling (Ha &\nSchmidhuber, 2018), with direct relevance to autonomous driving, robotics, and embodied intelli-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_2",
+    "chunk_index": 2,
+    "text": "Learning to predict how the physical world evolves is a central goal of world modeling (Ha &\nSchmidhuber, 2018), with direct relevance to autonomous driving, robotics, and embodied intelli-\ngence. Visual world models predict the future in pixel space (Hu et al., 2023; Wang et al., 2024b;\nGao et al., 2024; NVIDIA et al., 2025), which can introduce substantial representational redundancy\nand make geometric consistency difficult to maintain. This has motivated increasing interest in 3D\nworld models, which represent and predict future environments in geometrically grounded state\nspaces. By explicitly encoding spatial structure and 3D relationships, these representations provide\na structured and geometrically grounded state space that more directly reflects the real world.\nRecent 3D world models have explored a range of structured geometric state spaces, including\ndepth, occupancy, point-based representations, and 3D Gaussians (Zheng et al., 2024; Zhang et al.,"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_3",
+    "chunk_index": 3,
+    "text": "Recent 3D world models have explored a range of structured geometric state spaces, including\ndepth, occupancy, point-based representations, and 3D Gaussians (Zheng et al., 2024; Zhang et al.,\n2024; Yang et al., 2024; Zhu et al., 2025; Chen et al., 2025; Zuo et al., 2025). In parallel, geometry\nfoundation models (GFMs) have substantially advanced feed-forward 3D perception by learning rich\ngeometric representations directly from RGB observations (Wang et al., 2024a; Yang et al., 2025;\nWang et al., 2025b;a; 2026). Benefiting from large-scale pretraining, these representations capture\nstrong geometric priors that generalize across scenes and tasks, making them attractive state spaces\nfor predictive world modeling. Building on this capability, recent approaches have begun to directly\nmodel temporal evolution in pretrained geometry feature spaces (Sun et al., 2026; Lu et al., 2026). In\nparticular, VGGT-World (Sun et al., 2026) treats frozen VGGT features as world states and predicts"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_4",
+    "chunk_index": 4,
+    "text": "particular, VGGT-World (Sun et al., 2026) treats frozen VGGT features as world states and predicts\ntheir future evolution, demonstrating the potential of GFM representations for 3D forecasting.\nDespite the strong performance achieved by recent GFM-based 3D world models, a strong repre-\nsentation for geometric perception is not necessarily an appropriate state representation for world\n1\narXiv:2610.22343v1  [cs.CV]  15 Oct 2026"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_5",
+    "chunk_index": 5,
+    "text": "Preprint\ndynamics. GFM features are typically constructed from and organized around the observing views,\nso changes in camera viewpoint can induce substantial changes in the representation even when the\nunderlying physical scene remains unchanged. When such features are directly used as predictive\nstates, a temporal model would account simultaneously for genuine scene evolution and camera-\ninduced variation, although these arise from fundamentally different sources. In particular, even\na static scene can undergo substantial changes in feature space as the camera moves, forcing the\ntemporal model to predict viewpoint-dependent transformations that do not correspond to physical\nscene evolution. This unnecessary variation makes the latent dynamics more complex and therefore\nharder to predict over long horizons. FR3D (Morbitzer et al., 2026) also shows that separating ego-\nmotion from scene forecasting can improve temporal modeling, but its predictive state still inherits"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_6",
+    "chunk_index": 6,
+    "text": "motion from scene forecasting can improve temporal modeling, but its predictive state still inherits\nthe view-dependent structure of the underlying reconstruction representation. We argue that such\nseparation should instead be built into the representation itself: the state should describe what the\nworld is, while the camera should determine only how that world is observed.\nTo this end, we introduce GeoState, a view-decoupled geometry state learned from pretrained GFM\nfeatures. Given multi-view observations, a scene tokenizer compresses their geometry features into a\ncompact scene state represented in a shared scene coordinate system, while the query viewpoint is in-\ntroduced only during decoding. Specifically, a geometry decoder takes the scene state together with\nrays from a query camera and predicts the geometry observed from that viewpoint. Consequently,\nthe same scene state can be queried repeatedly from different viewpoints without re-encoding the"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_7",
+    "chunk_index": 7,
+    "text": "rays from a query camera and predicts the geometry observed from that viewpoint. Consequently,\nthe same scene state can be queried repeatedly from different viewpoints without re-encoding the\nscene. This transforms view-conditioned GFM features into a representation in which scene geom-\netry is explicitly separated from camera-dependent observation.\nBuilding on this representation, we formulate 3D world modeling directly in the scene-state space.\nThe temporal model can therefore focus solely on predicting scene dynamics, while camera evo-\nlution is modeled independently. At inference time, a predicted future state can be decoded using\neither a separately predicted camera trajectory or a user-controlled camera. Our formulation also\nmaintains a consistent scene gauge throughout temporal prediction and geometry decoding, avoid-\ning the need for per-frame scale alignment during rollout.\nWe evaluate our approach on large-scale dynamic driving scenes, using Waymo (Sun et al., 2020) for"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_8",
+    "chunk_index": 8,
+    "text": "ing the need for per-frame scale alignment during rollout.\nWe evaluate our approach on large-scale dynamic driving scenes, using Waymo (Sun et al., 2020) for\nin-domain evaluation and KITTI (Geiger et al., 2012) and nuScenes (Caesar et al., 2020) for zero-\nshot transfer. Our approach outperforms the compared world models in depth forecasting across all\nreported horizons, while maintaining a consistent scale throughout the forecasting rollout. Experi-\nments further demonstrate geometrically consistent querying across viewpoints and generalization\nacross driving datasets. Ablation results show that view decoupling makes the scene representation\nmore predictable. Together, these findings support view-decoupled geometry states derived from\npretrained GFMs as an effective representation for predictive 3D world modeling.\nOur contributions are threefold:\n• We identify viewpoint coupling in geometry foundation model features as a limitation when"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_9",
+    "chunk_index": 9,
+    "text": "Our contributions are threefold:\n• We identify viewpoint coupling in geometry foundation model features as a limitation when\nusing them as predictive world states, and introduce GeoState, a view-decoupled geometry\nstate derived from pretrained GFM representations that separates scene content from how\nthe scene is observed.\n• We develop a scene-state learning framework that realizes GeoState through a Scene To-\nkenizer that aggregates multi-view GFM features into a shared scene state and a query-\nconditioned Geometry Decoder that introduces the query viewpoint only at decoding time.\n• We formulate a 3D world model that predicts scene evolution directly in GeoState space\nwhile modeling camera evolution separately, and demonstrate long-horizon geometry fore-\ncasting, geometrically consistent cross-view querying, and zero-shot generalization across\ndriving datasets without per-frame scale alignment.\n2\nRELATED WORK\n2.1\n3D WORLD MODELS"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_10",
+    "chunk_index": 10,
+    "text": "casting, geometrically consistent cross-view querying, and zero-shot generalization across\ndriving datasets without per-frame scale alignment.\n2\nRELATED WORK\n2.1\n3D WORLD MODELS\nRecent world models increasingly move beyond pixel-space prediction toward structured 3D scene\nmodeling and forecasting. Copilot4D (Zhang et al., 2024) and ViDAR (Yang et al., 2024) forecast\nfuture point clouds, while OccWorld (Zheng et al., 2024) and DOME (Gu et al., 2024) predict scene\n2"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_11",
+    "chunk_index": 11,
+    "text": "Preprint\nevolution in semantic occupancy space. DIO (Diehl et al., 2025) represents future scene geometry\nand motion through decomposable implicit occupancy-flow fields, and GaussianWorld (Zuo et al.,\n2025) models scene evolution in 3D Gaussian space for streaming occupancy prediction. More re-\ncently, several approaches directly use learned geometry representations as predictive world states.\nVGGT-World (Sun et al., 2026) forecasts future VGGT features, while GeoWAM (Lu et al., 2026)\nlearns geometry-aware predictive states for autonomous driving. FR3D (Morbitzer et al., 2026) pre-\ndicts the latent state of a pretrained 3D reconstruction model while modeling ego-motion separately.\nIn contrast, we remove viewpoint dependence from the geometry state itself and introduce viewpoint\nonly as a query condition during decoding.\n2.2\nGEOMETRY FOUNDATION MODELS\nGeometry foundation models provide strong pretrained priors for multi-view 3D perception."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_12",
+    "chunk_index": 12,
+    "text": "only as a query condition during decoding.\n2.2\nGEOMETRY FOUNDATION MODELS\nGeometry foundation models provide strong pretrained priors for multi-view 3D perception.\nDUSt3R (Wang et al., 2024a) formulates reconstruction through pointmap prediction, while\nFast3R (Yang et al., 2025) scales joint reconstruction to larger collections of views. CUT3R (Wang\net al., 2025b) introduces a persistent latent state for continuously integrating observations, and\nVGGT (Wang et al., 2025a) unifies camera estimation, depth, point maps, and tracking in a feed-\nforward architecture. VGGT-Ω(Wang et al., 2026) further strengthens this paradigm for dynamic\n3D scenes, making it a natural geometry backbone for our setting. We build on its pretrained ge-\nometric features and reformulate them into a compact, view-decoupled scene-level representation\nbetter suited for temporal world modeling.\n2.3\nCOMPACT 3D REPRESENTATIONS"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_13",
+    "chunk_index": 13,
+    "text": "ometric features and reformulate them into a compact, view-decoupled scene-level representation\nbetter suited for temporal world modeling.\n2.3\nCOMPACT 3D REPRESENTATIONS\nA related line of work compresses multi-view observations into compact scene representations.\nLVSM (Jin et al., 2025) encodes input views into a fixed-length set of latent tokens for novel-\nview synthesis, while Surflo (Gu´edon et al., 2026) aggregates dense VGGT features into a fixed-size\nglobal latent representation for efficient 3D surface reconstruction. 3DRAE (Wei et al., 2026) further\nlearns a fixed-length, view-decoupled 3D latent space that can be queried from arbitrary cameras.\nThese works demonstrate that multi-view observations can be represented without retaining a sep-\narate dense representation for each view. While they focus primarily on static scene reconstruction\nor novel-view synthesis, our work investigates whether such scene-level representations can serve"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_14",
+    "chunk_index": 14,
+    "text": "arate dense representation for each view. While they focus primarily on static scene reconstruction\nor novel-view synthesis, our work investigates whether such scene-level representations can serve\nas predictive states for temporal world modeling.\n3\nMETHOD\n3.1\nMETHOD OVERVIEW\nOur goal is to predict future scene geometry without requiring the world model to simultaneously\naccount for variations induced by camera motion. To this end, as illustrated in Figure 1, we first con-\nstruct a view-decoupled geometry state from multi-view observations, and then model its temporal\nevolution while handling camera evolution separately.\nGeoState learning. Given multi-view RGB observations It = {Iv\nt }v∈Vt, a frozen geometry foun-\ndation model extracts geometry-aware features Mt, with the multi-view geometry expressed in a\nshared scene coordinate system defined by a common anchor view. A learnable Scene Tokenizer Eϕ\nthen aggregates Mt into a fixed-length scene state:\nSt = Eϕ(Mt).\n(1)"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_15",
+    "chunk_index": 15,
+    "text": "shared scene coordinate system defined by a common anchor view. A learnable Scene Tokenizer Eϕ\nthen aggregates Mt into a fixed-length scene state:\nSt = Eϕ(Mt).\n(1)\nThe state is not tied to any single observation viewpoint; we refer to it as a view-decoupled geometry\nstate, or GeoState. A faithful GeoState should capture the underlying 3D scene geometry, which\ncould be reflected in accurate and geometrically consistent depth reconstruction across different\nviewpoints. We therefore introduce a query-conditioned geometry decoder that reconstructs a depth\nmap from St for a given query camera Q:\nbDQ = Gψ(St, Q).\n(2)\nThus, the same GeoState can be queried from different viewpoints without re-encoding the scene.\n3"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_16",
+    "chunk_index": 16,
+    "text": "Preprint\nScene \nTokenizer\nScene \nTokenizer\nGeoState Learning\nCamera Prediction Model (Optional)\nHistory\nCams\nVGGT Patch Tokens\n𝒕𝒕𝑵𝑵\n𝒕𝒕𝑵𝑵−𝟏𝟏\n𝒕𝒕𝑵𝑵−𝟐𝟐\n𝒕𝒕𝑵𝑵−𝟑𝟑\n𝒕𝒕𝑵𝑵\nCamera \nPredictor \nPred Cams…\nFrozen\nVGGT-Ω\nMulti-view \nImages\nVGGT-Ω\nDPT\nHead\n…\n…\n…\n…\nVGGT\nPatch Tokens\n…\n⊕\nCam.\nEnc.\nVGGT-Ω\nDPT\nHead\n3D\nPos.\nEnc.\nCross\n-Attn\nSelf\n-Attn\nMLP\n×N\nScene Tokenizer\nLatent \nL ∈ℝ𝑵𝑵s×𝒅𝒅𝒔𝒔\nGeometry Decoder\nFrozen\nVGGT-Ω\nQuery\nCamera\n(novel view)\nQuery\nCamera\n…\nSelf-Attn\nSelf-Attn\nSelf-Attn\nSelf-Attn\nSelf-Attn Block ×N\n \nMulti-layer Features\nDPT\nFeature\nAdapter\nDepth Map\nGeometry \nDecoder\nState Loss\nMulti-view Images \n𝒕𝒕𝑵𝑵−𝟑𝟑\n𝒕𝒕𝑵𝑵\nDepth Map\nDepth \nLoss\n𝑺𝑺𝒕𝒕𝑵𝑵\n𝑺𝑺𝒕𝒕𝑵𝑵+𝟏𝟏\n෡𝑺𝑺𝒕𝒕𝑵𝑵+𝟏𝟏\nInput Only When \nSupervising\n𝒕𝒕𝑵𝑵+𝟏𝟏\nGT LiDAR Depth\nScene-State\nMasked\nTransformer\nGeometry\nWorld Model\n⊕\nVGGT Patch Tokens\n𝑷𝑷𝒕𝒕𝑵𝑵−𝟑𝟑\n𝑷𝑷𝒕𝒕𝑵𝑵\n𝑷𝑷𝒕𝒕𝑵𝑵+𝟏𝟏\n：\n：\nTrainable\nFrozen\nScene \nTokenizer\n𝑺𝑺𝒕𝒕𝑵𝑵−𝟑𝟑\nGeoState World Modeling\nFigure 1: Overview of GeoState. GeoState Learning constructs view-decoupled scene states with a"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_17",
+    "chunk_index": 17,
+    "text": "𝑷𝑷𝒕𝒕𝑵𝑵−𝟑𝟑\n𝑷𝑷𝒕𝒕𝑵𝑵\n𝑷𝑷𝒕𝒕𝑵𝑵+𝟏𝟏\n：\n：\nTrainable\nFrozen\nScene \nTokenizer\n𝑺𝑺𝒕𝒕𝑵𝑵−𝟑𝟑\nGeoState World Modeling\nFigure 1: Overview of GeoState. GeoState Learning constructs view-decoupled scene states with a\nscene tokenizer and query-conditioned geometry decoder. GeoState World Modeling predicts future\nstates directly in this representation space.\nGeoState world modeling. With viewpoint variation removed from the predictive state, temporal\nmodeling can focus on scene dynamics rather than camera-induced changes in the representation.\nGiven four historical GeoStates {St−3, St−2, St−1, St}, a temporal world model autoregressively\npredicts future states using a sliding four-state context. Each predicted state bSt+h is then queried\nunder a future camera Qt+h to obtain bDt+h = Gψ(bSt+h, Qt+h). The query camera can be exter-\nnally specified or provided by a separately trained camera prediction model, whose architecture and\ntraining details are given in Appendix A.2.\n3.2\nVIEW-DECOUPLED GEOMETRY STATE"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_18",
+    "chunk_index": 18,
+    "text": "nally specified or provided by a separately trained camera prediction model, whose architecture and\ntraining details are given in Appendix A.2.\n3.2\nVIEW-DECOUPLED GEOMETRY STATE\nGiven synchronized multi-view images It = {Iv\nt }v∈Vt, let Iin denote the observations jointly pro-\ncessed by the frozen VGGT-Ω(Wang et al., 2026). To maintain a common coordinate anchor across\ntimestamps, Iin may include observations from multiple timestamps that share the same first input\nview. After the joint VGGT-Ωforward pass, however, the Scene Tokenizer uses only the outputs\nassociated with the current synchronized observations It:\nn\n{F v,(ℓ)\nt\n}ℓ∈{4,11,17,23}, Xv\nt , Cv\nt , eQv\nt\no\nv∈Vt\n= GΩ(Iin)\n\f\f\nt .\n(3)\nHere, F v,(ℓ)\nt\ndenotes intermediate patch features from the four levels used by the VGGT-Ωdense\nprediction head, Xv\nt and Cv\nt denote the pixel-aligned 3D point map and its confidence, respectively,\nand eQv\nt = ( eKv\nt , eP v"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_19",
+    "chunk_index": 19,
+    "text": "prediction head, Xv\nt and Cv\nt denote the pixel-aligned 3D point map and its confidence, respectively,\nand eQv\nt = ( eKv\nt , eP v\nt ) is the GFM-estimated camera. Thus, cross-time observations are used by\nVGGT-Ωto establish a shared coordinate frame, while each GeoState is constructed only from the\noutputs corresponding to its own timestamp. For the observed context states, all context observa-\ntions are processed in a single forward pass; future target states use growing observation prefixes as\ndescribed in Sec. 3.5. We omit the time index t below for notational simplicity.\nGeometry-conditioned GFM tokens.\nFor each patch p in source view v, we project and fuse\nthe GFM features {F (ℓ)\np,v}ℓ∈{4,11,17,23} with per-level linear projections and an MLP to obtain\nefeat\np,v ∈R512. To facilitate cross-view feature aggregation and reduce scale inconsistency across\nGFM forwards, following Surflo (Gu´edon et al., 2026), we augment the GFM patch features with"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_20",
+    "chunk_index": 20,
+    "text": "efeat\np,v ∈R512. To facilitate cross-view feature aggregation and reduce scale inconsistency across\nGFM forwards, following Surflo (Gu´edon et al., 2026), we augment the GFM patch features with\nexplicit geometric cues derived from Xv, Cv, and eQv. For each patch, we obtain its 3D location and\nconfidence, source-camera pose, and viewing ray, and encode them as epoint\np,v\n, epose\nv\n, and eray\np,v, re-\nspectively, after median-normalizing their explicit spatial scale. These embeddings form the explicit\ngeometric encoding\ngp,v = [epoint\np,v\n, epose\nv\n, eray\np,v],\n(4)\n4"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_21",
+    "chunk_index": 21,
+    "text": "Preprint\nwhich is fused with the GFM feature through\nmp,v = LN\n\u0000efeat\np,v + MLP\n\u0000[efeat\np,v , gp,v]\n\u0001\u0001\n.\n(5)\nScene-state aggregation.\nTo obtain a scene representation independent of the number of views,\nwe collect the geometry-conditioned tokens from all source views into a variable-length memory\nMt = Concatv,p mp,v ∈RNt×512.\n(6)\nA Perceiver-style Tokenizer (Jaegle et al., 2021) Eϕ then aggregates this memory using learned\nscene queries L ∈RNs×ds:\nSt = Eϕ(Mt; L) ∈RNs×ds.\n(7)\nWe use Ns = ds = 512 and share the same learned scene queries across timestamps. The resulting\nGeoState has a fixed size independent of the number of source views. Detailed encoder architecture\nis provided in Appendix A.1.1.\n3.3\nQUERY-CONDITIONED GEOMETRY DECODER\nThe query viewpoint is introduced only during geometry decoding. Given a query camera Q =\n(K, P), we construct a Pl¨ucker ray field (Sitzmann et al., 2021) from its intrinsics and camera-to-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_22",
+    "chunk_index": 22,
+    "text": "The query viewpoint is introduced only during geometry decoding. Given a query camera Q =\n(K, P), we construct a Pl¨ucker ray field (Sitzmann et al., 2021) from its intrinsics and camera-to-\nworld pose. The rays are expressed in the same coordinate frame and scale as the encoded scene\ngeometry, then Fourier-encoded (Tancik et al., 2020) and patchified into query tokens RQ.\nWe first process the scene state with a scene-only self-attention conditioner, then concatenate it with\nRQ. A joint Transformer exchanges information among scene and ray tokens to produce view-\nconditioned representations:\nZQ = Ψquery(St, RQ),\n(8)\nwhere Ψquery denotes the query Transformer. A feature decoder Φdec maps ZQ to the four feature\nlevels expected by the frozen VGGT-Ωdense prediction head HGFM, which produces the depth:\nbDnorm\nQ\n= HGFM(Φdec(ZQ)) .\n(9)\nThe normalized prediction is converted back to metric depth using the same context-derived scale"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_23",
+    "chunk_index": 23,
+    "text": "bDnorm\nQ\n= HGFM(Φdec(ZQ)) .\n(9)\nThe normalized prediction is converted back to metric depth using the same context-derived scale\nconvention used by the scene representation. Reusing the frozen GFM head constrains the decoder\nto recover geometry-compatible features while avoiding relearning dense geometry prediction. De-\ntailed model architectures are provided in Appendix A.1.2.\n3.4\nSCENE-STATE WORLD MODEL\nThe world model predicts future evolution directly in GeoState space. By separating scene geome-\ntry from the query viewpoint, GeoState allows camera-induced observation changes to be handled\nduring decoding, making scene persistence a natural prior for temporal prediction. We therefore\nformulate future-state prediction as a residual update to the latest state:\nbSt+1 = St + ∆St+1,\n∆St+1 = Fθ(St−3:t).\n(10)\nWe adopt the masked factorized Transformer architecture of FR3D (Morbitzer et al., 2026) for scene-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_24",
+    "chunk_index": 24,
+    "text": "bSt+1 = St + ∆St+1,\n∆St+1 = Fθ(St−3:t).\n(10)\nWe adopt the masked factorized Transformer architecture of FR3D (Morbitzer et al., 2026) for scene-\nstate prediction. A masked prediction state is appended to the four historical states, followed by\nfactorized temporal and scene attention. The predicted state is produced through a residual head,\nwhich is zero-initialized so that the model is exactly equivalent to latent Copy-Last at initialization,\nand outputs ∆St+1 in Eq. 10.\nFuture GeoStates are generated autoregressively using a sliding four-state context:\nbSt+h = eSt+h−1 + Fθ\n\u0010\neSt+h−4:t+h−1\n\u0011\n,\nh ≥1,\n(11)\nwhere eSτ = Sτ for observed timestamps τ ≤t and eSτ = bSτ otherwise. Detailed world-model\narchitecture is provided in Appendix A.1.3.\n5"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_25",
+    "chunk_index": 25,
+    "text": "Preprint\n3.5\nLEARNING OBJECTIVES\nGeometry-state learning.\nWe train the scene tokenizer and decoder for geometry reconstruction\nand novel-view querying, keeping the GFM and its dense head frozen. The objective is\nLrep = Llog D + λgradLgrad,\n(12)\nwhere Llog D measures mean absolute log-depth error over valid pixels, and Lgrad supervises local\ndepth gradients. The learned tokenizer and decoder are frozen during world-model training.\nWorld-model training.\nWe train the world model in two stages: single-step initialization followed\nby autoregressive rollout training.\nTarget-state construction. To construct future supervision in a consistent scene coordinate frame,\ntarget GeoStates are constructed by feeding growing observation prefixes into the frozen VGGT-Ω.\nFor the target at t + h, the prefix terminates at t + h, while all prefixes share the same first input\nview to maintain a common coordinate anchor across time. Only the outputs corresponding to the"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_26",
+    "chunk_index": 26,
+    "text": "For the target at t + h, the prefix terminates at t + h, while all prefixes share the same first input\nview to maintain a common coordinate anchor across time. Only the outputs corresponding to the\nsynchronized observations at t+h are retained and passed to the Scene Tokenizer to construct S∗\nt+h.\nSince VGGT-Ωpredictions may vary in scale across forward passes, we normalize the metric spatial\nquantities in gp,v (Eq. 4) using a calibration derived from the observed context before fusing them\nwith the GFM features. This gives target GeoStates a consistent context-derived scale without target-\nframe alignment. Further details are provided in Appendix A.3.\nSingle-step initialization. We first train Fθ for one-step 4 →1 prediction with joint state and geo-\nmetric supervision:\nLinit = λstateLstate + λdepthLlog D( bDt+1, Dt+1),\n(13)\nwhere Lstate combines Smooth L1 and cosine losses between the predicted state bSt+1 and the en-\ncoded target S∗"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_27",
+    "chunk_index": 27,
+    "text": "metric supervision:\nLinit = λstateLstate + λdepthLlog D( bDt+1, Dt+1),\n(13)\nwhere Lstate combines Smooth L1 and cosine losses between the predicted state bSt+1 and the en-\ncoded target S∗\nt+1. The predicted state is also decoded as bDt+1 = Gψ(bSt+1, Qt+1) using the\nground-truth future FRONT camera Qt+1 and supervised against LiDAR depth Dt+1. Thus, state\nsupervision directly guides prediction toward the encoded target, while depth supervision constrains\nthe geometry decoded from the predicted state.\nAutoregressive rollout training. We then unroll the world model for H = 7 future steps and supervise\neach predicted state through its decoded geometry. At each step, bDt+h = Gψ(bSt+h, Qt+h) is\ndecoded using the ground-truth future FRONT camera Qt+h:\nLroll = 1\nH\nH\nX\nh=1\nLlog D( bDt+h, Dt+h),\n(14)\nUnlike single-step initialization, we omit direct state matching during rollout, allowing autoregres-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_28",
+    "chunk_index": 28,
+    "text": "Lroll = 1\nH\nH\nX\nh=1\nLlog D( bDt+h, Dt+h),\n(14)\nUnlike single-step initialization, we omit direct state matching during rollout, allowing autoregres-\nsive states to be optimized for their decoded geometry rather than exact agreement with GFM fea-\ntures. We examine the role of state supervision in both training stages in Section 4.5.\n4\nEXPERIMENTS\n4.1\nEXPERIMENTAL SETUP\nDatasets.\nWe pretrain the Scene Tokenizer and ray-conditioned decoder on approximately\n10k multi-view scenes from DL3DV (Ling et al., 2024), TartanAir (Wang et al., 2020),\nRealEstate10K (Zhou et al., 2018), CO3D (Reizenstein et al., 2021), and WildRGB-D (Xia et al.,\n2024), using ground-truth depth where available and VGGT-Ω(Wang et al., 2026) pseudo-depth\notherwise. We then adapt both modules on a subset of the Waymo Open Dataset (Sun et al., 2020)\nselected for static scene content. World Model training uses approximately 140k windows from"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_29",
+    "chunk_index": 29,
+    "text": "otherwise. We then adapt both modules on a subset of the Waymo Open Dataset (Sun et al., 2020)\nselected for static scene content. World Model training uses approximately 140k windows from\n800 segments, each containing four context and seven future states at 0.2 s intervals, with FRONT,\nFRONT LEFT, and FRONT RIGHT context views. We evaluate on 100 Waymo windows held out\nfrom model selection, 113 eligible KITTI (Geiger et al., 2012) drives, and all 150 scenes in the\nnuScenes (Caesar et al., 2020) validation split. Further dataset selection and sampling details are\nprovided in Appendix A.5.\n6"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_30",
+    "chunk_index": 30,
+    "text": "Preprint\nTable 1: Long-horizon depth forecasting on Waymo. Bold and underlined values indicate the best\nand second-best results among methods using predicted future cameras.\nMethod\nCamera\nPer-frame\nt+0.2 s\nt+0.6 s\nt+1.0 s\nt+2.0 s\nalignment AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑\nCopy-Last\nFixed View\nNo\n0.094\n0.906\n0.147\n0.840\n0.184\n0.797\n0.248\n0.734\nDINO-Foresight\nPred.\nYes\n0.119\n0.841\n0.138\n0.825\n0.151\n0.798\n0.243\n0.663\nVGGT-World\nPred.\nYes\n0.073\n0.931\n0.112\n0.892\n0.143\n0.826\n0.213\n0.731\nFR3D\nPred.\nYes\n0.110\n0.879\n0.121\n0.858\n0.131\n0.840\n0.152\n0.800\nCopy-Last\nPred.\nNo\n0.071\n0.933\n0.088\n0.905\n0.100\n0.882\n0.132\n0.827\nGeoState\nPred.\nNo\n0.065\n0.939\n0.079\n0.921\n0.092\n0.902\n0.127\n0.848\nCopy-Last\nGT\nNo\n0.068\n0.934\n0.082\n0.913\n0.092\n0.894\n0.108\n0.865\nGeoState\nGT\nNo\n0.062\n0.940\n0.071\n0.929\n0.081\n0.915\n0.099\n0.888\nEvaluation Metrics.\nWe report frame-wise mean AbsRel (↓) and δ1 (↑) (Eigen et al., 2014) over"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_31",
+    "chunk_index": 31,
+    "text": "0.934\n0.082\n0.913\n0.092\n0.894\n0.108\n0.865\nGeoState\nGT\nNo\n0.062\n0.940\n0.071\n0.929\n0.081\n0.915\n0.099\n0.888\nEvaluation Metrics.\nWe report frame-wise mean AbsRel (↓) and δ1 (↑) (Eigen et al., 2014) over\nvalid pixels. Our method flexibly adapts VGGT-Ω’s default balanced resolution preprocessing to\nboth training and evaluation, while baselines follow their original resolution settings. For scale\nhandling, we follow the original evaluation procedure of each baseline: VGGT-World performs per-\ntarget-frame scale alignment, while FR3D performs per-target-frame scale-and-shift alignment. For\nDINO-Foresight, we fit its relative inverse-depth predictions to the LiDAR measurements of each\ntarget frame. In contrast, we calibrate metric scale once using LiDAR at the last observed FRONT\nframe and retain this scale throughout the entire forecasting rollout without target-frame alignment.\nWe additionally measure cross-query geometric consistency using symmetric reprojection AbsRel."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_32",
+    "chunk_index": 32,
+    "text": "frame and retain this scale throughout the entire forecasting rollout without target-frame alignment.\nWe additionally measure cross-query geometric consistency using symmetric reprojection AbsRel.\nGiven decoded depths D0, Di and z-buffered reprojection Ra→b, we compute\nEsym(Q0, Qi) = 1\n2\n\u0002\nAbsRel(R0→i(D0), Di) + AbsRel(Ri→0(Di), D0)\n\u0003\n.\n(15)\nLower values indicate better geometric agreement.\nBaselines.\nWe compare with DINO-Foresight (Karypidis et al., 2025), which forecasts seman-\ntic image features, and geometry-based world models FR3D (Morbitzer et al., 2026) and VGGT-\nWorld (Sun et al., 2026). We train DINO-Foresight and VGGT-World on the same Waymo training\ndata as our method, but following their respective training procedures. All FR3D results are taken\ndirectly from the original paper.\nWe also include three Copy-Last baselines. Fixed View repeats the last observed VGGT-Ωdepth at\nevery future timestamp, while GT Camera and Pred. Camera decode the last observed scene state"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_33",
+    "chunk_index": 33,
+    "text": "We also include three Copy-Last baselines. Fixed View repeats the last observed VGGT-Ωdepth at\nevery future timestamp, while GT Camera and Pred. Camera decode the last observed scene state\nfrom ground-truth or predicted future cameras. These baselines allow us to assess the effects of\nfuture camera motion and scene-state prediction.\nImplementation Details.\nWe pretrain the Scene Tokenizer and ray-conditioned decoder on the\nmulti-view pretraining data for 200k steps with an initial learning rate of 10−5, and then finetune\non the static Waymo subset for 50k steps with an initial learning rate of 5×10−6. Both stages use a\nglobal effective batch size of 36, with the VGGT-Ωencoder frozen. We sample one to five source\nviews per scene and supervise depth reconstruction at held-out query views. For static Waymo\nsequences, source and query views may span both cameras and timestamps. We then train the"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_34",
+    "chunk_index": 34,
+    "text": "views per scene and supervise depth reconstruction at held-out query views. For static Waymo\nsequences, source and query views may span both cameras and timestamps. We then train the\nWorld Model in two stages: 20k steps of one-step prediction with an initial learning rate of 10−5,\nfollowed by 35k steps of seven-step autoregressive rollout training with an initial learning rate of\n10−6. VGGT-Ω, the Scene Tokenizer, and the decoder remain frozen throughout World Model\ntraining, while gradients propagate through the decoder to the predicted states. Additional training\ndetails are provided in Appendix A.4.\n4.2\nLONG-HORIZON DEPTH FORECASTING ON WAYMO\nTable 1 compares long-horizon depth forecasting performance on Waymo. With predicted cameras,\nour model consistently outperforms all compared methods on both depth metrics at every reported\nhorizon. The advantage over VGGT-World increases with the forecasting horizon, reaching a 40.4%\n7"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_35",
+    "chunk_index": 35,
+    "text": "Preprint\nFigure 2: Qualitative multi-view depth forecasting. Red boxes highlight prediction differences.\n0.2\n0.8\n1.4\n2.0\nForecast horizon (s)\n0.02\n0.04\n0.06\n0.08\n0.10\nSymmetric AbsRel ↓\nSmall\nMedium\nLarge\nSmall\nMedium\nLarge\nΔt (s)\nWorld\nEnc.\nWorld\nEnc.\nWorld\nEnc.\n0.2\n0.023\n0.024\n0.054\n0.055\n0.089\n0.091\n0.6\n0.022\n0.023\n0.053\n0.055\n0.088\n0.091\n1.0\n0.022\n0.024\n0.054\n0.055\n0.089\n0.090\n2.0\n0.024\n0.024\n0.058\n0.055\n0.096\n0.091\nWorld\nEnc.\nFigure 3: Cross-query geometric consistency on Waymo. We evaluate symmetric reprojection\nAbsRel (↓) across perturbation levels.\nreduction in AbsRel at 2.0 s. These improvements are achieved while maintaining a single context-\nderived scale without per-frame alignment and persist beyond the 1.4 s rollout horizon used during\ntraining. These results demonstrate that GeoState supports effective long-horizon autoregressive\ngeometry forecasting, including at horizons beyond those seen during training. Figure 2 visualizes"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_36",
+    "chunk_index": 36,
+    "text": "training. These results demonstrate that GeoState supports effective long-horizon autoregressive\ngeometry forecasting, including at horizons beyond those seen during training. Figure 2 visualizes\ndepth forecasts across future horizons and query views, alongside comparisons with prior methods.\nThe Copy-Last variants further disentangle the effects of camera conditioning and scene-state evo-\nlution. Re-querying the last observed state with future cameras substantially outperforms simply\nrepeating the last observed depth map, demonstrating that viewpoint-induced changes can be ac-\ncounted for by querying a fixed scene state from future viewpoints without evolving the state itself.\nOur predicted states consistently outperform their camera-matched Copy-Last counterparts at every\nhorizon under both GT and predicted cameras, showing that the World Model captures future scene\nevolution beyond what can be explained by camera re-querying alone. Motion-stratified evaluation"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_37",
+    "chunk_index": 37,
+    "text": "horizon under both GT and predicted cameras, showing that the World Model captures future scene\nevolution beyond what can be explained by camera re-querying alone. Motion-stratified evaluation\nfurther shows that these improvements are more pronounced in Dynamic than in Static windows\nunder both GT and predicted cameras, supporting the effectiveness of GeoState in modeling scene\ndynamics. Detailed results are provided in Appendix A.8.2.\n4.3\nCROSS-QUERY GEOMETRIC CONSISTENCY\nWe evaluate whether a predicted scene state remains geometrically consistent when queried from\ndifferent viewpoints. At each future timestamp, we decode the same state from the ground-truth\nFRONT camera Q0 and perturbed virtual cameras Qi, jointly varying translation and rotation. We\nconsider Small (0–0.5 m, 0–2◦), Medium (0.5–1.0 m, 2–5◦), and Large (1.0–1.5 m, 5–10◦) pertur-\nbations. Consistency is measured by symmetric reprojection AbsRel Esym in Eq. 15 over valid"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_38",
+    "chunk_index": 38,
+    "text": "consider Small (0–0.5 m, 0–2◦), Medium (0.5–1.0 m, 2–5◦), and Large (1.0–1.5 m, 5–10◦) pertur-\nbations. Consistency is measured by symmetric reprojection AbsRel Esym in Eq. 15 over valid\noverlap. We compare World Model-predicted states (World) with target-time states encoded from\nRGB observations (Enc.). Further protocol details are provided in Appendix A.6.\n8"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_39",
+    "chunk_index": 39,
+    "text": "Preprint\nTable 2: Zero-shot depth forecasting on KITTI and nuScenes. Bold and underlined values indi-\ncate the best and second-best results among methods using predicted cameras.\nKITTI\nnuScenes\nMethod\nCamera\nt+0.6 s\nt+1.0 s\nt+2.0 s\nt+0.75 s\nt+1.25 s\nt+2.5 s\nAbsRel↓δ1 ↑AbsRel↓δ1 ↑AbsRel↓δ1 ↑\nAbsRel↓δ1 ↑AbsRel↓δ1 ↑AbsRel↓δ1 ↑\nDINO-Foresight\nPred.\n0.131\n0.849\n0.161\n0.793\n0.195\n0.732\n0.231\n0.691\n0.253\n0.665\n0.291\n0.602\nVGGT-World\nPred.\n0.109\n0.886\n0.127\n0.862\n0.198\n0.732\n0.228\n0.715\n0.241\n0.693\n0.282\n0.637\nFR3D\nPred.\n0.116\n0.868\n0.132\n0.835\n0.178\n0.758\n0.182\n0.740\n0.197\n0.710\n0.229\n0.660\nCopy-Last\nPred.\n0.097\n0.913\n0.113\n0.878\n0.160\n0.802\n0.142\n0.804\n0.177\n0.751\n0.221\n0.646\nGeoState\nPred.\n0.095\n0.920\n0.112\n0.883\n0.155\n0.821\n0.136\n0.820\n0.172\n0.764\n0.213\n0.666\nCopy-Last\nGT\n0.088\n0.932\n0.095\n0.915\n0.114\n0.882\n0.131\n0.825\n0.164\n0.786\n0.195\n0.697\nGeoState\nGT\n0.086\n0.939\n0.093\n0.918\n0.108\n0.895\n0.125\n0.840\n0.159\n0.797\n0.190\n0.707\nTable 3: Geometric reconstruction on Waymo.\nMethod\nt+0.2 s"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_40",
+    "chunk_index": 40,
+    "text": "0.915\n0.114\n0.882\n0.131\n0.825\n0.164\n0.786\n0.195\n0.697\nGeoState\nGT\n0.086\n0.939\n0.093\n0.918\n0.108\n0.895\n0.125\n0.840\n0.159\n0.797\n0.190\n0.707\nTable 3: Geometric reconstruction on Waymo.\nMethod\nt+0.2 s\nt+0.6 s\nt+1.0 s\nt+2.0 s\nAbsRel ↓\nδ1 ↑\nAbsRel ↓\nδ1 ↑\nAbsRel ↓\nδ1 ↑\nAbsRel ↓\nδ1 ↑\nVGGT-Ω\n0.074\n0.934\n0.079\n0.932\n0.076\n0.932\n0.078\n0.930\nGeoState Reconstruction\n0.068\n0.934\n0.073\n0.932\n0.072\n0.932\n0.072\n0.929\nFigure 3 shows that world-model-predicted states closely match observation-encoded states across\nall perturbation levels at every forecast horizon. This indicates that although geometric supervision\nis provided only through depth, the model learns a scene state that captures the underlying geometric\nstructure of the world and supports consistent querying from unseen cameras.\n4.4\nZERO-SHOT GENERALIZATION\nTable 2 evaluates zero-shot depth forecasting on KITTI and nuScenes. Without target-dataset adap-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_41",
+    "chunk_index": 41,
+    "text": "4.4\nZERO-SHOT GENERALIZATION\nTable 2 evaluates zero-shot depth forecasting on KITTI and nuScenes. Without target-dataset adap-\ntation, our model with predicted cameras outperforms DINO-Foresight, VGGT-World, and the re-\nported FR3D results on both metrics across all reported horizons on both datasets. These results\nsupport that GeoState captures transferable geometric structure. Moreover, our predicted states con-\nsistently outperform camera-matched Copy-Last under both ground-truth and predicted cameras,\nshowing that the learned scene dynamics also generalize beyond the training domain.\n4.5\nABLATION STUDIES\nGeometric Reconstruction Quality.\nWe first examine whether compressing GFM features into\nGeoState preserves their geometric information. Table 3 compares direct VGGT-Ωdepth predic-\ntions with depth reconstructed through our Scene Tokenizer and Geometry Decoder using ground-\ntruth query cameras. Both use target-time RGB observations and are evaluated against ground-truth"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_42",
+    "chunk_index": 42,
+    "text": "tions with depth reconstructed through our Scene Tokenizer and Geometry Decoder using ground-\ntruth query cameras. Both use target-time RGB observations and are evaluated against ground-truth\nLiDAR depth. Their comparable accuracy shows that the fixed-length GeoState preserves the ge-\nometric information required for accurate reconstruction, providing a compact and geometrically\nfaithful representation for subsequent world modeling.\nEffect of the View-Decoupled Scene State.\nWe compare GeoState with a feature-compression\nbaseline that directly compresses VGGT-Ωfeatures into a 512 × 512 latent state. For a fair com-\nparison with the feature-compression baseline, only the target FRONT GFM output block is passed\nto the Scene Tokenizer. Both representations use the same world model, training data, forecast-\ning objectives, optimization, and evaluation protocol; implementation details are provided in Ap-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_43",
+    "chunk_index": 43,
+    "text": "to the Scene Tokenizer. Both representations use the same world model, training data, forecast-\ning objectives, optimization, and evaluation protocol; implementation details are provided in Ap-\npendix A.5.4. As shown in Table 4, the two representations achieve comparable reconstruction\nquality, but GeoState is substantially easier to predict, improving AbsRel and δ1 at every horizon.\nBecause the two representations achieve comparable reconstruction quality, the forecasting gap is\nunlikely to arise from reconstruction accuracy. Instead, the results suggest that GeoState provides a\nmore predictable state space for temporal modeling. By separating scene content from viewpoint-\ndependent observation, GeoState reduces camera-induced variation in the state dynamics, allowing\nthe World Model to focus more directly on the underlying evolution of scene geometry.\n9"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_44",
+    "chunk_index": 44,
+    "text": "Preprint\nTable 4: Representation ablation.\nMode State\nt+0.6 s\nt+1.0 s\nt+2.0 s\nAbsRel↓δ1 ↑AbsRel↓δ1 ↑AbsRel↓δ1 ↑\nRec.\nCompressor\n0.075\n0.930\n0.073\n0.930\n0.074\n0.928\nOurs\n0.073\n0.932\n0.072\n0.932\n0.072\n0.929\nPred. Compressor\n0.092\n0.896\n0.111\n0.863\n0.144\n0.804\nOurs\n0.081\n0.919\n0.095\n0.896\n0.133\n0.834\nTable 5: State supervision ablation.\nOne-step Rollout\nt+0.6 s\nt+1.0 s\nt+2.0 s\nAbsRel↓δ1 ↑AbsRel↓δ1 ↑AbsRel↓δ1 ↑\n×\n✓\n0.077\n0.919\n0.086\n0.902\n0.108\n0.878\n×\n×\n0.075\n0.922\n0.084\n0.909\n0.104\n0.879\n✓\n✓\n0.071\n0.928\n0.082\n0.913\n0.107\n0.879\n✓\n×\n0.071\n0.929\n0.081\n0.915\n0.099\n0.888\nEffect of State Supervision.\nWe ablate state supervision during one-step initialization and autore-\ngressive rollout while retaining decoded-depth supervision in all settings. Table 5 shows that one-\nstep state supervision consistently improves forecasting, providing a useful target for initializing\nlocal state transitions. In contrast, extending latent matching throughout the rollout degrades long-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_45",
+    "chunk_index": 45,
+    "text": "local state transitions. In contrast, extending latent matching throughout the rollout degrades long-\nhorizon performance. This may be attributed to context-dependent variations in GFM features that\ndo not necessarily correspond to changes in scene geometry, as further analyzed in Appendix A.7.\nThese findings support using state matching to initialize local transitions while supervising autore-\ngressive predictions through decoded geometry rather than enforcing a unique latent trajectory.\n5\nCONCLUSION\nWe presented GeoState, a view-decoupled geometry state learned from GFM features for predictive\n3D world modeling. By separating scene evolution from camera-dependent observation, GeoState\nprovides a scene representation that can be predicted more effectively over time and queried from\ndifferent viewpoints. Future work may extend this framework to embodied settings, where predictive\nscene states could support perception, planning, and interaction in dynamic environments.\nREFERENCES"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_46",
+    "chunk_index": 46,
+    "text": "different viewpoints. Future work may extend this framework to embodied settings, where predictive\nscene states could support perception, planning, and interaction in dynamic environments.\nREFERENCES\nHolger Caesar, Varun Bankiti, Alex H. Lang, Sourabh Vora, Venice Erin Liong, Qiang Xu,\nAnush Krishnan, Yu Pan, Giancarlo Baldan, and Oscar Beijbom.\nnuScenes:\nA Multi-\nmodal Dataset for Autonomous Driving.\nIn Proceedings of the IEEE/CVF Conference\non Computer Vision and Pattern Recognition, pp. 11621–11631, 2020.\nURL https:\n//openaccess.thecvf.com/content_CVPR_2020/html/Caesar_nuScenes_\nA_Multimodal_Dataset_for_Autonomous_Driving_CVPR_2020_paper.html.\nJunyi Chen, Haoyi Zhu, Xianglong He, Yifan Wang, Jianjun Zhou, Wenzheng Chang, Yang Zhou,\nZizun Li, Zhoujie Fu, Jiangmiao Pang, and Tong He.\nDeepVerse: 4D Autoregressive Video\nGeneration as a World Model. arXiv preprint arXiv:2506.01103, 2025. URL https://arxiv.\norg/abs/2506.01103."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_47",
+    "chunk_index": 47,
+    "text": "Zizun Li, Zhoujie Fu, Jiangmiao Pang, and Tong He.\nDeepVerse: 4D Autoregressive Video\nGeneration as a World Model. arXiv preprint arXiv:2506.01103, 2025. URL https://arxiv.\norg/abs/2506.01103.\nChristopher Diehl, Quinlan Sykora, Ben Agro, Thomas Gilles, Sergio Casas, and Raquel Urtasun.\nDIO: Decomposable implicit 4D occupancy-flow world model. In Proceedings of the IEEE/CVF\nConference on Computer Vision and Pattern Recognition (CVPR), pp. 27456–27466, June 2025.\nURL\nhttps://openaccess.thecvf.com/content/CVPR2025/html/Diehl_\nDIO_Decomposable_Implicit_4D_Occupancy-Flow_World_Model_CVPR_\n2025_paper.html.\nDavid Eigen, Christian Puhrsch, and Rob Fergus.\nDepth Map Prediction from a Single Image\nUsing a Multi-Scale Deep Network. In Advances in Neural Information Processing Systems, vol-\nume 27, 2014. URL https://papers.nips.cc/paper_files/paper/2014/hash/\n91c56ce4a249fae5419b90cba831e303-Abstract.html.\nShenyuan Gao, Jiazhi Yang, Li Chen, Kashyap Chitta, Yihang Qiu, Andreas Geiger, Jun Zhang,"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_48",
+    "chunk_index": 48,
+    "text": "91c56ce4a249fae5419b90cba831e303-Abstract.html.\nShenyuan Gao, Jiazhi Yang, Li Chen, Kashyap Chitta, Yihang Qiu, Andreas Geiger, Jun Zhang,\nand Hongyang Li. Vista: A Generalizable Driving World Model with High Fidelity and Versatile\nControllability. In Advances in Neural Information Processing Systems, 2024. URL https:\n//arxiv.org/abs/2405.17398.\n10"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_49",
+    "chunk_index": 49,
+    "text": "Preprint\nAndreas Geiger, Philip Lenz, and Raquel Urtasun. Are we ready for Autonomous Driving? The\nKITTI Vision Benchmark Suite. In Conference on Computer Vision and Pattern Recognition\n(CVPR), 2012. URL https://www.cvlibs.net/datasets/kitti/.\nSongen Gu, Wei Yin, Bu Jin, Xiaoyang Guo, Junming Wang, Haodong Li, Qian Zhang, and Xiaox-\niao Long. DOME: Taming diffusion model into high-fidelity controllable occupancy world model.\narXiv preprint arXiv:2410.10429, 2024. URL https://arxiv.org/abs/2410.10429.\nAntoine Gu´edon, Shu Nakamura, Nicolas Dufour, Jiahui Lei, Ko Nishino, and Angjoo Kanazawa.\nSurflo: Consistent 3d surface flow model with global state. NeurIPS, 2026.\nDavid Ha and J¨urgen Schmidhuber. World Models. arXiv preprint arXiv:1803.10122, 2018. URL\nhttps://arxiv.org/abs/1803.10122.\nAnthony Hu, Lloyd Russell, Hudson Yeo, Zak Murez, George Fedoseev, Alex Kendall, Jamie Shot-\nton, and Gianluca Corrado. GAIA-1: A Generative World Model for Autonomous Driving. arXiv"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_50",
+    "chunk_index": 50,
+    "text": "Anthony Hu, Lloyd Russell, Hudson Yeo, Zak Murez, George Fedoseev, Alex Kendall, Jamie Shot-\nton, and Gianluca Corrado. GAIA-1: A Generative World Model for Autonomous Driving. arXiv\npreprint arXiv:2309.17080, 2023. URL https://arxiv.org/abs/2309.17080.\nAndrew Jaegle, Felix Gimeno, Andy Brock, Oriol Vinyals, Andrew Zisserman, and Joao Carreira.\nPerceiver: General Perception with Iterative Attention.\nIn Proceedings of the 38th Interna-\ntional Conference on Machine Learning, volume 139 of Proceedings of Machine Learning Re-\nsearch, pp. 4651–4664. PMLR, 2021. URL https://proceedings.mlr.press/v139/\njaegle21a.html.\nHaian Jin, Hanwen Jiang, Hao Tan, Kai Zhang, Sai Bi, Tianyuan Zhang, Fujun Luan, Noah Snavely,\nand Zexiang Xu. LVSM: A Large View Synthesis Model with Minimal 3D Inductive Bias. In\nThe Thirteenth International Conference on Learning Representations, 2025.\nURL https:\n//openreview.net/forum?id=QQBPWtvtcn."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_51",
+    "chunk_index": 51,
+    "text": "The Thirteenth International Conference on Learning Representations, 2025.\nURL https:\n//openreview.net/forum?id=QQBPWtvtcn.\nEfstathios Karypidis, Ioannis Kakogeorgiou, Spyros Gidaris, and Nikos Komodakis.\nDINO-\nForesight: Looking into the Future with DINO. In The Thirty-ninth Annual Conference on Neu-\nral Information Processing Systems, 2025. URL https://openreview.net/forum?id=\ngimtybo07H.\nLu Ling, Yichen Sheng, Zhi Tu, Wentian Zhao, Cheng Xin, Kun Wan, Lantao Yu, Qianyu Guo,\nZixun Yu, Yawen Lu, Xuanmao Li, Xingpeng Sun, Rohan Ashok, Aniruddha Mukherjee, Hao\nKang, Xiangrui Kong, Gang Hua, Tianyi Zhang, Bedrich Benes, and Aniket Bera. DL3DV-10K:\nA Large-Scale Scene Dataset for Deep Learning-based 3D Vision.\nIn Proceedings of the\nIEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 22160–22169, 2024.\nURL\nhttps://openaccess.thecvf.com/content/CVPR2024/html/Ling_\nDL3DV-10K_A_Large-Scale_Scene_Dataset_for_Deep_Learning-based_\n3D_Vision_CVPR_2024_paper.html."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_52",
+    "chunk_index": 52,
+    "text": "URL\nhttps://openaccess.thecvf.com/content/CVPR2024/html/Ling_\nDL3DV-10K_A_Large-Scale_Scene_Dataset_for_Deep_Learning-based_\n3D_Vision_CVPR_2024_paper.html.\nYiren Lu, Xin Ye, Jiaming Liu, Philip Jacobson, Jin Yao, Yi-chung Chen, Liam Merino, Dhruva Dix-\nith Kurra, Min Cai, Tom Lampo, Yu Yin, Danhua Guo, and Burhan Yaman. GeoWAM: Visual\nGeometry World Action Models for Autonomous Driving. arXiv preprint arXiv:2608.23486,\n2026. URL https://arxiv.org/abs/2608.23486.\nNils Morbitzer, Jonathan Evers, Artem Savkin, Thomas Stauner, Nassir Navab, Federico Tombari,\nand Stefano Gasperini. Future dynamic 3d reconstruction: Toward 3d world modeling with disen-\ntangled ego-motion. In Proceedings of the 43rd International Conference on Machine Learning,\nProceedings of Machine Learning Research. PMLR, 2026. URL https://arxiv.org/abs/\n2606.18250.\nNVIDIA, Niket Agarwal, Arslan Ali, Maciej Bala, Yogesh Balaji, Erik Barker, Tiffany Cai, Prithvi-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_53",
+    "chunk_index": 53,
+    "text": "Proceedings of Machine Learning Research. PMLR, 2026. URL https://arxiv.org/abs/\n2606.18250.\nNVIDIA, Niket Agarwal, Arslan Ali, Maciej Bala, Yogesh Balaji, Erik Barker, Tiffany Cai, Prithvi-\njit Chattopadhyay, Yongxin Chen, Yin Cui, Yifan Ding, Daniel Dworakowski, Jiaojiao Fan,\nMichele Fenzi, Francesco Ferroni, Sanja Fidler, Dieter Fox, Songwei Ge, Yunhao Ge, Jinwei\nGu, Siddharth Gururani, Ethan He, Jiahui Huang, Jacob Huffman, Pooya Jannaty, Jingyi Jin,\nSeung Wook Kim, Gergely Kl´ar, Grace Lam, Shiyi Lan, Laura Leal-Taixe, Anqi Li, Zhaoshuo\nLi, Chen-Hsuan Lin, Tsung-Yi Lin, Huan Ling, Ming-Yu Liu, Xian Liu, Alice Luo, Qianli Ma,\nHanzi Mao, Kaichun Mo, Arsalan Mousavian, Seungjun Nah, Sriharsha Niverty, David Page, De-\nspoina Paschalidou, Zeeshan Patel, Lindsey Pavao, Morteza Ramezanali, Fitsum Reda, Xiaowei\n11"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_54",
+    "chunk_index": 54,
+    "text": "Preprint\nRen, Vasanth Rao Naik Sabavat, Ed Schmerling, Stella Shi, Bartosz Stefaniak, Shitao Tang, Lyne\nTchapmi, Przemek Tredak, Wei-Cheng Tseng, Jibin Varghese, Hao Wang, Haoxiang Wang, Heng\nWang, Ting-Chun Wang, Fangyin Wei, Xinyue Wei, Jay Zhangjie Wu, Jiashu Xu, Wei Yang,\nLin Yen-Chen, Xiaohui Zeng, Yu Zeng, Jing Zhang, Qinsheng Zhang, Yuxuan Zhang, Qingqing\nZhao, and Artur Zolkowski. Cosmos world foundation model platform for physical ai, 2025. URL\nhttps://arxiv.org/abs/2501.03575.\nJeremy Reizenstein,\nRoman Shapovalov,\nPhilipp Henzler,\nLuca Sbordone,\nPatrick La-\nbatut, and David Novotny.\nCommon Objects in 3D: Large-Scale Learning and Eval-\nuation of Real-Life 3D Category Reconstruction.\nIn Proceedings of the IEEE/CVF\nInternational\nConference\non\nComputer\nVision,\npp.\n10901–10911,\n2021.\nURL\nhttps://openaccess.thecvf.com/content/ICCV2021/html/Reizenstein_\nCommon_Objects_in_3D_Large-Scale_Learning_and_Evaluation_of_\nReal-Life_ICCV_2021_paper.html."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_55",
+    "chunk_index": 55,
+    "text": "Vision,\npp.\n10901–10911,\n2021.\nURL\nhttps://openaccess.thecvf.com/content/ICCV2021/html/Reizenstein_\nCommon_Objects_in_3D_Large-Scale_Learning_and_Evaluation_of_\nReal-Life_ICCV_2021_paper.html.\nVincent Sitzmann, Semon Rezchikov, William T. Freeman, Joshua B. Tenenbaum, and Fredo\nDurand.\nLight Field Networks: Neural Scene Representations with Single-Evaluation Ren-\ndering.\nIn Advances in Neural Information Processing Systems, volume 34, 2021.\nURL\nhttps://arxiv.org/abs/2106.02634.\nPei Sun, Henrik Kretzschmar, Xerxes Dotiwalla, Aurelien Chouard, Vijaysai Patnaik, Paul\nTsui, James Guo, Yin Zhou, Yuning Chai, Benjamin Caine, Vijay Vasudevan, Wei Han,\nJiquan Ngiam, Hang Zhao, Aleksei Timofeev, Scott Ettinger, Maxim Krivokon, Amy Gao,\nAditya Joshi, Yu Zhang, Jonathon Shlens, Zhifeng Chen, and Dragomir Anguelov.\nScal-\nability in Perception for Autonomous Driving: Waymo Open Dataset.\nIn Proceedings of\nthe IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 2446–2454,\n2020."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_56",
+    "chunk_index": 56,
+    "text": "Scal-\nability in Perception for Autonomous Driving: Waymo Open Dataset.\nIn Proceedings of\nthe IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 2446–2454,\n2020.\nURL https://openaccess.thecvf.com/content_CVPR_2020/html/\nSun_Scalability_in_Perception_for_Autonomous_Driving_Waymo_Open_\nDataset_CVPR_2020_paper.html.\nXiangyu Sun, Shijie Wang, Fengyi Zhang, Lin Liu, Caiyan Jia, Ziying Song, Zi Huang, and\nYadan Luo. Vggt-world: Transforming vggt into an autoregressive geometry world model. In\nPaolo Favaro, Zuzana Kukelova, Atsuto Maki, Anna Rohrbach, Konrad Schindler, and Federico\nTombari (eds.), Computer Vision – ECCV 2026, pp. 382–400, Cham, 2026. Springer Nature\nSwitzerland. ISBN 978-3-032-37271-0. URL https://link.springer.com/chapter/\n10.1007/978-3-032-37271-0_21.\nMatthew\nTancik,\nPratul\nP.\nSrinivasan,\nBen\nMildenhall,\nSara\nFridovich-Keil,\nNithin\nRaghavan,\nUtkarsh\nSinghal,\nRavi\nRamamoorthi,\nJonathan\nT.\nBarron,\nand\nRen\nNg.\nFourier\nFeatures\nLet\nNetworks\nLearn\nHigh"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_57",
+    "chunk_index": 57,
+    "text": "Matthew\nTancik,\nPratul\nP.\nSrinivasan,\nBen\nMildenhall,\nSara\nFridovich-Keil,\nNithin\nRaghavan,\nUtkarsh\nSinghal,\nRavi\nRamamoorthi,\nJonathan\nT.\nBarron,\nand\nRen\nNg.\nFourier\nFeatures\nLet\nNetworks\nLearn\nHigh\nFrequency\nFunctions\nin\nLow\nDimen-\nsional Domains.\nIn Advances in Neural Information Processing Systems, volume 33,\n2020.\nURL\nhttps://papers.nips.cc/paper_files/paper/2020/hash/\n55053683268957697aa39fba6f231c68-Abstract.html.\nJianyuan Wang, Minghao Chen, Nikita Karaev, Andrea Vedaldi, Christian Rupprecht, and David\nNovotny. VGGT: Visual Geometry Grounded Transformer. In Proceedings of the IEEE/CVF\nConference on Computer Vision and Pattern Recognition, pp. 5294–5306, 2025a.\nURL\nhttps://openaccess.thecvf.com/content/CVPR2025/html/Wang_VGGT_\nVisual_Geometry_Grounded_Transformer_CVPR_2025_paper.html.\nJianyuan Wang, Minghao Chen, Shangzhan Zhang, Nikita Karaev, Johannes Sch¨onberger, Patrick\nLabatut, Piotr Bojanowski, David Novotny, Andrea Vedaldi, and Christian Rupprecht. VGGT-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_58",
+    "chunk_index": 58,
+    "text": "Jianyuan Wang, Minghao Chen, Shangzhan Zhang, Nikita Karaev, Johannes Sch¨onberger, Patrick\nLabatut, Piotr Bojanowski, David Novotny, Andrea Vedaldi, and Christian Rupprecht. VGGT-\nΩ. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition\n(CVPR), 2026. URL https://arxiv.org/abs/2605.15195.\nQianqian Wang, Yifei Zhang, Aleksander Holynski, Alexei A. Efros, and Angjoo Kanazawa.\nContinuous 3D Perception Model with Persistent State. In Proceedings of the IEEE/CVF Con-\nference on Computer Vision and Pattern Recognition, pp. 10510–10522, 2025b. URL https:\n//openaccess.thecvf.com/content/CVPR2025/html/Wang_Continuous_\n3D_Perception_Model_with_Persistent_State_CVPR_2025_paper.html.\n12"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_59",
+    "chunk_index": 59,
+    "text": "Preprint\nShuzhe Wang,\nVincent Leroy,\nYohann Cabon,\nBoris Chidlovskii,\nand Jerome Revaud.\nDUSt3R: Geometric 3D Vision Made Easy.\nIn Proceedings of the IEEE/CVF Con-\nference on Computer Vision and Pattern Recognition, pp. 20697–20709, 2024a.\nURL\nhttps://openaccess.thecvf.com/content/CVPR2024/html/Wang_DUSt3R_\nGeometric_3D_Vision_Made_Easy_CVPR_2024_paper.html.\nWenshan Wang, Delong Zhu, Xiangwei Wang, Yaoyu Hu, Yuheng Qiu, Chen Wang, Yafei Hu,\nAshish Kapoor, and Sebastian Scherer. Tartanair: A dataset to push the limits of visual slam. In\n2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), pp. 4909–\n4916, 2020. doi: 10.1109/IROS45743.2020.9341801. URL https://ieeexplore.ieee.\norg/document/9341801/.\nXiaofeng Wang, Zheng Zhu, Guan Huang, Xinze Chen, Jiagang Zhu, and Jiwen Lu. DriveDreamer:\nTowards Real-World-Drive World Models for Autonomous Driving.\nIn Computer Vision –\nECCV 2024, volume 15106 of Lecture Notes in Computer Science, pp. 55–72. Springer, 2024b."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_60",
+    "chunk_index": 60,
+    "text": "Towards Real-World-Drive World Models for Autonomous Driving.\nIn Computer Vision –\nECCV 2024, volume 15106 of Lecture Notes in Computer Science, pp. 55–72. Springer, 2024b.\ndoi: 10.1007/978-3-031-73195-2 4.\nURL https://link.springer.com/chapter/\n10.1007/978-3-031-73195-2_4.\nDongxu Wei, Qi Xu, Zhiqi Li, Hangning Zhou, Cong Qiu, Hailong Qin, Mu Yang, Zhaopeng Cui,\nand Peidong Liu. Any 3D Scene is Worth 1K Tokens: 3D-Grounded Representation for Scene\nGeneration at Scale. arXiv preprint arXiv:2604.11331, 2026. URL https://arxiv.org/\nabs/2604.11331.\nHongchi Xia, Yang Fu, Sifei Liu, and Xiaolong Wang.\nRGBD Objects in the Wild: Scaling\nReal-World 3D Object Learning from RGB-D Videos.\nIn Proceedings of the IEEE/CVF\nConference on Computer Vision and Pattern Recognition, pp. 22378–22389, 2024.\nURL\nhttps://openaccess.thecvf.com/content/CVPR2024/html/Xia_RGBD_\nObjects_in_the_Wild_Scaling_Real-World_3D_Object_Learning_CVPR_\n2024_paper.html."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_61",
+    "chunk_index": 61,
+    "text": "URL\nhttps://openaccess.thecvf.com/content/CVPR2024/html/Xia_RGBD_\nObjects_in_the_Wild_Scaling_Real-World_3D_Object_Learning_CVPR_\n2024_paper.html.\nJianing Yang, Alexander Sax, Kevin J. Liang, Mikael Henaff, Hao Tang, Ang Cao, Joyce Chai,\nFranziska Meier, and Matt Feiszli.\nFast3R: Towards 3D Reconstruction of 1000+ Images in\nOne Forward Pass.\nIn Proceedings of the IEEE/CVF Conference on Computer Vision and\nPattern Recognition, pp. 21924–21935, 2025. URL https://openaccess.thecvf.com/\ncontent/CVPR2025/html/Yang_Fast3R_Towards_3D_Reconstruction_of_\n1000_Images_in_One_Forward_CVPR_2025_paper.html.\nZetong Yang, Li Chen, Yanan Sun, and Hongyang Li. Visual Point Cloud Forecasting enables\nScalable Autonomous Driving. In Proceedings of the IEEE/CVF Conference on Computer Vision\nand Pattern Recognition, pp. 14673–14684, 2024. URL https://openaccess.thecvf.\ncom/content/CVPR2024/html/Yang_Visual_Point_Cloud_Forecasting_\nenables_Scalable_Autonomous_Driving_CVPR_2024_paper.html."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_62",
+    "chunk_index": 62,
+    "text": "and Pattern Recognition, pp. 14673–14684, 2024. URL https://openaccess.thecvf.\ncom/content/CVPR2024/html/Yang_Visual_Point_Cloud_Forecasting_\nenables_Scalable_Autonomous_Driving_CVPR_2024_paper.html.\nLunjun Zhang, Yuwen Xiong, Ze Yang, Sergio Casas, Rui Hu, and Raquel Urtasun.\nCopi-\nlot4D: Learning Unsupervised World Models for Autonomous Driving via Discrete Diffusion.\nIn The Twelfth International Conference on Learning Representations, 2024.\nURL https:\n//openreview.net/forum?id=Psl75UCoZM.\nWenzhao Zheng, Weiliang Chen, Yuanhui Huang, Borui Zhang, Yueqi Duan, and Jiwen Lu. Occ-\nworld: Learning a 3d occupancy world model for autonomous driving. In Aleˇs Leonardis, Elisa\nRicci, Stefan Roth, Olga Russakovsky, Torsten Sattler, and G¨ul Varol (eds.), Computer Vision –\nECCV 2024, pp. 55–72, Cham, 2024. Springer Nature Switzerland. ISBN 978-3-031-72624-8.\nURL https://link.springer.com/chapter/10.1007/978-3-031-72624-8_\n4."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_63",
+    "chunk_index": 63,
+    "text": "ECCV 2024, pp. 55–72, Cham, 2024. Springer Nature Switzerland. ISBN 978-3-031-72624-8.\nURL https://link.springer.com/chapter/10.1007/978-3-031-72624-8_\n4.\nTinghui Zhou, Richard Tucker, John Flynn, Graham Fyffe, and Noah Snavely. Stereo Magnification:\nLearning View Synthesis using Multiplane Images. In SIGGRAPH, 2018. URL https://\ntinghuiz.github.io/projects/mpi/.\nHaoyi Zhu, Yifan Wang, Jianjun Zhou, Wenzheng Chang, Yang Zhou, Zizun Li, Junyi Chen, Chun-\nhua Shen, Jiangmiao Pang, and Tong He. Aether: Geometric-Aware Unified World Modeling.\nIn Proceedings of the IEEE/CVF International Conference on Computer Vision, pp. 8535–8546,\n13"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_64",
+    "chunk_index": 64,
+    "text": "Preprint\n2025. URL https://openaccess.thecvf.com/content/ICCV2025/html/Zhu_\nAether_Geometric-Aware_Unified_World_Modeling_ICCV_2025_paper.\nhtml.\nSicheng Zuo, Wenzhao Zheng, Yuanhui Huang, Jie Zhou, and Jiwen Lu.\nGaussianWorld:\nGaussian World Model for Streaming 3D Occupancy Prediction.\nIn Proceedings of the\nIEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 6772–6781, 2025.\nURL\nhttps://openaccess.thecvf.com/content/CVPR2025/html/Zuo_\nGaussianWorld_Gaussian_World_Model_for_Streaming_3D_Occupancy_\nPrediction_CVPR_2025_paper.html.\n14"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_65",
+    "chunk_index": 65,
+    "text": "Preprint\nA\nAPPENDIX\nA.1\nARCHITECTURE DETAILS\nThis section provides the implementation details of the Scene Tokenizer, geometry decoder, and\nworld model used in the main experiments. Table 6 summarizes their principal architectural config-\nurations and parameter counts.\nA.1.1\nGEOMETRY-CONDITIONED MEMORY AND SCENE TOKENIZER\nEach selected GFM feature level is independently normalized and projected from 2,048 to 512\nchannels. The four projected features are concatenated and fused by an MLP with dimensions\n2048 →2048 →512. For each spatial patch, confidence-weighted pooling of the dense point\nmap provides a representative 3D point. Its coordinates, normalized by the scene scale, are Fourier-\nencoded with ten bands and concatenated with log(1 + c), where c is the pooled confidence, before\nprojection to a 512-dimensional geometry embedding.\nSource-camera conditioning uses a six-dimensional rotation representation formed from the first two"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_66",
+    "chunk_index": 66,
+    "text": "projection to a 512-dimensional geometry embedding.\nSource-camera conditioning uses a six-dimensional rotation representation formed from the first two\nrotation-matrix columns and a four-band Fourier encoding of normalized translation. A camera MLP\nproduces a 512-dimensional embedding shared by all patches in that view. The source-ray branch\nencodes six-dimensional Pl¨ucker coordinates with four Fourier bands and applies a convolution with\nkernel size and stride 16, followed by LayerNorm, to produce one 512-dimensional embedding per\npatch.\nThe feature, point, camera, and ray embeddings are concatenated. A 2048 →1024 →512 fusion\nMLP predicts a correction to the feature embedding; their sum is normalized to form the patch\nmemory. A bank of 512 learned queries of width 512 is updated by eight Perceiver layers, each\ncomprising latent-to-memory cross-attention and latent self-attention. Each attention block uses"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_67",
+    "chunk_index": 67,
+    "text": "memory. A bank of 512 learned queries of width 512 is updated by eight Perceiver layers, each\ncomprising latent-to-memory cross-attention and latent self-attention. Each attention block uses\neight heads, pre-normalization, residual connections, and a feed-forward network with expansion\nratio four. A final LayerNorm produces S ∈R512×512.\nA.1.2\nQUERY-CONDITIONED GEOMETRY DECODER\nFor a camera-to-world pose P = (R, o) and intrinsic matrix K, a pixel u = (u, v, 1)⊤defines the\nunit direction\nd(u) =\nRK−1u\n∥RK−1u∥2\n.\n(16)\nIn normalized scene coordinates, the ray representation is [d, ¯o×d], where ¯o is the normalized cam-\nera center. Query rays are Fourier-encoded with six bands and patchified by a stride-16 convolution.\nAt 416 × 624 resolution, this produces 26 × 39 = 1,014 query tokens, which are concatenated with\nthe 512 scene tokens to form a sequence of 1,526 tokens.\nThe scene tokens first pass through LayerNorm, a linear projection, and two scene-only self-attention"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_68",
+    "chunk_index": 68,
+    "text": "the 512 scene tokens to form a sequence of 1,526 tokens.\nThe scene tokens first pass through LayerNorm, a linear projection, and two scene-only self-attention\nblocks. The resulting scene tokens and query-ray tokens are then processed jointly by sixteen self-\nattention Transformer blocks, allowing each query to retrieve view-dependent geometry from the\nshared scene state. Query-token representations are retained after blocks 4, 8, 12, and 16, providing\nmulti-layer features at four stages of the decoder.\nThese multi-layer features are subsequently processed by a DPT Feature Adapter, whose role is\nto transform the decoder representations into the feature interface expected by the frozen VGGT-Ω\nDPT head. For each level, the final query representation is fused with the corresponding intermediate\nrepresentation through a learned sigmoid gate and a level embedding. Two additional Perceiver\nlayers allow the query tokens to attend to the final scene tokens, and an independent MLP maps"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_69",
+    "chunk_index": 69,
+    "text": "representation through a learned sigmoid gate and a level embedding. Two additional Perceiver\nlayers allow the query tokens to attend to the final scene tokens, and an independent MLP maps\neach level as 512 →1024 →1024 →2048.\nThe resulting four feature maps are passed directly to the frozen VGGT-ΩDPT head to predict cam-\nera z-depth. The decoder receives only the scene state, query camera, and output dimensions, such\nthat all scene information must pass through the fixed-size state bottleneck. During world-model\ntraining, both the Geometry Decoder and DPT head remain fixed, while gradients are propagated\nthrough them with respect to the input scene state.\n15"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_70",
+    "chunk_index": 70,
+    "text": "Preprint\nTable 6: Detailed architecture of the model.\nComponent\nConfiguration\nScene Tokenizer\n512 queries of width 512; eight Perceiver layers; eight attention\nheads; MLP expansion ratio 4; 70.46M parameters\nGeometry decoder\nWidth 512; two scene-conditioning blocks; 16 joint scene–ray\nblocks;\nfour output branches with two Perceiver layers each;\n135.55M parameters\nWorld Model\nFour-state context; 12 factorized blocks; width 1,152; eight heads;\nMLP expansion ratio 4; dropout 0.1; 256.55M parameters\nA.1.3\nRESIDUAL WORLD MODEL\nThe four observed scene states form an input tensor of shape 4 × 512 × 512, corresponding to four\ntime steps, 512 spatial slots per state, and 512 feature channels per slot. Each token is first linearly\nprojected from 512 to a model width of 1,152. A learned mask token is then replicated over 512\nslots to construct a fifth state, which serves as the prediction position. To encode token identity,"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_71",
+    "chunk_index": 71,
+    "text": "projected from 512 to a model width of 1,152. A learned mask token is then replicated over 512\nslots to construct a fifth state, which serves as the prediction position. To encode token identity,\nwe use learned temporal and slot embeddings of 576 dimensions each. Their concatenation forms a\n1,152-dimensional positional embedding, which is added to the projected tokens.\nEach Transformer block factorizes attention over time and space. Temporal attention is first applied\nacross the five time positions independently for each of the 512 slots. Spatial attention then operates\nacross the 512 slots independently within each time position. The two attention operations are\nfollowed by a 1152 →4608 →1152 feed-forward network with GELU. All sublayers use pre-\nnormalization, residual connections, and dropout. After the final block, the tokens at the fifth,\nmasked prediction position are mapped back to 512 channels by a bias-free linear residual head. The"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_72",
+    "chunk_index": 72,
+    "text": "normalization, residual connections, and dropout. After the final block, the tokens at the fifth,\nmasked prediction position are mapped back to 512 channels by a bias-free linear residual head. The\nhead is zero-initialized, such that the model initially predicts a zero residual and therefore exactly\nrecovers the Copy-Last prediction.\nA.2\nCAMERA PREDICTOR\nThe camera predictor forecasts future FRONT-camera poses from the observed ego-motion and the\ncurrent FRONT image. The predicted trajectory is used as the future query-camera sequence for\nboth GeoState (Pred. Camera) and Copy-Last (Pred. Camera).\nA.2.1\nARCHITECTURE\nThe camera predictor contains 8.99M parameters and follows a motion-prior-plus-visual-refinement\ndesign. Given four historical metric FRONT poses at t−0.6, t−0.4, t−0.2, and t seconds, we first\ncompute the three consecutive relative transformations and map them to six-dimensional motion"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_73",
+    "chunk_index": 73,
+    "text": "design. Given four historical metric FRONT poses at t−0.6, t−0.4, t−0.2, and t seconds, we first\ncompute the three consecutive relative transformations and map them to six-dimensional motion\nvectors using the SE(3) logarithm. The motion vectors and their first differences are standardized,\nprojected to width 256, and encoded by a four-layer Transformer with eight attention heads, an\nMLP expansion ratio of four, and dropout 0.1. Future poses are initialized from a constant-body-\ntwist extrapolation of the latest observed motion. Learned horizon queries attend to the encoded\nmotion features through three decoding layers and predict residual corrections to this extrapolated\ntrajectory. Future time is represented using linear and quadratic terms together with eight Fourier\nbands.\nTo incorporate scene-dependent cues, the predictor additionally conditions on the current FRONT\nimage. Frozen VGGT-Ωspatial features are extracted from a separate forward pass and pooled to"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_74",
+    "chunk_index": 74,
+    "text": "bands.\nTo incorporate scene-dependent cues, the predictor additionally conditions on the current FRONT\nimage. Frozen VGGT-Ωspatial features are extracted from a separate forward pass and pooled to\na 6 × 8 grid, yielding 48 tokens of width 2,048. After projection to width 256 and the addition\nof learned spatial embeddings, two cross-attention layers compress these features into eight visual\ntokens. The visual tokens are appended to the encoded motion memory, and two additional horizon-\nquery decoding layers, with eight attention heads and an MLP expansion ratio of two, predict a\nsix-dimensional visual correction ∆ξh for each requested horizon.\nFor each requested horizon h, the final relative pose is\nbPt+h = bP motion\nt+h\nExpSE(3)(∆ξh).\n(17)\n16"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_75",
+    "chunk_index": 75,
+    "text": "Preprint\nTable 7: Camera prediction results on Waymo.\nHorizon (s)\nATE (m) ↓\nRTE (m) ↓\nRRE (◦) ↓\n0.2\n0.0125\n0.0125\n0.1894\n0.6\n0.0379\n0.0246\n0.2462\n1.0\n0.0840\n0.0361\n0.2783\n2.0\n0.3117\n0.0785\n0.3755\nThe visual correction is bounded by a scaled tanh output, with a limit of 2.0 in normalized residual\ncoordinates and horizon-dependent motion scales. Its final projection is initialized to zero, so the\ncomplete model initially reduces to the motion-only prediction and learns visual corrections during\ntraining. At inference, we use direct multi-horizon camera prediction for Waymo and KITTI, while\nnuScenes adopts autoregressive prediction at 0.25 s intervals, recursively updating the pose history\nwith predicted poses.\nA.2.2\nTRAINING\nWe train the camera predictor in three stages. First, we optimize the motion backbone using metric\nFRONT-camera trajectories from Waymo. Each training sample contains four observed poses at"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_76",
+    "chunk_index": 76,
+    "text": "TRAINING\nWe train the camera predictor in three stages. First, we optimize the motion backbone using metric\nFRONT-camera trajectories from Waymo. Each training sample contains four observed poses at\nt−0.6, t−0.4, t−0.2, and t, together with ten future poses at 0.2 s intervals. The objective com-\nbines absolute pose error, adjacent relative-pose error, and ray-endpoint error with weights 1.0, 0.5,\nand 0.2, respectively. Rotation errors are converted to metric displacement using a 10 m lever arm.\nWe first train for 12,000 steps with direct ten-horizon supervision using AdamW, batch size 1,024,\nweight decay 0.05, and a cosine learning-rate schedule from 10−4 to 10−6 after 300 warm-up steps.\nWe then continue for another 12,000 steps with closed-loop training, recursively applying the pre-\ndictor over four consecutive rollout chunks. The closed-loop loss is weighted by 0.5. This phase\nuses batch size 384, a 100-step warm-up, and a cosine learning-rate schedule from 5 × 10−5 to"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_77",
+    "chunk_index": 77,
+    "text": "dictor over four consecutive rollout chunks. The closed-loop loss is weighted by 0.5. This phase\nuses batch size 384, a 100-step warm-up, and a cosine learning-rate schedule from 5 × 10−5 to\n5 × 10−7. Gradients are clipped to norm 1.0 throughout motion training.\nSecond, we train the visual adapter while keeping the motion backbone frozen. We use the same\npose-based supervision, with the relative-pose and ray-endpoint terms both weighted by 0.5 and a\n20 m rotation lever arm. Turning and speed-changing windows are assigned sample weights of 1.5\nand 0.5, respectively. Training uses 123,789 windows for 20 epochs with AdamW, batch size 256,\nweight decay 0.02, and a cosine learning-rate schedule from 2 × 10−4 to 2 × 10−6. Gradients are\nclipped to norm 1.0.\nFinally, we adapt the visual adapter to the downstream depth-query task through the frozen geometry\ndecoder. The last observed GeoState St is held fixed across future horizons and decoded using the"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_78",
+    "chunk_index": 78,
+    "text": "Finally, we adapt the visual adapter to the downstream depth-query task through the frozen geometry\ndecoder. The last observed GeoState St is held fixed across future horizons and decoded using the\npredicted future camera poses. The decoded depth is supervised against future Waymo LiDAR. To\naccount for the horizon-dependent difficulty of querying a fixed scene state, we normalize the Ab-\nsRel at each horizon by the corresponding GT-camera Copy-Last AbsRel estimated over the training\nset. This depth objective is combined with the trajectory loss and a parameter-anchor regularizer,\nweighted by 0.05 and 0.02, respectively. Only the visual adapter is updated in this stage. We train\nfor 1,200 steps using AdamW with learning rate 5 × 10−6, weight decay 0.01, and gradient clipping\nat 1.0.\nA.2.3\nEVALUATION RESULTS\nWe evaluate on the same Waymo validation windows as depth forecasting.\nPredicted and GT"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_79",
+    "chunk_index": 79,
+    "text": "at 1.0.\nA.2.3\nEVALUATION RESULTS\nWe evaluate on the same Waymo validation windows as depth forecasting.\nPredicted and GT\ncamera-to-world poses share the metric frame of the last observed FRONT camera, with no post-hoc\ntrajectory alignment. At each reported horizon, errors are pooled over all 100 sequences and all fu-\nture steps up to that horizon before computing RMSE. ATE measures camera-center error. RTE and\nRRE measure the translation magnitude and rotation angle of (T −1\nk−1Tk)−1( bT −1\nk−1 bTk) over adjacent\n0.2 s transitions, including the first transition from the observed anchor. Table 7 reports the results.\nA.3\nCOORDINATE AND SCALE CONVENTIONS\nGFM reconstruction is defined up to an unknown scale. For each temporal window, we therefore\ncalibrate its scale using the latest observed FRONT view, which serves as the anchor. Let DΩ\n0 and\n17"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_80",
+    "chunk_index": 80,
+    "text": "Preprint\nDLiDAR\n0\ndenote the raw GFM and LiDAR depths at the anchor, respectively, and let Ω0 denote the\nset of valid pixels with matched GFM and LiDAR depths. We estimate\na0 = exp\n\u0002\nmedianp∈Ω0\n\u0000log DΩ\n0 (p) −log DLiDAR\n0\n(p)\n\u0001\u0003\n,\n(18)\nwhere a0 converts metric distances to GFM units. Matched pixels are required to have finite and\npositive GFM depth, LiDAR depth, and GFM confidence, and LiDAR depth is restricted to 80 m.\nCalibration is performed only when at least 128 valid matches are available.\nWe additionally define a scene-normalization depth s0 from the observed views as a confidence-\nweighted trimmed median of valid GFM depths. The lowest and highest 2% of cumulative confi-\ndence weight are discarded before computing the weighted median. The physical length represented\nby one normalized scene unit is therefore\nL0 = s0\na0\nmeters.\n(19)\nPoint coordinates, camera translations, and ray origins are divided by s0 in the reference GFM frame,"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_81",
+    "chunk_index": 81,
+    "text": "by one normalized scene unit is therefore\nL0 = s0\na0\nmeters.\n(19)\nPoint coordinates, camera translations, and ray origins are divided by s0 in the reference GFM frame,\nwhile rotations and unit ray directions remain unchanged. Pl¨ucker moments are constructed using\nthe normalized ray origins.\nAll four observed states within a temporal window are extracted from the same 12-image GFM\nforward pass and therefore share the same a0, s0, and L0. A normalized decoder prediction is\nconverted to metric depth as\nbDmetric\nQ\n= L0 bDnorm\nQ\n.\n(20)\nThis conversion is fixed by the observed context and retained throughout the entire forecasting roll-\nout; no future target frame is used to re-estimate the scale.\nWhen geometry is obtained from a separate GFM forward pass, its raw scale may differ from that\nof the observed context. Let ak denote the metric calibration factor of such a pass. Setting\nsk = akL0\n(21)\nexpresses its geometry in the same normalized physical unit, since\nxGFM,k\nsk\n≈xmetric\nL0\n."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_82",
+    "chunk_index": 82,
+    "text": "of the observed context. Let ak denote the metric calibration factor of such a pass. Setting\nsk = akL0\n(21)\nexpresses its geometry in the same normalized physical unit, since\nxGFM,k\nsk\n≈xmetric\nL0\n.\n(22)\nThis normalization applies only to explicit geometric quantities (Eq. 4); the intermediate GFM fea-\nture vectors are not rescaled.\nA.4\nTRAINING DETAILS\nIn this section, we provide the sampling procedures, loss implementations, and optimization settings\nthat supplement Sections 3.5 and 4.1.\nA.4.1\nWAYMO DATA CONSTRUCTION\nWe use a binary motion partition for Waymo. Motion labels are derived from the annotated 3D\ntracks of vehicles, pedestrians, and cyclists over each eleven-state window (four observed and seven\nfuture states at 0.2 s intervals). A box observation must contain at least three LiDAR points and a\ntrack must be observed in at least two states. We mark a track as moving when its median speed"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_83",
+    "chunk_index": 83,
+    "text": "future states at 0.2 s intervals). A box observation must contain at least three LiDAR points and a\ntrack must be observed in at least two states. We mark a track as moving when its median speed\nexceeds 0.75 m/s for a vehicle, 0.25 m/s for a pedestrian, or 0.50 m/s for a cyclist. A window is\nDynamic if it contains at least one such visible moving track and Static otherwise. This partition\nyields 114,735 Dynamic and 24,632 Static training windows.\nA.4.2\nSCENE TOKENIZER AND DECODER TRAINING\nMulti-view pretraining uses 9,496 scenes, comprising 2,834 from DL3DV, 2,818 from TartanAir,\n2,142 from RealEstate10K, 941 from CO3D, and 761 from WildRGB-D. To train the tokenizer with\ndifferent visible-view configurations, anchor-view and random-view dropout each use probability\n0.4 at the memory level. For each training sample with at least two source views, we apply one of\nthree mutually exclusive memory-level operations: mask the anchor-view patch block with prob-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_84",
+    "chunk_index": 84,
+    "text": "0.4 at the memory level. For each training sample with at least two source views, we apply one of\nthree mutually exclusive memory-level operations: mask the anchor-view patch block with prob-\nability 0.4, mask one uniformly sampled non-anchor view block with probability 0.4, or retain all\nview blocks with probability 0.2. Single-view samples retain their only view.\n18"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_85",
+    "chunk_index": 85,
+    "text": "Preprint\nDuring Waymo adaptation, we use the Static subset described in Section A.4.1. Since these win-\ndows contain no visible moving tracks under our motion criterion, we allow temporal source–query\nseparations up to 2.0 s while the observation and query cameras move. This sampling covers both\nnearby and more distant query viewpoints, so that viewpoints far from the anchor remain within the\ntraining distribution. The adaptation schedule uses a 2k-step warmup followed by cosine learning-\nrate decay; training budgets, initial learning rates, and effective batch sizes follow Section 4.1. For\nthe geometry objective defined in Eq. 12, we set the gradient-loss weight to 0.1, yielding\nLrep = Llog D + 0.1Lgrad.\n(23)\nA.4.3\nWORLD-MODEL TRAINING\nWorld Model training uses 139,367 windows from 798 usable Waymo training segments covering\nstatic and dynamic content. Each window contains four context states and seven future states at"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_86",
+    "chunk_index": 86,
+    "text": "World Model training uses 139,367 windows from 798 usable Waymo training segments covering\nstatic and dynamic content. Each window contains four context states and seven future states at\n0.2 s intervals, corresponding to a forecast horizon of 1.4 s from the last context state. For one-step\ninitialization, each window supplies seven 4 →1 transitions with observation-encoded histories.\nThe concrete loss corresponding to Eq. 13 is\nLinit = SmoothL10.1(bS, S∗) + 0.05\nh\n1 −cos\n\u0010\nvec bS, vec S∗\u0011i\n+ 0.24Llog D.\n(24)\nThe SmoothL1 transition parameter is 0.1, and cosine similarity is computed between flattened\nstates. During autoregressive training, Eq. 14 weights the FRONT log-depth losses equally across\nhorizons. Each window requires one GFM forward pass on its twelve context images; future LiDAR\ndepth supplies the reconstruction targets.\nWe use AdamW with β = (0.9, 0.95), weight decay 0.05, gradient clipping at 1.0, and learning-rate\nwarmup followed by cosine decay.\nA.5"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_87",
+    "chunk_index": 87,
+    "text": "depth supplies the reconstruction targets.\nWe use AdamW with β = (0.9, 0.95), weight decay 0.05, gradient clipping at 1.0, and learning-rate\nwarmup followed by cosine decay.\nA.5\nDATA AND EVALUATION PROTOCOLS\nA.5.1\nDATASETS AND TEMPORAL SAMPLING\nWe construct one candidate window per sequence. Each window contains four historical observa-\ntions ending at anchor t and ten future targets. Eligibility is determined solely by the availability\nof the required RGB images, camera poses, and LiDAR measurements, together with timestamp\nmatching. Using a fixed temporal position and at most one window per sequence prevents longer\nsequences from receiving greater weight.\nFor Waymo, the candidate pool contains one window from each of the 202 segments in the official\nvalidation split. We define logical states at 5 Hz and place the anchor at the tenth logical state, 1.8 s\nafter the first complete timestamp. A complete timestamp contains FRONT, FRONT LEFT, and"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_88",
+    "chunk_index": 88,
+    "text": "validation split. We define logical states at 5 Hz and place the anchor at the tenth logical state, 1.8 s\nafter the first complete timestamp. A complete timestamp contains FRONT, FRONT LEFT, and\nFRONT RIGHT images together with the vehicle pose. The four observations occur at t −0.6,\nt −0.4, t −0.2, and t, and the ten targets span t + 0.2 through t + 2.0 s. For each nominal time,\nwe select the nearest complete timestamp within 20 ms. We partition the 202 segments into 102\nsegments used for checkpoint selection and 100 held-out segments reserved for final evaluation.\nThe evaluation subset is sampled uniformly without replacement using seed 20260804, after which\nits segment identities and anchors are fixed for all paired comparisons. No segment in the held-out\nevaluation subset is used for checkpoint selection. This fixed sample contains 79 Dynamic and 21\nStatic windows under the partition defined in Appendix A.4.1."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_89",
+    "chunk_index": 89,
+    "text": "evaluation subset is used for checkpoint selection. This fixed sample contains 79 Dynamic and 21\nStatic windows under the partition defined in Appendix A.4.1.\nFor KITTI, we consider the 151 sequences covered by the KITTI Depth Completion annotations and\nconstruct at most one fixed window per sequence. Logical states follow the VGGT-World two-raw-\nframe stride, with the anchor placed at the tenth logical state, corresponding to raw-frame offset 18\nfrom the first image. We retain a drive when all four historical and ten future RGB, pose, and Li-\nDAR records are available on this stride, yielding 113 eligible drives. Ineligible drives are recorded\nas skipped and are not replaced. This common anchor placement keeps the temporal position com-\nparable to Waymo while respecting KITTI’s native sampling cadence.\nFor nuScenes, we construct one window for each of the 150 scenes in the official validation split."
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_90",
+    "chunk_index": 90,
+    "text": "parable to Waymo while respecting KITTI’s native sampling cadence.\nFor nuScenes, we construct one window for each of the 150 scenes in the official validation split.\nBecause CAM FRONT is sampled asynchronously, the anchor is defined as the image nearest to\n1.8 s after the scene start, subject to a 120 ms tolerance, rather than as the tenth stored image. His-\ntorical observations occur at t −0.75, t −0.50, t −0.25, t, and ten future targets follow at 0.25 s\n19"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_91",
+    "chunk_index": 91,
+    "text": "Preprint\nintervals. Each target is paired with the nearest LIDAR TOP sweep within 50 ms. This construc-\ntion preserves a comparable fixed temporal anchor across datasets while accommodating the native\nnuScenes sensor timing.\nA.5.2\nINPUT AND QUERY CONSTRUCTION\nOur method follows the balanced-resolution preprocessing rule of VGGT-Ω. It preserves the nomi-\nnal patch-token budget while adapting the height and width to the source aspect ratio and rounding\nboth dimensions to multiples of the 16-pixel patch size; a centered crop is applied only when needed\nto limit extreme aspect ratios. The resulting evaluation rasters (height×width) are 416 × 624 for\nWaymo, 368 × 720 for KITTI, and 384 × 688 for nuScenes. Camera intrinsics are updated using\nthe same resize factors and crop offsets. Since VGGT-Ωassumes a centered principal point, its pre-\ndicted intrinsics can introduce systematic errors in viewing-ray directions when the actual principal"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_92",
+    "chunk_index": 92,
+    "text": "dicted intrinsics can introduce systematic errors in viewing-ray directions when the actual principal\npoint is off-center. We therefore use dataset-calibrated intrinsics together with VGGT-Ω-estimated\ncamera poses for source-view geometric conditioning. External baselines retain their respective\npreprocessing conventions.\nAt\neach\nWaymo\nobservation\ntime,\nwe\nuse\nsynchronized\nFRONT,\nFRONT LEFT,\nand\nFRONT RIGHT images. VGGT-Ωjointly processes all twelve historical images, placing the lat-\nest FRONT image first to define a shared reference frame. A timestamp-specific memory mask\nexposes only the three view blocks belonging to each state to the Scene Tokenizer. The four states\nare then supplied to the World Model in chronological order. KITTI and nuScenes use one camera\nview per timestamp.\nThe World Model predicts ten successive states with a four-state sliding window. GT-camera and\npredicted-camera evaluations share this state trajectory and differ in the decoder query poses. The"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_93",
+    "chunk_index": 93,
+    "text": "The World Model predicts ten successive states with a four-state sliding window. GT-camera and\npredicted-camera evaluations share this state trajectory and differ in the decoder query poses. The\ncamera predictor receives four observed metric poses and the current forward-facing image, as de-\ntailed in Appendix A.2. Within each camera setting, Copy-Last and forecasting share query cameras\nand LiDAR evaluation masks.\nCamera-matched Copy-Last holds St fixed and evaluates Gψ(St, Qt+h), retaining the representa-\ntion, decoder, and query trajectory used by forecasting. Fixed-View Copy-Last repeats the raw\nVGGT-ΩFRONT depth map from the observed anchor at every future timestamp. The map remains\nfixed while the future LiDAR reference changes.\nA.5.3\nDEPTH, SCALE, AND METRIC COMPUTATION\nDepth is evaluated against projected LiDAR measurements in the query-camera frame. For a trans-\nformed point (xc, yc, zc), the reference depth is zc. The valid set Ωcontains projected measurements"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_94",
+    "chunk_index": 94,
+    "text": "Depth is evaluated against projected LiDAR measurements in the query-camera frame. For a trans-\nformed point (xc, yc, zc), the reference depth is zc. The valid set Ωcontains projected measurements\nwith finite depth satisfying 0 < D ≤80 m. Predictions and references are compared at correspond-\ning pixels of the evaluation raster:\nAbsRel( bD, D) = 1\n|Ω|\nX\np∈Ω\n| bD(p) −D(p)|\nD(p)\n,\n(25)\nδ1( bD, D) = 1\n|Ω|\nX\np∈Ω\n1\n\"\nmax\n bD(p)\nD(p), D(p)\nbD(p)\n!\n< 1.25\n#\n.\n(26)\nFor all depth-forecasting results, we compute each metric independently on every target frame and\nthen average over frames, giving every frame equal weight regardless of its number of valid LiDAR\npixels.\nOur forecasts calibrate metric scale once from same-pixel VGGT-Ω/LiDAR depth pairs at the ob-\nserved anchor. The conversion and scene-normalization unit defined in Appendix A.3 are shared\nby the input states, query-camera translations, and decoded depths throughout the rollout. Future"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_95",
+    "chunk_index": 95,
+    "text": "served anchor. The conversion and scene-normalization unit defined in Appendix A.3 are shared\nby the input states, query-camera translations, and decoded depths throughout the rollout. Future\nLiDAR provides the scoring reference, while decoded predictions retain the context-derived scale.\nFixed-View Copy-Last uses the same-pixel anchor calibration for its raw GFM depth raster.\nFor VGGT-World, we follow its original per-target-frame scale-alignment protocol. FR3D num-\nbers are quoted from its original evaluation, which uses per-target-frame scale-and-shift alignment.\nDINO-Foresight relative inverse-depth predictions are fitted to target-frame LiDAR for depth scor-\ning.\n20"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_96",
+    "chunk_index": 96,
+    "text": "Preprint\nA.5.4\nCOMPRESSED VGGT STATE BASELINE\nArchitecture.\nThe representation ablation uses an autoencoder of VGGT-Ωpatch features. For\neach training example, the frozen GFM jointly processes four historical timestamps and one target\ntimestamp, with FRONT, FRONT LEFT, and FRONT RIGHT at each timestamp. We retain the\ntarget FRONT features from GFM layers {4, 11, 17, 23}; each layer provides a 26 × 39 grid of\n2,048-dimensional patch features. Four independent linear projections reduce each feature vector\nfrom 2,048 to 128 dimensions. The projected features are concatenated channel-wise and spatially\naverage-pooled from 26×39 to 16×32, producing a compressed state Z ∈R512×512. To reconstruct\nthe GFM features, the state is bilinearly upsampled to 26 × 39, split into four 128-dimensional\ngroups, and mapped back to four 2,048-dimensional feature grids by independent linear layers. A\nfrozen VGGT-ΩDPT head decodes the reconstructed features into FRONT depth. The compressor"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_97",
+    "chunk_index": 97,
+    "text": "groups, and mapped back to four 2,048-dimensional feature grids by independent linear layers. A\nfrozen VGGT-ΩDPT head decodes the reconstructed features into FRONT depth. The compressor\nhas 2.11M trainable parameters.\nTraining.\nWe follow the same two-stage training paradigm as the Scene Tokenizer. The compres-\nsor is first pretrained for 200k steps on the same 9,496-scene multi-view dataset, after which the best\ncheckpoint is selected and further fine-tuned on Waymo for 50k steps.\nThe training procedure is identical in both stages. For each training sample, we extract the VGGT-Ω\nfeatures of the target image and compress them into the latent state Z. The compressor then re-\nconstructs the original multi-layer VGGT-Ωfeatures, which are passed through the frozen VGGT-Ω\nDPT head to obtain the predicted depth. The prediction is supervised directly against the corre-\nsponding ground-truth depth using\nLrep = Llog D + 0.1Lgrad.\n(27)"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_98",
+    "chunk_index": 98,
+    "text": "DPT head to obtain the predicted depth. The prediction is supervised directly against the corre-\nsponding ground-truth depth using\nLrep = Llog D + 0.1Lgrad.\n(27)\nThe VGGT-Ωbackbone and DPT head remain frozen throughout both stages, and gradients are\npropagated through the DPT head to optimize only the compressor.\nA.6\nCROSS-QUERY GEOMETRIC CONSISTENCY\nA.6.1\nFORECAST AND OBSERVATION-ENCODED STATES\nWe use the same 100 Waymo validation windows and all ten future timestamps. World denotes\nthe world model autoregressive prediction. Enc. denotes an independent target-time reconstruction\nfrom exactly three images. For Enc., a separate historical pass provides the normalization length L0\ndefined in Eq. 19.\nFor Enc., raw target FRONT GFM depth is calibrated using target-time LiDAR, and the normaliza-\ntion scale is set to its paired scale times L0. World retains its historical-anchor calibration. Both\ndecode under the same GT FRONT reference query and the same camera perturbations, without"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_99",
+    "chunk_index": 99,
+    "text": "tion scale is set to its paired scale times L0. World retains its historical-anchor calibration. Both\ndecode under the same GT FRONT reference query and the same camera perturbations, without\nindependently aligning decoded depths. Enc. is therefore an observation-based reference with priv-\nileged target-time scale information.\nA.6.2\nCAMERA PERTURBATIONS AND COVERAGE\nEach perturbation combines a 3D translation with an axis–angle rotation. Translation directions\nand rotation axes are independently sampled uniformly on the unit sphere, while their magnitudes\nare sampled uniformly within one of three perturbation levels. Small perturbations use translation\nmagnitudes in [0, 0.5] m and rotation magnitudes in [0, 2]◦; Medium uses [0.5, 1.0] m and [2, 5]◦;\nand Large uses [1.0, 1.5] m and [5, 10]◦. Rotation magnitudes refer to the total axis–angle rotation,\nand translation magnitudes to Euclidean displacement. For a reference camera-to-world pose P0,"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_100",
+    "chunk_index": 100,
+    "text": "and Large uses [1.0, 1.5] m and [5, 10]◦. Rotation magnitudes refer to the total axis–angle rotation,\nand translation magnitudes to Euclidean displacement. For a reference camera-to-world pose P0,\nthe perturbed pose is Pi = P0∆i. Perturbations are expressed in the reference camera’s local\ncoordinates, with +x right, +y down, and +z forward.\nUsing seed 20260804, we initially sample 250 perturbations at each level. For each perturbation, we\ncompute its mean bidirectional coverage across all evaluation windows, timestamps, and both state\nvariants, and retain the 200 perturbations with the highest coverage within each level. This produces\na fixed set of 600 perturbations from 750 initial samples. The target-three-view evaluation reuses\nthis fixed subset.\n21"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_101",
+    "chunk_index": 101,
+    "text": "Preprint\nA.6.3\nREPROJECTION, MASKS, AND AGGREGATION\nWe back-project Da using K−1\na , transform points into camera b, and project them using Kb. Des-\ntination pixels are rounded to their nearest integer location. A z-buffer retains the smallest pos-\nitive destination depth when points collide. Out-of-frame projections and points with destination\nz ≤10−4 m are excluded. Let Ωa→b contain pixels with finite, positive reprojected and decoded\ndestination depths. The directional error is\nea→b =\n1\n|Ωa→b|\nX\np∈Ωa→b\n|Ra→b(Da)(p) −Db(p)|\nmax(Db(p), 10−8)\n.\n(28)\nWe report (e0→i + ei→0)/2. This dense consistency comparison uses neither the sparse LiDAR\nevaluation mask nor the 80 m depth cutoff. No additional depth-agreement threshold filters the\noverlapping pixels.\nCoverage is (|Ω0→i| + |Ωi→0|)/(2HW). Each horizon equally averages 100 windows and 200\nperturbations per level; the overall mean averages all ten horizons. There are 100 × 10 × 600 ="
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_102",
+    "chunk_index": 102,
+    "text": "Coverage is (|Ω0→i| + |Ωi→0|)/(2HW). Each horizon equally averages 100 windows and 200\nperturbations per level; the overall mean averages all ten horizons. There are 100 × 10 × 600 =\n600,000 query pairs per method. This metric measures geometric agreement across queries and\ncomplements the evaluation of accuracy against physical ground truth.\nA.7\nFEATURE ANALYSIS OF VGGT-Ω\nVGGT-Ωjointly processes multiple images, so the representation of an image may depend on the\nother images included in the same forward pass. This property is relevant to state supervision: an\nobservation-derived target can encode both scene geometry and context-specific variation introduced\nby the GFM. We therefore examine whether the features of an unchanged image remain stable when\nonly its surrounding context changes.\nWe conduct a controlled diagnostic on all 100 Waymo validation windows. For each window, the\nsame FRONT image at the first future timestamp (t+0.2 s) is retained at the same input index,"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_103",
+    "chunk_index": 103,
+    "text": "We conduct a controlled diagnostic on all 100 Waymo validation windows. For each window, the\nsame FRONT image at the first future timestamp (t+0.2 s) is retained at the same input index,\nwith its image content, camera, and reference frame fixed. The reference frame is defined by the\nFRONT image at the observed anchor t. Each timestamp contributes three views. The shortest prefix\ncontaining the probed image comprises four observed timestamps and the first future timestamp,\ngiving 5 × 3 = 15 images. The complete diagnostic window contains the same four observed\ntimestamps and seven future timestamps, giving 11 × 3 = 33 images. We compare the probed-\nimage features produced under these two contexts. For feature layer ℓ, we measure Relative L2\nE(ℓ)\nF\n= ∥F (ℓ)\n33 −F (ℓ)\n15 ∥2\n∥F (ℓ)\n15 ∥2\n.\n(29)\nWe additionally compare the dense DPT depth maps predicted for the same t+0.2 s FRONT image\nunder both unaligned and calibrated settings. The unaligned comparison is performed directly on the"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_104",
+    "chunk_index": 104,
+    "text": ".\n(29)\nWe additionally compare the dense DPT depth maps predicted for the same t+0.2 s FRONT image\nunder both unaligned and calibrated settings. The unaligned comparison is performed directly on the\nraw DPT outputs. For the calibrated comparison, both forwards estimate their VGGT-Ω-to-metric\nfactors from the same matched VGGT-Ω/LiDAR depths at the observed anchor t, following the\nphysical-unit convention in Eq. 19.\nAs shown in Table 8, context dependence is small in the early representation but becomes pro-\nnounced in deeper layers. Relative feature differences increase from 1.38% at layer 4 to 33.55%\nand 31.15% at layers 17 and 23, respectively, with a four-layer mean of 19.32%. The raw DPT out-\nputs differ by 12.08% AbsRel. After expressing both outputs in the anchor-calibrated metric unit,\nthe difference decreases to 3.82%. Although feature relative L2 and depth AbsRel are not directly\ncommensurate, this controlled contrast shows that substantial variation in the VGGT-Ωfeature co-"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_105",
+    "chunk_index": 105,
+    "text": "the difference decreases to 3.82%. Although feature relative L2 and depth AbsRel are not directly\ncommensurate, this controlled contrast shows that substantial variation in the VGGT-Ωfeature co-\nordinates can coexist with considerably more stable metric geometry. The features therefore carry\ncontext-conditioned information that is not uniquely determined by scene geometry, in addition to\nthe geometric information used by the DPT head.\nThis property inevitably affects a state representation built on VGGT-Ωfeatures. The Scene Tok-\nenizer can suppress part of the context-specific variation, but its observation-derived targets are still\nconstructed from GFM features that are not purely geometric. This observation helps explain the\nstate-supervision ablation in Table 5. During one-step initialization, latent supervision provides a\nuseful local target for learning the state transition. During autoregressive rollout, however, exact\n22"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_106",
+    "chunk_index": 106,
+    "text": "Preprint\nTable 8: Context dependence of frozen VGGT-Ω. All metrics come from the same image while\nvarying only its jointly processed context. Values are sample mean ± standard deviation.\nQuantity\nMeasure\n15 vs. 33 images\nGFM patch features\nLayer-4 patch features\nRelative L2\n1.38 ± 0.59%\nLayer-11 patch features\nRelative L2\n11.21 ± 1.96%\nLayer-17 patch features\nRelative L2\n33.55 ± 8.71%\nLayer-23 patch features\nRelative L2\n31.15 ± 5.97%\nFour-layer mean\nRelative L2\n19.32 ± 4.16%\nDPT depth of the same image\nRaw DPT depth\nAbsRel\n12.08 ± 7.59%\nAnchor-calibrated DPT depth\nAbsRel\n3.82 ± 1.58%\nTable 9: Long-horizon depth forecasting on Waymo with FRONT-only history. GeoState re-\nceives only the FRONT image at each observed timestamp; Bold and underlined values indicate the\nbest and second-best results among methods using predicted future cameras.\nMethod\nCamera Per-frame\nt+0.2 s\nt+0.6 s\nt+1.0 s\nt+2.0 s\nalignment AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑\nDINO-Foresight\nPred.\nYes\n0.119"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_107",
+    "chunk_index": 107,
+    "text": "Method\nCamera Per-frame\nt+0.2 s\nt+0.6 s\nt+1.0 s\nt+2.0 s\nalignment AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑AbsRel ↓δ1 ↑\nDINO-Foresight\nPred.\nYes\n0.119\n0.841\n0.138\n0.825\n0.151\n0.798\n0.243\n0.663\nVGGT-World\nPred.\nYes\n0.073\n0.931\n0.112\n0.892\n0.143\n0.826\n0.213\n0.731\nFR3D\nPred.\nYes\n0.110\n0.879\n0.121\n0.858\n0.131\n0.840\n0.152\n0.800\nGeoState\nPred.\nNo\n0.070\n0.936\n0.089\n0.914\n0.105\n0.881\n0.143\n0.813\nlatent matching then asks the World Model to reproduce both scene geometry and context-specific\nfeature variation, including directions with limited influence on scene geometry. Supervising rollout\nstates through decoded depth instead constrains the scene geometry required at inference while al-\nlowing flexibility in these context-sensitive latent directions. This analysis supports our use of latent\nsupervision for one-step initialization and decoded-geometry supervision for closed-loop rollout.\nA.8\nADDITIONAL QUANTITATIVE RESULTS\nA.8.1\nSINGLE-VIEW-CONTROLLED BASELINE COMPARISON"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_108",
+    "chunk_index": 108,
+    "text": "supervision for one-step initialization and decoded-geometry supervision for closed-loop rollout.\nA.8\nADDITIONAL QUANTITATIVE RESULTS\nA.8.1\nSINGLE-VIEW-CONTROLLED BASELINE COMPARISON\nThe main GeoState evaluation uses the synchronized FRONT, FRONT LEFT, and FRONT RIGHT\nimages at each observed timestamp, whereas our compared methods use a single image. To control\nfor this difference in input-view count, we re-evaluate GeoState on the same 100 Waymo evaluation\nwindows using only FRONT. Both the frozen GFM and the Scene Tokenizer therefore receive four\nhistorical images in total, one from each observed timestamp. The model checkpoints, timestamps,\nquery cameras, metric-scale calibration, and LiDAR masks remain unchanged. Table 9 compares\nthis FRONT-only variant with the external forecasting baselines from Table 1.\nUnder predicted future cameras, FRONT-only GeoState outperforms FR3D, VGGT-World, and"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_109",
+    "chunk_index": 109,
+    "text": "this FRONT-only variant with the external forecasting baselines from Table 1.\nUnder predicted future cameras, FRONT-only GeoState outperforms FR3D, VGGT-World, and\nDINO-Foresight in both AbsRel and δ1 at every reported horizon. At t+2.0 s, it obtains an Ab-\nsRel of 0.143 and a δ1 of 0.813, compared with 0.152/0.800 for FR3D, 0.213/0.731 for VGGT-\nWorld, and 0.243/0.663 for DINO-Foresight. This comparison removes the additional side-view\nobservations available to the main GeoState configuration, while GeoState continues to use a single\ncontext-derived scale rather than per-target-frame alignment. The performance advantage over the\nexternal forecasting baselines therefore cannot be attributed solely to using three camera views per\nobserved timestamp.\nA.8.2\nMOTION-STRATIFIED FORECASTING RESULTS\nWe further report results under the Dynamic/Static partition defined in Appendix A.4.1. Dynamic\ncombines all windows containing at least one qualifying visible moving track, while Static con-\n23"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_110",
+    "chunk_index": 110,
+    "text": "Preprint\nTable 10: Motion-stratified forecasting on Waymo. Results are frame-wise means over all ten\nhorizons on the Waymo validation set. “Improve” is the relative AbsRel reduction of GeoState over\nthe camera-matched Copy-Last, and ∆δ1 is the absolute accuracy gain.\nAbsRel↓\nδ1 ↑\nSubset\nCamera\nCopy-Last\nGeoState\nImprove\nCopy-Last\nGeoState\n∆δ1\nDynamic\nGT\n0.0980\n0.0852\n13.10%\n0.8842\n0.9077\n+0.0236\nDynamic\nPred.\n0.1070\n0.0967\n9.63%\n0.8717\n0.8946\n+0.0229\nStatic\nGT\n0.0710\n0.0675\n4.92%\n0.9245\n0.9337\n+0.0092\nStatic\nPred.\n0.0915\n0.0895\n2.17%\n0.8917\n0.8995\n+0.0078\ntains the remaining windows. Table 10 averages each subset over all ten forecasting horizons and\ncompares GeoState with the camera-matched Copy-Last reference.\nGeoState improves both subsets under GT and predicted query cameras. On the Dynamic subset, it\nreduces AbsRel by 13.10% with GT cameras and 9.63% with predicted cameras, with corresponding"
+  },
+  {
+    "paper_id": "2610.22343v1",
+    "chunk_id": "2610.22343v1_chunk_111",
+    "chunk_index": 111,
+    "text": "GeoState improves both subsets under GT and predicted query cameras. On the Dynamic subset, it\nreduces AbsRel by 13.10% with GT cameras and 9.63% with predicted cameras, with corresponding\nδ1 gains of 0.0236 and 0.0229. The gains on Static windows are smaller but remain positive: 4.92%\nand 2.17% relative AbsRel reductions, respectively. The substantially larger gains on Dynamic win-\ndows indicate that the World Model effectively captures temporal changes in scene geometry. The\nsame pattern under GT query cameras further shows that this dynamic-scene advantage is present\nindependently of future-camera prediction error.\n24"
+  }
+]

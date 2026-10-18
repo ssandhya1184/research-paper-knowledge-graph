@@ -1,0 +1,359 @@
+{
+  "methods": [
+    {
+      "name": "VLA policies",
+      "entity_type": "Method",
+      "description": "Vision-Language-Action policies, a type of generalist robotic manipulation model."
+    },
+    {
+      "name": "Supervised Fine-Tuning (SFT)",
+      "entity_type": "Method",
+      "description": "A method used to make preferences learnable for robotic policies."
+    },
+    {
+      "name": "Mixed training",
+      "entity_type": "Method",
+      "description": "A training strategy that combines different types of data or objectives."
+    },
+    {
+      "name": "Sequential adaptation",
+      "entity_type": "Method",
+      "description": "A training strategy where models are adapted sequentially."
+    },
+    {
+      "name": "Contextual prompts",
+      "entity_type": "Method",
+      "description": "Prompts that provide additional context to guide policy behavior."
+    },
+    {
+      "name": "Preference-only training",
+      "entity_type": "Method",
+      "description": "A training strategy focused solely on learning preferences."
+    },
+    {
+      "name": "LoRA",
+      "entity_type": "Method",
+      "description": "Low-Rank Adaptation, a technique mentioned in relation to preference-only training."
+    },
+    {
+      "name": "Procedural generation pipeline",
+      "entity_type": "Method",
+      "description": "A pipeline used to automatically instantiate tasks and their preference-conditioned variants, generating demonstrations, metrics, and metadata."
+    },
+    {
+      "name": "OMPL planner",
+      "entity_type": "Method",
+      "description": "An Open Motion Planning Library planner used to generate trajectories within the data generation pipeline."
+    },
+    {
+      "name": "Trajectory smoothing",
+      "entity_type": "Method",
+      "description": "A technique applied to generated trajectories within the data generation pipeline."
+    },
+    {
+      "name": "VLM grounding",
+      "entity_type": "Method",
+      "description": "A process used to select preference targets within the data generation pipeline."
+    },
+    {
+      "name": "VLM planner",
+      "entity_type": "Method",
+      "description": "A Vision-Language Model planner used for preference-conditioned task planning within the data generation pipeline."
+    },
+    {
+      "name": "VLM checker",
+      "entity_type": "Method",
+      "description": "A Vision-Language Model checker used to verify skill satisfaction within the data generation pipeline."
+    }
+  ],
+  "datasets": [
+    {
+      "name": "LIBERO-PeRM",
+      "entity_type": "Dataset",
+      "description": "A benchmark for personalized robotic manipulation, comprising five task suites and 312 preference-conditioned tasks with pipeline-generated, human-reviewed demonstrations."
+    },
+    {
+      "name": "LIBERO-SinglePref",
+      "entity_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating single-preference learning."
+    },
+    {
+      "name": "LIBERO-PrefScale",
+      "entity_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating preference learning efficiency and generalization across data sizes, tasks, and layouts."
+    },
+    {
+      "name": "LIBERO-PrefConflict",
+      "entity_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating preference-preference and task-preference conflicts."
+    },
+    {
+      "name": "LIBERO-PrefCompose",
+      "entity_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating multi-preference composition."
+    },
+    {
+      "name": "LIBERO-ComprePref",
+      "entity_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating realistic preference-conditioned reasoning based on contextual language."
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Preference satisfaction",
+      "entity_type": "Metric",
+      "description": "A metric to evaluate how well a policy adheres to user preferences."
+    },
+    {
+      "name": "Task success",
+      "entity_type": "Metric",
+      "description": "A metric to evaluate if the nominal task goal is completed."
+    },
+    {
+      "name": "No-preference retention",
+      "entity_type": "Metric",
+      "description": "A metric to evaluate how well a policy retains performance on tasks without preferences."
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Personalized Robotic Manipulation (PeRM)",
+      "entity_type": "Concept",
+      "description": "The field of study focusing on enabling robots to execute tasks in ways that align with individual user preferences, habits, and constraints."
+    },
+    {
+      "name": "Preference learning",
+      "entity_type": "Concept",
+      "description": "The process by which embodied agents acquire user preferences from demonstrations or other signals."
+    },
+    {
+      "name": "Zero-shot personalization",
+      "entity_type": "Concept",
+      "description": "The ability of policies to follow preferences without explicit preference data."
+    },
+    {
+      "name": "Preference generalization",
+      "entity_type": "Concept",
+      "description": "The ability of learned preferences to apply across different layouts and tasks."
+    },
+    {
+      "name": "Preference composition",
+      "entity_type": "Concept",
+      "description": "The ability of policies to combine multiple preferences."
+    },
+    {
+      "name": "Preference conflicts",
+      "entity_type": "Concept",
+      "description": "Situations where multiple preferences or a preference and a task goal are in opposition."
+    },
+    {
+      "name": "Observable preferences",
+      "entity_type": "Concept",
+      "description": "Preferences that can be expressed in language, instantiated without changing the original task goal, evaluated automatically, and reused across tasks."
+    },
+    {
+      "name": "Motion Preference",
+      "entity_type": "Concept",
+      "description": "A type of observable preference that constrains the physical properties of the trajectory (Pmotion)."
+    },
+    {
+      "name": "Skill Preference",
+      "entity_type": "Concept",
+      "description": "A type of observable preference that alters the execution behavior of a specific skill (Pskill)."
+    },
+    {
+      "name": "User Profile",
+      "entity_type": "Concept",
+      "description": "A type of observable preference that uses a user profile or context to guide subtask-level semantic choices (Pprofile)."
+    },
+    {
+      "name": "Vision-Language-Action (VLA) models",
+      "entity_type": "Concept",
+      "description": "Models that integrate vision, language, and action for robotic control."
+    }
+  ],
+  "findings": [
+    {
+      "name": "Current VLA policies struggle with zero-shot personalization.",
+      "entity_type": "Finding",
+      "description": "Observation that existing Vision-Language-Action policies perform poorly when asked to follow preferences without prior preference data."
+    },
+    {
+      "name": "Supervised Fine-Tuning (SFT) makes preferences learnable.",
+      "entity_type": "Finding",
+      "description": "Finding that applying Supervised Fine-Tuning enables policies to learn and incorporate user preferences."
+    },
+    {
+      "name": "Mixed training achieves better no-preference retention than sequential adaptation.",
+      "entity_type": "Finding",
+      "description": "Result indicating that a mixed training approach helps policies maintain performance on tasks without preferences more effectively than sequential adaptation."
+    },
+    {
+      "name": "Mixed training improves performance with contextual prompts compared with preference-only training.",
+      "entity_type": "Finding",
+      "description": "Finding that mixed training, when combined with contextual prompts, leads to better task success and preference satisfaction than training solely on preferences."
+    },
+    {
+      "name": "Mixed training can weaken motion-preference learning.",
+      "entity_type": "Finding",
+      "description": "Observation that while mixed training has benefits, it may negatively impact the learning of motion-specific preferences."
+    },
+    {
+      "name": "Preference generalization, decomposition, and conflict handling remain difficult.",
+      "entity_type": "Finding",
+      "description": "Conclusion that current methods still face significant challenges in applying learned preferences to new situations, breaking down complex preferences, and resolving conflicting preferences."
+    },
+    {
+      "name": "Broader layout diversity and matched no-preference data also help.",
+      "entity_type": "Finding",
+      "description": "Finding that increasing the variety of layouts and providing corresponding no-preference data can improve policy performance."
+    }
+  ],
+  "relationships": [
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "is a benchmark for",
+      "target": "Personalized Robotic Manipulation (PeRM)"
+    },
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "introduces",
+      "target": "Procedural generation pipeline"
+    },
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "introduces",
+      "target": "Observable preferences"
+    },
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "comprises",
+      "target": "LIBERO-SinglePref"
+    },
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "comprises",
+      "target": "LIBERO-PrefScale"
+    },
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "comprises",
+      "target": "LIBERO-PrefConflict"
+    },
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "comprises",
+      "target": "LIBERO-PrefCompose"
+    },
+    {
+      "source": "LIBERO-PeRM",
+      "relation": "comprises",
+      "target": "LIBERO-ComprePref"
+    },
+    {
+      "source": "Procedural generation pipeline",
+      "relation": "generates",
+      "target": "demonstrations"
+    },
+    {
+      "source": "Procedural generation pipeline",
+      "relation": "generates",
+      "target": "Preference satisfaction"
+    },
+    {
+      "source": "VLA policies",
+      "relation": "struggle with",
+      "target": "Zero-shot personalization"
+    },
+    {
+      "source": "Supervised Fine-Tuning (SFT)",
+      "relation": "enables",
+      "target": "Preference learning"
+    },
+    {
+      "source": "Mixed training",
+      "relation": "achieves better no-preference retention than",
+      "target": "Sequential adaptation"
+    },
+    {
+      "source": "Mixed training",
+      "relation": "improves performance with",
+      "target": "Contextual prompts"
+    },
+    {
+      "source": "Mixed training",
+      "relation": "compared with",
+      "target": "Preference-only training"
+    },
+    {
+      "source": "Mixed training",
+      "relation": "can weaken",
+      "target": "Motion Preference learning"
+    },
+    {
+      "source": "Preference generalization",
+      "relation": "remains difficult",
+      "target": "policies"
+    },
+    {
+      "source": "Preference composition",
+      "relation": "remains difficult",
+      "target": "policies"
+    },
+    {
+      "source": "Preference conflicts",
+      "relation": "remain difficult",
+      "target": "policies"
+    },
+    {
+      "source": "Motion Preference",
+      "relation": "is a type of",
+      "target": "Observable preferences"
+    },
+    {
+      "source": "Skill Preference",
+      "relation": "is a type of",
+      "target": "Observable preferences"
+    },
+    {
+      "source": "User Profile",
+      "relation": "is a type of",
+      "target": "Observable preferences"
+    },
+    {
+      "source": "OMPL planner",
+      "relation": "is used in",
+      "target": "Procedural generation pipeline"
+    },
+    {
+      "source": "VLM grounding",
+      "relation": "is used in",
+      "target": "Procedural generation pipeline"
+    },
+    {
+      "source": "VLM planner",
+      "relation": "is used in",
+      "target": "Procedural generation pipeline"
+    },
+    {
+      "source": "VLM checker",
+      "relation": "is used in",
+      "target": "Procedural generation pipeline"
+    },
+    {
+      "source": "Preference satisfaction",
+      "relation": "evaluates",
+      "target": "Personalized Robotic Manipulation (PeRM)"
+    },
+    {
+      "source": "Task success",
+      "relation": "evaluates",
+      "target": "Personalized Robotic Manipulation (PeRM)"
+    },
+    {
+      "source": "No-preference retention",
+      "relation": "evaluates",
+      "target": "Personalized Robotic Manipulation (PeRM)"
+    }
+  ]
+}

@@ -1,0 +1,957 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {},
+  "nodes": [
+    {
+      "name": "GeoState: Learning View-Decoupled Geometry States for 3D World Modeling",
+      "node_type": "Paper",
+      "paper_id": "2610.22343v1",
+      "id": "paper::2610.22343v1"
+    },
+    {
+      "name": "GeoState",
+      "node_type": "Method",
+      "description": "A view-decoupled geometry representation for predictive 3D world modeling that separates scene-state evolution from camera-dependent observation.",
+      "id": "method::geostate"
+    },
+    {
+      "name": "Scene Tokenizer",
+      "node_type": "Method",
+      "description": "A component of GeoState that aggregates multi-view GFM features into a view-decoupled scene state.",
+      "id": "method::scene_tokenizer"
+    },
+    {
+      "name": "Geometry Decoder",
+      "node_type": "Method",
+      "description": "A component of GeoState that queries the scene state using camera rays to reconstruct geometry.",
+      "id": "method::geometry_decoder"
+    },
+    {
+      "name": "Autoregressive World Model",
+      "node_type": "Method",
+      "description": "A component of GeoState that predicts future scene states autoregressively.",
+      "id": "method::autoregressive_world_model"
+    },
+    {
+      "name": "Camera Prediction Model",
+      "node_type": "Method",
+      "description": "An optional model that predicts future camera motion.",
+      "id": "method::camera_prediction_model"
+    },
+    {
+      "name": "Perceiver-style Tokenizer",
+      "node_type": "Method",
+      "description": "A type of tokenizer used within the Scene Tokenizer for aggregating features.",
+      "id": "method::perceiver_style_tokenizer"
+    },
+    {
+      "name": "Query Transformer",
+      "node_type": "Method",
+      "description": "A component within the Geometry Decoder that processes scene and ray tokens.",
+      "id": "method::query_transformer"
+    },
+    {
+      "name": "Feature Decoder",
+      "node_type": "Method",
+      "description": "A component within the Geometry Decoder that maps view-conditioned representations to feature levels for the GFM head.",
+      "id": "method::feature_decoder"
+    },
+    {
+      "name": "Masked Factorized Transformer",
+      "node_type": "Method",
+      "description": "The architecture adopted for the Autoregressive World Model.",
+      "id": "method::masked_factorized_transformer"
+    },
+    {
+      "name": "VGGT-Ω",
+      "node_type": "Method",
+      "description": "A frozen geometry foundation model used as a backbone to extract geometry-aware features.",
+      "id": "method::vggt"
+    },
+    {
+      "name": "VGGT-Ω dense prediction head",
+      "node_type": "Method",
+      "description": "A frozen component of VGGT-Ω reused by the Geometry Decoder for depth prediction.",
+      "id": "method::vggt_dense_prediction_head"
+    },
+    {
+      "name": "Waymo",
+      "node_type": "Dataset",
+      "description": "A large-scale dataset of dynamic driving scenes used for in-domain evaluation.",
+      "id": "dataset::waymo"
+    },
+    {
+      "name": "KITTI",
+      "node_type": "Dataset",
+      "description": "A dataset used for zero-shot transfer evaluation.",
+      "id": "dataset::kitti"
+    },
+    {
+      "name": "nuScenes",
+      "node_type": "Dataset",
+      "description": "A dataset used for zero-shot transfer evaluation.",
+      "id": "dataset::nuscenes"
+    },
+    {
+      "name": "Llog D",
+      "node_type": "Metric",
+      "description": "Mean absolute log-depth error, used to measure geometry reconstruction accuracy.",
+      "id": "metric::llog_d"
+    },
+    {
+      "name": "Lgrad",
+      "node_type": "Metric",
+      "description": "Local depth gradients, used to supervise local depth consistency.",
+      "id": "metric::lgrad"
+    },
+    {
+      "name": "View-decoupled geometry representation",
+      "node_type": "Concept",
+      "description": "A representation that separates scene dynamics from camera-induced variation.",
+      "id": "concept::view_decoupled_geometry_representation"
+    },
+    {
+      "name": "Geometry foundation models (GFMs)",
+      "node_type": "Concept",
+      "description": "Models that learn rich geometric representations from RGB observations, providing strong geometric priors.",
+      "id": "concept::geometry_foundation_models_gfms"
+    },
+    {
+      "name": "Predictive 3D world modeling",
+      "node_type": "Concept",
+      "description": "The task of representing and predicting future environments in geometrically grounded state spaces.",
+      "id": "concept::predictive_3d_world_modeling"
+    },
+    {
+      "name": "Scene-state evolution",
+      "node_type": "Concept",
+      "description": "The genuine physical changes occurring in a 3D scene over time.",
+      "id": "concept::scene_state_evolution"
+    },
+    {
+      "name": "Camera-induced variation",
+      "node_type": "Concept",
+      "description": "Changes in a representation caused by camera viewpoint changes, not actual scene dynamics.",
+      "id": "concept::camera_induced_variation"
+    },
+    {
+      "name": "Context-derived scale",
+      "node_type": "Concept",
+      "description": "A consistent scale maintained throughout the rollout without per-frame alignment.",
+      "id": "concept::context_derived_scale"
+    },
+    {
+      "name": "Viewpoint coupling",
+      "node_type": "Concept",
+      "description": "The entanglement of scene dynamics with camera-induced variation in GFM features.",
+      "id": "concept::viewpoint_coupling"
+    },
+    {
+      "name": "Scene content",
+      "node_type": "Concept",
+      "description": "The intrinsic geometric and semantic information of a scene.",
+      "id": "concept::scene_content"
+    },
+    {
+      "name": "Scene observation",
+      "node_type": "Concept",
+      "description": "How a scene is perceived from a specific camera viewpoint.",
+      "id": "concept::scene_observation"
+    },
+    {
+      "name": "Geometric priors",
+      "node_type": "Concept",
+      "description": "Pre-learned knowledge about geometric structures and relationships.",
+      "id": "concept::geometric_priors"
+    },
+    {
+      "name": "Multi-view RGB observations",
+      "node_type": "Concept",
+      "description": "Images captured from multiple camera viewpoints.",
+      "id": "concept::multi_view_rgb_observations"
+    },
+    {
+      "name": "Geometry-aware features",
+      "node_type": "Concept",
+      "description": "Features extracted by GFMs that encode geometric information.",
+      "id": "concept::geometry_aware_features"
+    },
+    {
+      "name": "Shared scene coordinate system",
+      "node_type": "Concept",
+      "description": "A common reference frame for representing multi-view geometry.",
+      "id": "concept::shared_scene_coordinate_system"
+    },
+    {
+      "name": "Common anchor view",
+      "node_type": "Concept",
+      "description": "A specific view used to define a shared coordinate frame across timestamps.",
+      "id": "concept::common_anchor_view"
+    },
+    {
+      "name": "Fixed-length scene state",
+      "node_type": "Concept",
+      "description": "A compact representation of a scene with a consistent size, independent of the number of source views.",
+      "id": "concept::fixed_length_scene_state"
+    },
+    {
+      "name": "Query camera",
+      "node_type": "Concept",
+      "description": "A specified camera viewpoint from which to decode scene geometry.",
+      "id": "concept::query_camera"
+    },
+    {
+      "name": "Depth map",
+      "node_type": "Concept",
+      "description": "An image representing the distance of surfaces from the camera.",
+      "id": "concept::depth_map"
+    },
+    {
+      "name": "Autoregressive prediction",
+      "node_type": "Concept",
+      "description": "A method of predicting future states based on a sequence of past states.",
+      "id": "concept::autoregressive_prediction"
+    },
+    {
+      "name": "Scene dynamics",
+      "node_type": "Concept",
+      "description": "The temporal changes and movements within a 3D scene.",
+      "id": "concept::scene_dynamics"
+    },
+    {
+      "name": "Scene persistence",
+      "node_type": "Concept",
+      "description": "The property that the underlying scene geometry remains consistent unless physically changed.",
+      "id": "concept::scene_persistence"
+    },
+    {
+      "name": "Residual update",
+      "node_type": "Concept",
+      "description": "A method where future states are predicted as an additive change to the current state.",
+      "id": "concept::residual_update"
+    },
+    {
+      "name": "Plücker ray field",
+      "node_type": "Concept",
+      "description": "A representation of camera rays used in geometry decoding.",
+      "id": "concept::pl_cker_ray_field"
+    },
+    {
+      "name": "Fourier-encoded",
+      "node_type": "Concept",
+      "description": "A technique for encoding spatial information, applied to Plücker ray fields.",
+      "id": "concept::fourier_encoded"
+    },
+    {
+      "name": "View-conditioned representations",
+      "node_type": "Concept",
+      "description": "Representations that incorporate information about the query viewpoint.",
+      "id": "concept::view_conditioned_representations"
+    },
+    {
+      "name": "Metric depth",
+      "node_type": "Concept",
+      "description": "Depth values expressed in real-world units.",
+      "id": "concept::metric_depth"
+    },
+    {
+      "name": "Geometry reconstruction",
+      "node_type": "Concept",
+      "description": "The process of recovering 3D geometric information from observations.",
+      "id": "concept::geometry_reconstruction"
+    },
+    {
+      "name": "Novel-view querying",
+      "node_type": "Concept",
+      "description": "The ability to generate observations from viewpoints not seen during encoding.",
+      "id": "concept::novel_view_querying"
+    },
+    {
+      "name": "Target-state construction",
+      "node_type": "Concept",
+      "description": "The process of creating ground truth future GeoStates for supervision.",
+      "id": "concept::target_state_construction"
+    },
+    {
+      "name": "Future supervision",
+      "node_type": "Concept",
+      "description": "Ground truth data used to train the world model for future prediction.",
+      "id": "concept::future_supervision"
+    },
+    {
+      "name": "Growing observation prefixes",
+      "node_type": "Concept",
+      "description": "A method for constructing target GeoStates by feeding increasing sequences of observations into the GFM.",
+      "id": "concept::growing_observation_prefixes"
+    },
+    {
+      "name": "GeoState outperforms prior 3D world models on Waymo",
+      "node_type": "Finding",
+      "description": "GeoState achieved better depth forecasting performance on the Waymo dataset compared to existing 3D world models.",
+      "id": "finding::geostate_outperforms_prior_3d_world_models_on_waymo"
+    },
+    {
+      "name": "GeoState supports geometrically consistent cross-view querying",
+      "node_type": "Finding",
+      "description": "GeoState can generate consistent geometric reconstructions from different viewpoints.",
+      "id": "finding::geostate_supports_geometrically_consistent_cross_view_querying"
+    },
+    {
+      "name": "GeoState generalizes zero-shot to KITTI",
+      "node_type": "Finding",
+      "description": "GeoState performs well on the KITTI dataset without specific training on it.",
+      "id": "finding::geostate_generalizes_zero_shot_to_kitti"
+    },
+    {
+      "name": "GeoState generalizes zero-shot to nuScenes",
+      "node_type": "Finding",
+      "description": "GeoState performs well on the nuScenes dataset without specific training on it.",
+      "id": "finding::geostate_generalizes_zero_shot_to_nuscenes"
+    },
+    {
+      "name": "GeoState maintains consistent scale throughout forecasting rollout",
+      "node_type": "Finding",
+      "description": "GeoState avoids the need for per-frame scale alignment during temporal prediction.",
+      "id": "finding::geostate_maintains_consistent_scale_throughout_forecasting_rollout"
+    },
+    {
+      "name": "View decoupling makes scene representation more predictable",
+      "node_type": "Finding",
+      "description": "Separating viewpoint dependence from the scene state simplifies temporal modeling.",
+      "id": "finding::view_decoupling_makes_scene_representation_more_predictable"
+    },
+    {
+      "name": "View-decoupled geometry states are effective for predictive 3D world modeling",
+      "node_type": "Finding",
+      "description": "The proposed GeoState representation is well-suited for forecasting 3D world evolution.",
+      "id": "finding::view_decoupled_geometry_states_are_effective_for_predictive_3d_world_modeling"
+    },
+    {
+      "name": "GeoState separates scene content from scene observation",
+      "node_type": "Finding",
+      "description": "GeoState explicitly disentangles the intrinsic scene properties from how they are viewed.",
+      "id": "finding::geostate_separates_scene_content_from_scene_observation"
+    },
+    {
+      "name": "GeoState enables long-horizon geometry forecasting",
+      "node_type": "Finding",
+      "description": "GeoState can predict scene geometry accurately over extended future time steps.",
+      "id": "finding::geostate_enables_long_horizon_geometry_forecasting"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::geostate",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::scene_tokenizer",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::geometry_decoder",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::autoregressive_world_model",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::camera_prediction_model",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::perceiver_style_tokenizer",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::query_transformer",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::feature_decoder",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::masked_factorized_transformer",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::vggt",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "method::vggt_dense_prediction_head",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "dataset::waymo",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "dataset::kitti",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "dataset::nuscenes",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "metric::llog_d",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "metric::lgrad",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::view_decoupled_geometry_representation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::geometry_foundation_models_gfms",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::predictive_3d_world_modeling",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::scene_state_evolution",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::camera_induced_variation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::context_derived_scale",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::viewpoint_coupling",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::scene_content",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::scene_observation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::geometric_priors",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::multi_view_rgb_observations",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::geometry_aware_features",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::shared_scene_coordinate_system",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::common_anchor_view",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::fixed_length_scene_state",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::query_camera",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::depth_map",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::autoregressive_prediction",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::scene_dynamics",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::scene_persistence",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::residual_update",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::pl_cker_ray_field",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::fourier_encoded",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::view_conditioned_representations",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::metric_depth",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::geometry_reconstruction",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::novel_view_querying",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::target_state_construction",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::future_supervision",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "concept::growing_observation_prefixes",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::geostate_outperforms_prior_3d_world_models_on_waymo",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::geostate_supports_geometrically_consistent_cross_view_querying",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::geostate_generalizes_zero_shot_to_kitti",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::geostate_generalizes_zero_shot_to_nuscenes",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::geostate_maintains_consistent_scale_throughout_forecasting_rollout",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::view_decoupling_makes_scene_representation_more_predictable",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::view_decoupled_geometry_states_are_effective_for_predictive_3d_world_modeling",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::geostate_separates_scene_content_from_scene_observation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22343v1",
+      "target": "finding::geostate_enables_long_horizon_geometry_forecasting",
+      "key": 0
+    },
+    {
+      "relation": "is a",
+      "source": "method::geostate",
+      "target": "concept::view_decoupled_geometry_representation",
+      "key": 0
+    },
+    {
+      "relation": "separates",
+      "source": "method::geostate",
+      "target": "concept::scene_state_evolution",
+      "key": 0
+    },
+    {
+      "relation": "separates",
+      "source": "method::geostate",
+      "target": "concept::camera_induced_variation",
+      "key": 0
+    },
+    {
+      "relation": "is evaluated on",
+      "source": "method::geostate",
+      "target": "dataset::waymo",
+      "key": 0
+    },
+    {
+      "relation": "generalizes zero-shot to",
+      "source": "method::geostate",
+      "target": "dataset::kitti",
+      "key": 0
+    },
+    {
+      "relation": "generalizes zero-shot to",
+      "source": "method::geostate",
+      "target": "dataset::nuscenes",
+      "key": 0
+    },
+    {
+      "relation": "addresses",
+      "source": "method::geostate",
+      "target": "concept::viewpoint_coupling",
+      "key": 0
+    },
+    {
+      "relation": "derived from",
+      "source": "method::geostate",
+      "target": "concept::geometry_foundation_models_gfms",
+      "key": 0
+    },
+    {
+      "relation": "is used for",
+      "source": "method::geostate",
+      "target": "concept::predictive_3d_world_modeling",
+      "key": 0
+    },
+    {
+      "relation": "maintains",
+      "source": "method::geostate",
+      "target": "concept::context_derived_scale",
+      "key": 0
+    },
+    {
+      "relation": "enables",
+      "source": "method::geostate",
+      "target": "concept::geometry_reconstruction",
+      "key": 0
+    },
+    {
+      "relation": "enables",
+      "source": "method::geostate",
+      "target": "concept::novel_view_querying",
+      "key": 0
+    },
+    {
+      "relation": "enables",
+      "source": "method::geostate",
+      "target": "concept::autoregressive_prediction",
+      "key": 0
+    },
+    {
+      "relation": "supports",
+      "source": "method::geostate",
+      "target": "concept::scene_persistence",
+      "key": 0
+    },
+    {
+      "relation": "separates",
+      "source": "method::geostate",
+      "target": "concept::scene_content",
+      "key": 0
+    },
+    {
+      "relation": "from",
+      "source": "method::geostate",
+      "target": "concept::scene_observation",
+      "key": 0
+    },
+    {
+      "relation": "aggregates",
+      "source": "method::scene_tokenizer",
+      "target": "concept::geometry_aware_features",
+      "key": 0
+    },
+    {
+      "relation": "produces",
+      "source": "method::scene_tokenizer",
+      "target": "concept::fixed_length_scene_state",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::scene_tokenizer",
+      "target": "method::perceiver_style_tokenizer",
+      "key": 0
+    },
+    {
+      "relation": "trained for",
+      "source": "method::scene_tokenizer",
+      "target": "concept::geometry_reconstruction",
+      "key": 0
+    },
+    {
+      "relation": "trained for",
+      "source": "method::scene_tokenizer",
+      "target": "concept::novel_view_querying",
+      "key": 0
+    },
+    {
+      "relation": "queries",
+      "source": "method::geometry_decoder",
+      "target": "concept::fixed_length_scene_state",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::geometry_decoder",
+      "target": "concept::query_camera",
+      "key": 0
+    },
+    {
+      "relation": "introduces",
+      "source": "method::geometry_decoder",
+      "target": "concept::query_camera",
+      "key": 1
+    },
+    {
+      "relation": "uses",
+      "source": "method::geometry_decoder",
+      "target": "method::query_transformer",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::geometry_decoder",
+      "target": "method::feature_decoder",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::geometry_decoder",
+      "target": "method::vggt_dense_prediction_head",
+      "key": 0
+    },
+    {
+      "relation": "reconstructs",
+      "source": "method::geometry_decoder",
+      "target": "concept::depth_map",
+      "key": 0
+    },
+    {
+      "relation": "constructs",
+      "source": "method::geometry_decoder",
+      "target": "concept::pl_cker_ray_field",
+      "key": 0
+    },
+    {
+      "relation": "trained for",
+      "source": "method::geometry_decoder",
+      "target": "concept::geometry_reconstruction",
+      "key": 0
+    },
+    {
+      "relation": "trained for",
+      "source": "method::geometry_decoder",
+      "target": "concept::novel_view_querying",
+      "key": 0
+    },
+    {
+      "relation": "predicts",
+      "source": "method::autoregressive_world_model",
+      "target": "concept::scene_state_evolution",
+      "key": 0
+    },
+    {
+      "relation": "adopts",
+      "source": "method::autoregressive_world_model",
+      "target": "method::masked_factorized_transformer",
+      "key": 0
+    },
+    {
+      "relation": "predicts future states in",
+      "source": "method::autoregressive_world_model",
+      "target": "concept::fixed_length_scene_state",
+      "key": 0
+    },
+    {
+      "relation": "focuses on",
+      "source": "method::autoregressive_world_model",
+      "target": "concept::scene_dynamics",
+      "key": 0
+    },
+    {
+      "relation": "trained with",
+      "source": "method::autoregressive_world_model",
+      "target": "concept::target_state_construction",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::autoregressive_world_model",
+      "target": "concept::residual_update",
+      "key": 0
+    },
+    {
+      "relation": "provides",
+      "source": "method::camera_prediction_model",
+      "target": "concept::query_camera",
+      "key": 0
+    },
+    {
+      "relation": "produces",
+      "source": "method::query_transformer",
+      "target": "concept::view_conditioned_representations",
+      "key": 0
+    },
+    {
+      "relation": "maps",
+      "source": "method::feature_decoder",
+      "target": "concept::view_conditioned_representations",
+      "key": 0
+    },
+    {
+      "relation": "to features for",
+      "source": "method::feature_decoder",
+      "target": "method::vggt_dense_prediction_head",
+      "key": 0
+    },
+    {
+      "relation": "extracts",
+      "source": "method::vggt",
+      "target": "concept::geometry_aware_features",
+      "key": 0
+    },
+    {
+      "relation": "from",
+      "source": "method::vggt",
+      "target": "concept::multi_view_rgb_observations",
+      "key": 0
+    },
+    {
+      "relation": "measures",
+      "source": "metric::llog_d",
+      "target": "concept::depth_map",
+      "key": 0
+    },
+    {
+      "relation": "is",
+      "source": "concept::pl_cker_ray_field",
+      "target": "concept::fourier_encoded",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "concept::target_state_construction",
+      "target": "concept::growing_observation_prefixes",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "concept::target_state_construction",
+      "target": "method::vggt",
+      "key": 0
+    }
+  ]
+}

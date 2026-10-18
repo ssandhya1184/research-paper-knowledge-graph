@@ -1,0 +1,539 @@
+{
+  "methods": [
+    {
+      "name": "GeoState",
+      "entity_type": "Method",
+      "description": "A view-decoupled geometry representation for predictive 3D world modeling that separates scene-state evolution from camera-dependent observation."
+    },
+    {
+      "name": "Scene Tokenizer",
+      "entity_type": "Method",
+      "description": "A component of GeoState that aggregates multi-view GFM features into a view-decoupled scene state."
+    },
+    {
+      "name": "Geometry Decoder",
+      "entity_type": "Method",
+      "description": "A component of GeoState that queries the scene state using camera rays to reconstruct geometry."
+    },
+    {
+      "name": "Autoregressive World Model",
+      "entity_type": "Method",
+      "description": "A component of GeoState that predicts future scene states autoregressively."
+    },
+    {
+      "name": "Camera Prediction Model",
+      "entity_type": "Method",
+      "description": "An optional model that predicts future camera motion."
+    },
+    {
+      "name": "Perceiver-style Tokenizer",
+      "entity_type": "Method",
+      "description": "A type of tokenizer used within the Scene Tokenizer for aggregating features."
+    },
+    {
+      "name": "Query Transformer",
+      "entity_type": "Method",
+      "description": "A component within the Geometry Decoder that processes scene and ray tokens."
+    },
+    {
+      "name": "Feature Decoder",
+      "entity_type": "Method",
+      "description": "A component within the Geometry Decoder that maps view-conditioned representations to feature levels for the GFM head."
+    },
+    {
+      "name": "Masked Factorized Transformer",
+      "entity_type": "Method",
+      "description": "The architecture adopted for the Autoregressive World Model."
+    },
+    {
+      "name": "VGGT-Ω",
+      "entity_type": "Method",
+      "description": "A frozen geometry foundation model used as a backbone to extract geometry-aware features."
+    },
+    {
+      "name": "VGGT-Ω dense prediction head",
+      "entity_type": "Method",
+      "description": "A frozen component of VGGT-Ω reused by the Geometry Decoder for depth prediction."
+    }
+  ],
+  "datasets": [
+    {
+      "name": "Waymo",
+      "entity_type": "Dataset",
+      "description": "A large-scale dataset of dynamic driving scenes used for in-domain evaluation."
+    },
+    {
+      "name": "KITTI",
+      "entity_type": "Dataset",
+      "description": "A dataset used for zero-shot transfer evaluation."
+    },
+    {
+      "name": "nuScenes",
+      "entity_type": "Dataset",
+      "description": "A dataset used for zero-shot transfer evaluation."
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Llog D",
+      "entity_type": "Metric",
+      "description": "Mean absolute log-depth error, used to measure geometry reconstruction accuracy."
+    },
+    {
+      "name": "Lgrad",
+      "entity_type": "Metric",
+      "description": "Local depth gradients, used to supervise local depth consistency."
+    }
+  ],
+  "concepts": [
+    {
+      "name": "View-decoupled geometry representation",
+      "entity_type": "Concept",
+      "description": "A representation that separates scene dynamics from camera-induced variation."
+    },
+    {
+      "name": "Geometry foundation models (GFMs)",
+      "entity_type": "Concept",
+      "description": "Models that learn rich geometric representations from RGB observations, providing strong geometric priors."
+    },
+    {
+      "name": "Predictive 3D world modeling",
+      "entity_type": "Concept",
+      "description": "The task of representing and predicting future environments in geometrically grounded state spaces."
+    },
+    {
+      "name": "Scene-state evolution",
+      "entity_type": "Concept",
+      "description": "The genuine physical changes occurring in a 3D scene over time."
+    },
+    {
+      "name": "Camera-induced variation",
+      "entity_type": "Concept",
+      "description": "Changes in a representation caused by camera viewpoint changes, not actual scene dynamics."
+    },
+    {
+      "name": "Context-derived scale",
+      "entity_type": "Concept",
+      "description": "A consistent scale maintained throughout the rollout without per-frame alignment."
+    },
+    {
+      "name": "Viewpoint coupling",
+      "entity_type": "Concept",
+      "description": "The entanglement of scene dynamics with camera-induced variation in GFM features."
+    },
+    {
+      "name": "Scene content",
+      "entity_type": "Concept",
+      "description": "The intrinsic geometric and semantic information of a scene."
+    },
+    {
+      "name": "Scene observation",
+      "entity_type": "Concept",
+      "description": "How a scene is perceived from a specific camera viewpoint."
+    },
+    {
+      "name": "Geometric priors",
+      "entity_type": "Concept",
+      "description": "Pre-learned knowledge about geometric structures and relationships."
+    },
+    {
+      "name": "Multi-view RGB observations",
+      "entity_type": "Concept",
+      "description": "Images captured from multiple camera viewpoints."
+    },
+    {
+      "name": "Geometry-aware features",
+      "entity_type": "Concept",
+      "description": "Features extracted by GFMs that encode geometric information."
+    },
+    {
+      "name": "Shared scene coordinate system",
+      "entity_type": "Concept",
+      "description": "A common reference frame for representing multi-view geometry."
+    },
+    {
+      "name": "Common anchor view",
+      "entity_type": "Concept",
+      "description": "A specific view used to define a shared coordinate frame across timestamps."
+    },
+    {
+      "name": "Fixed-length scene state",
+      "entity_type": "Concept",
+      "description": "A compact representation of a scene with a consistent size, independent of the number of source views."
+    },
+    {
+      "name": "Query camera",
+      "entity_type": "Concept",
+      "description": "A specified camera viewpoint from which to decode scene geometry."
+    },
+    {
+      "name": "Depth map",
+      "entity_type": "Concept",
+      "description": "An image representing the distance of surfaces from the camera."
+    },
+    {
+      "name": "Autoregressive prediction",
+      "entity_type": "Concept",
+      "description": "A method of predicting future states based on a sequence of past states."
+    },
+    {
+      "name": "Scene dynamics",
+      "entity_type": "Concept",
+      "description": "The temporal changes and movements within a 3D scene."
+    },
+    {
+      "name": "Scene persistence",
+      "entity_type": "Concept",
+      "description": "The property that the underlying scene geometry remains consistent unless physically changed."
+    },
+    {
+      "name": "Residual update",
+      "entity_type": "Concept",
+      "description": "A method where future states are predicted as an additive change to the current state."
+    },
+    {
+      "name": "Plücker ray field",
+      "entity_type": "Concept",
+      "description": "A representation of camera rays used in geometry decoding."
+    },
+    {
+      "name": "Fourier-encoded",
+      "entity_type": "Concept",
+      "description": "A technique for encoding spatial information, applied to Plücker ray fields."
+    },
+    {
+      "name": "View-conditioned representations",
+      "entity_type": "Concept",
+      "description": "Representations that incorporate information about the query viewpoint."
+    },
+    {
+      "name": "Metric depth",
+      "entity_type": "Concept",
+      "description": "Depth values expressed in real-world units."
+    },
+    {
+      "name": "Geometry reconstruction",
+      "entity_type": "Concept",
+      "description": "The process of recovering 3D geometric information from observations."
+    },
+    {
+      "name": "Novel-view querying",
+      "entity_type": "Concept",
+      "description": "The ability to generate observations from viewpoints not seen during encoding."
+    },
+    {
+      "name": "Target-state construction",
+      "entity_type": "Concept",
+      "description": "The process of creating ground truth future GeoStates for supervision."
+    },
+    {
+      "name": "Future supervision",
+      "entity_type": "Concept",
+      "description": "Ground truth data used to train the world model for future prediction."
+    },
+    {
+      "name": "Growing observation prefixes",
+      "entity_type": "Concept",
+      "description": "A method for constructing target GeoStates by feeding increasing sequences of observations into the GFM."
+    }
+  ],
+  "findings": [
+    {
+      "name": "GeoState outperforms prior 3D world models on Waymo",
+      "entity_type": "Finding",
+      "description": "GeoState achieved better depth forecasting performance on the Waymo dataset compared to existing 3D world models."
+    },
+    {
+      "name": "GeoState supports geometrically consistent cross-view querying",
+      "entity_type": "Finding",
+      "description": "GeoState can generate consistent geometric reconstructions from different viewpoints."
+    },
+    {
+      "name": "GeoState generalizes zero-shot to KITTI",
+      "entity_type": "Finding",
+      "description": "GeoState performs well on the KITTI dataset without specific training on it."
+    },
+    {
+      "name": "GeoState generalizes zero-shot to nuScenes",
+      "entity_type": "Finding",
+      "description": "GeoState performs well on the nuScenes dataset without specific training on it."
+    },
+    {
+      "name": "GeoState maintains consistent scale throughout forecasting rollout",
+      "entity_type": "Finding",
+      "description": "GeoState avoids the need for per-frame scale alignment during temporal prediction."
+    },
+    {
+      "name": "View decoupling makes scene representation more predictable",
+      "entity_type": "Finding",
+      "description": "Separating viewpoint dependence from the scene state simplifies temporal modeling."
+    },
+    {
+      "name": "View-decoupled geometry states are effective for predictive 3D world modeling",
+      "entity_type": "Finding",
+      "description": "The proposed GeoState representation is well-suited for forecasting 3D world evolution."
+    },
+    {
+      "name": "GeoState separates scene content from scene observation",
+      "entity_type": "Finding",
+      "description": "GeoState explicitly disentangles the intrinsic scene properties from how they are viewed."
+    },
+    {
+      "name": "GeoState enables long-horizon geometry forecasting",
+      "entity_type": "Finding",
+      "description": "GeoState can predict scene geometry accurately over extended future time steps."
+    }
+  ],
+  "relationships": [
+    {
+      "source": "GeoState",
+      "relation": "is a",
+      "target": "View-decoupled geometry representation"
+    },
+    {
+      "source": "GeoState",
+      "relation": "separates",
+      "target": "Scene-state evolution"
+    },
+    {
+      "source": "GeoState",
+      "relation": "separates",
+      "target": "Camera-induced variation"
+    },
+    {
+      "source": "Scene Tokenizer",
+      "relation": "aggregates",
+      "target": "Geometry-aware features"
+    },
+    {
+      "source": "Scene Tokenizer",
+      "relation": "produces",
+      "target": "Fixed-length scene state"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "queries",
+      "target": "Fixed-length scene state"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "uses",
+      "target": "Query camera"
+    },
+    {
+      "source": "Autoregressive World Model",
+      "relation": "predicts",
+      "target": "Scene-state evolution"
+    },
+    {
+      "source": "GeoState",
+      "relation": "is evaluated on",
+      "target": "Waymo"
+    },
+    {
+      "source": "GeoState",
+      "relation": "generalizes zero-shot to",
+      "target": "KITTI"
+    },
+    {
+      "source": "GeoState",
+      "relation": "generalizes zero-shot to",
+      "target": "nuScenes"
+    },
+    {
+      "source": "GeoState",
+      "relation": "addresses",
+      "target": "Viewpoint coupling"
+    },
+    {
+      "source": "GeoState",
+      "relation": "derived from",
+      "target": "Geometry foundation models (GFMs)"
+    },
+    {
+      "source": "Scene Tokenizer",
+      "relation": "uses",
+      "target": "Perceiver-style Tokenizer"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "uses",
+      "target": "Query Transformer"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "uses",
+      "target": "Feature Decoder"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "uses",
+      "target": "VGGT-Ω dense prediction head"
+    },
+    {
+      "source": "Autoregressive World Model",
+      "relation": "adopts",
+      "target": "Masked Factorized Transformer"
+    },
+    {
+      "source": "VGGT-Ω",
+      "relation": "extracts",
+      "target": "Geometry-aware features"
+    },
+    {
+      "source": "VGGT-Ω",
+      "relation": "from",
+      "target": "Multi-view RGB observations"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "reconstructs",
+      "target": "Depth map"
+    },
+    {
+      "source": "Autoregressive World Model",
+      "relation": "predicts future states in",
+      "target": "Fixed-length scene state"
+    },
+    {
+      "source": "Camera Prediction Model",
+      "relation": "provides",
+      "target": "Query camera"
+    },
+    {
+      "source": "GeoState",
+      "relation": "is used for",
+      "target": "Predictive 3D world modeling"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "introduces",
+      "target": "Query camera"
+    },
+    {
+      "source": "Autoregressive World Model",
+      "relation": "focuses on",
+      "target": "Scene dynamics"
+    },
+    {
+      "source": "GeoState",
+      "relation": "maintains",
+      "target": "Context-derived scale"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "constructs",
+      "target": "Plücker ray field"
+    },
+    {
+      "source": "Plücker ray field",
+      "relation": "is",
+      "target": "Fourier-encoded"
+    },
+    {
+      "source": "Query Transformer",
+      "relation": "produces",
+      "target": "View-conditioned representations"
+    },
+    {
+      "source": "Feature Decoder",
+      "relation": "maps",
+      "target": "View-conditioned representations"
+    },
+    {
+      "source": "Feature Decoder",
+      "relation": "to features for",
+      "target": "VGGT-Ω dense prediction head"
+    },
+    {
+      "source": "Llog D",
+      "relation": "measures",
+      "target": "Depth map"
+    },
+    {
+      "source": "Lgrad",
+      "relation": "supervises",
+      "target": "local depth gradients"
+    },
+    {
+      "source": "Scene Tokenizer",
+      "relation": "trained for",
+      "target": "Geometry reconstruction"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "trained for",
+      "target": "Geometry reconstruction"
+    },
+    {
+      "source": "Scene Tokenizer",
+      "relation": "trained for",
+      "target": "Novel-view querying"
+    },
+    {
+      "source": "Geometry Decoder",
+      "relation": "trained for",
+      "target": "Novel-view querying"
+    },
+    {
+      "source": "Autoregressive World Model",
+      "relation": "trained with",
+      "target": "Target-state construction"
+    },
+    {
+      "source": "Target-state construction",
+      "relation": "uses",
+      "target": "Growing observation prefixes"
+    },
+    {
+      "source": "Target-state construction",
+      "relation": "uses",
+      "target": "VGGT-Ω"
+    },
+    {
+      "source": "GeoState",
+      "relation": "enables",
+      "target": "Geometry reconstruction"
+    },
+    {
+      "source": "GeoState",
+      "relation": "enables",
+      "target": "Novel-view querying"
+    },
+    {
+      "source": "GeoState",
+      "relation": "enables",
+      "target": "Autoregressive prediction"
+    },
+    {
+      "source": "GeoState",
+      "relation": "supports",
+      "target": "Scene persistence"
+    },
+    {
+      "source": "Autoregressive World Model",
+      "relation": "uses",
+      "target": "Residual update"
+    },
+    {
+      "source": "GeoState",
+      "relation": "is a",
+      "target": "View-decoupled geometry state"
+    },
+    {
+      "source": "GeoState",
+      "relation": "separates",
+      "target": "Scene content"
+    },
+    {
+      "source": "GeoState",
+      "relation": "from",
+      "target": "Scene observation"
+    },
+    {
+      "source": "GeoState",
+      "relation": "enables",
+      "target": "Long-horizon geometry forecasting"
+    }
+  ]
+}

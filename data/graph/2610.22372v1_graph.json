@@ -1,0 +1,639 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {},
+  "nodes": [
+    {
+      "name": "LIBERO-PeRM: Benchmarking Personalized Robotic Manipulation",
+      "node_type": "Paper",
+      "paper_id": "2610.22372v1",
+      "id": "paper::2610.22372v1"
+    },
+    {
+      "name": "VLA policies",
+      "node_type": "Method",
+      "description": "Vision-Language-Action policies, a type of generalist robotic manipulation model.",
+      "id": "method::vla_policies"
+    },
+    {
+      "name": "Supervised Fine-Tuning (SFT)",
+      "node_type": "Method",
+      "description": "A method used to make preferences learnable for robotic policies.",
+      "id": "method::supervised_fine_tuning_sft"
+    },
+    {
+      "name": "Mixed training",
+      "node_type": "Method",
+      "description": "A training strategy that combines different types of data or objectives.",
+      "id": "method::mixed_training"
+    },
+    {
+      "name": "Sequential adaptation",
+      "node_type": "Method",
+      "description": "A training strategy where models are adapted sequentially.",
+      "id": "method::sequential_adaptation"
+    },
+    {
+      "name": "Contextual prompts",
+      "node_type": "Method",
+      "description": "Prompts that provide additional context to guide policy behavior.",
+      "id": "method::contextual_prompts"
+    },
+    {
+      "name": "Preference-only training",
+      "node_type": "Method",
+      "description": "A training strategy focused solely on learning preferences.",
+      "id": "method::preference_only_training"
+    },
+    {
+      "name": "LoRA",
+      "node_type": "Method",
+      "description": "Low-Rank Adaptation, a technique mentioned in relation to preference-only training.",
+      "id": "method::lora"
+    },
+    {
+      "name": "Procedural generation pipeline",
+      "node_type": "Method",
+      "description": "A pipeline used to automatically instantiate tasks and their preference-conditioned variants, generating demonstrations, metrics, and metadata.",
+      "id": "method::procedural_generation_pipeline"
+    },
+    {
+      "name": "OMPL planner",
+      "node_type": "Method",
+      "description": "An Open Motion Planning Library planner used to generate trajectories within the data generation pipeline.",
+      "id": "method::ompl_planner"
+    },
+    {
+      "name": "Trajectory smoothing",
+      "node_type": "Method",
+      "description": "A technique applied to generated trajectories within the data generation pipeline.",
+      "id": "method::trajectory_smoothing"
+    },
+    {
+      "name": "VLM grounding",
+      "node_type": "Method",
+      "description": "A process used to select preference targets within the data generation pipeline.",
+      "id": "method::vlm_grounding"
+    },
+    {
+      "name": "VLM planner",
+      "node_type": "Method",
+      "description": "A Vision-Language Model planner used for preference-conditioned task planning within the data generation pipeline.",
+      "id": "method::vlm_planner"
+    },
+    {
+      "name": "VLM checker",
+      "node_type": "Method",
+      "description": "A Vision-Language Model checker used to verify skill satisfaction within the data generation pipeline.",
+      "id": "method::vlm_checker"
+    },
+    {
+      "name": "LIBERO-PeRM",
+      "node_type": "Dataset",
+      "description": "A benchmark for personalized robotic manipulation, comprising five task suites and 312 preference-conditioned tasks with pipeline-generated, human-reviewed demonstrations.",
+      "id": "dataset::libero_perm"
+    },
+    {
+      "name": "LIBERO-SinglePref",
+      "node_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating single-preference learning.",
+      "id": "dataset::libero_singlepref"
+    },
+    {
+      "name": "LIBERO-PrefScale",
+      "node_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating preference learning efficiency and generalization across data sizes, tasks, and layouts.",
+      "id": "dataset::libero_prefscale"
+    },
+    {
+      "name": "LIBERO-PrefConflict",
+      "node_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating preference-preference and task-preference conflicts.",
+      "id": "dataset::libero_prefconflict"
+    },
+    {
+      "name": "LIBERO-PrefCompose",
+      "node_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating multi-preference composition.",
+      "id": "dataset::libero_prefcompose"
+    },
+    {
+      "name": "LIBERO-ComprePref",
+      "node_type": "Dataset",
+      "description": "A task suite within LIBERO-PeRM for evaluating realistic preference-conditioned reasoning based on contextual language.",
+      "id": "dataset::libero_comprepref"
+    },
+    {
+      "name": "Preference satisfaction",
+      "node_type": "Metric",
+      "description": "A metric to evaluate how well a policy adheres to user preferences.",
+      "id": "metric::preference_satisfaction"
+    },
+    {
+      "name": "Task success",
+      "node_type": "Metric",
+      "description": "A metric to evaluate if the nominal task goal is completed.",
+      "id": "metric::task_success"
+    },
+    {
+      "name": "No-preference retention",
+      "node_type": "Metric",
+      "description": "A metric to evaluate how well a policy retains performance on tasks without preferences.",
+      "id": "metric::no_preference_retention"
+    },
+    {
+      "name": "Personalized Robotic Manipulation (PeRM)",
+      "node_type": "Concept",
+      "description": "The field of study focusing on enabling robots to execute tasks in ways that align with individual user preferences, habits, and constraints.",
+      "id": "concept::personalized_robotic_manipulation_perm"
+    },
+    {
+      "name": "Preference learning",
+      "node_type": "Concept",
+      "description": "The process by which embodied agents acquire user preferences from demonstrations or other signals.",
+      "id": "concept::preference_learning"
+    },
+    {
+      "name": "Zero-shot personalization",
+      "node_type": "Concept",
+      "description": "The ability of policies to follow preferences without explicit preference data.",
+      "id": "concept::zero_shot_personalization"
+    },
+    {
+      "name": "Preference generalization",
+      "node_type": "Concept",
+      "description": "The ability of learned preferences to apply across different layouts and tasks.",
+      "id": "concept::preference_generalization"
+    },
+    {
+      "name": "Preference composition",
+      "node_type": "Concept",
+      "description": "The ability of policies to combine multiple preferences.",
+      "id": "concept::preference_composition"
+    },
+    {
+      "name": "Preference conflicts",
+      "node_type": "Concept",
+      "description": "Situations where multiple preferences or a preference and a task goal are in opposition.",
+      "id": "concept::preference_conflicts"
+    },
+    {
+      "name": "Observable preferences",
+      "node_type": "Concept",
+      "description": "Preferences that can be expressed in language, instantiated without changing the original task goal, evaluated automatically, and reused across tasks.",
+      "id": "concept::observable_preferences"
+    },
+    {
+      "name": "Motion Preference",
+      "node_type": "Concept",
+      "description": "A type of observable preference that constrains the physical properties of the trajectory (Pmotion).",
+      "id": "concept::motion_preference"
+    },
+    {
+      "name": "Skill Preference",
+      "node_type": "Concept",
+      "description": "A type of observable preference that alters the execution behavior of a specific skill (Pskill).",
+      "id": "concept::skill_preference"
+    },
+    {
+      "name": "User Profile",
+      "node_type": "Concept",
+      "description": "A type of observable preference that uses a user profile or context to guide subtask-level semantic choices (Pprofile).",
+      "id": "concept::user_profile"
+    },
+    {
+      "name": "Vision-Language-Action (VLA) models",
+      "node_type": "Concept",
+      "description": "Models that integrate vision, language, and action for robotic control.",
+      "id": "concept::vision_language_action_vla_models"
+    },
+    {
+      "name": "Current VLA policies struggle with zero-shot personalization.",
+      "node_type": "Finding",
+      "description": "Observation that existing Vision-Language-Action policies perform poorly when asked to follow preferences without prior preference data.",
+      "id": "finding::current_vla_policies_struggle_with_zero_shot_personalization"
+    },
+    {
+      "name": "Supervised Fine-Tuning (SFT) makes preferences learnable.",
+      "node_type": "Finding",
+      "description": "Finding that applying Supervised Fine-Tuning enables policies to learn and incorporate user preferences.",
+      "id": "finding::supervised_fine_tuning_sft_makes_preferences_learnable"
+    },
+    {
+      "name": "Mixed training achieves better no-preference retention than sequential adaptation.",
+      "node_type": "Finding",
+      "description": "Result indicating that a mixed training approach helps policies maintain performance on tasks without preferences more effectively than sequential adaptation.",
+      "id": "finding::mixed_training_achieves_better_no_preference_retention_than_sequential_adaptation"
+    },
+    {
+      "name": "Mixed training improves performance with contextual prompts compared with preference-only training.",
+      "node_type": "Finding",
+      "description": "Finding that mixed training, when combined with contextual prompts, leads to better task success and preference satisfaction than training solely on preferences.",
+      "id": "finding::mixed_training_improves_performance_with_contextual_prompts_compared_with_preference_only_training"
+    },
+    {
+      "name": "Mixed training can weaken motion-preference learning.",
+      "node_type": "Finding",
+      "description": "Observation that while mixed training has benefits, it may negatively impact the learning of motion-specific preferences.",
+      "id": "finding::mixed_training_can_weaken_motion_preference_learning"
+    },
+    {
+      "name": "Preference generalization, decomposition, and conflict handling remain difficult.",
+      "node_type": "Finding",
+      "description": "Conclusion that current methods still face significant challenges in applying learned preferences to new situations, breaking down complex preferences, and resolving conflicting preferences.",
+      "id": "finding::preference_generalization_decomposition_and_conflict_handling_remain_difficult"
+    },
+    {
+      "name": "Broader layout diversity and matched no-preference data also help.",
+      "node_type": "Finding",
+      "description": "Finding that increasing the variety of layouts and providing corresponding no-preference data can improve policy performance.",
+      "id": "finding::broader_layout_diversity_and_matched_no_preference_data_also_help"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::vla_policies",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::supervised_fine_tuning_sft",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::mixed_training",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::sequential_adaptation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::contextual_prompts",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::preference_only_training",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::lora",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::procedural_generation_pipeline",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::ompl_planner",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::trajectory_smoothing",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::vlm_grounding",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::vlm_planner",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "method::vlm_checker",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "dataset::libero_perm",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "dataset::libero_singlepref",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "dataset::libero_prefscale",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "dataset::libero_prefconflict",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "dataset::libero_prefcompose",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "dataset::libero_comprepref",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "metric::preference_satisfaction",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "metric::task_success",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "metric::no_preference_retention",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::personalized_robotic_manipulation_perm",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::preference_learning",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::zero_shot_personalization",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::preference_generalization",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::preference_composition",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::preference_conflicts",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::observable_preferences",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::motion_preference",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::skill_preference",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::user_profile",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "concept::vision_language_action_vla_models",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "finding::current_vla_policies_struggle_with_zero_shot_personalization",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "finding::supervised_fine_tuning_sft_makes_preferences_learnable",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "finding::mixed_training_achieves_better_no_preference_retention_than_sequential_adaptation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "finding::mixed_training_improves_performance_with_contextual_prompts_compared_with_preference_only_training",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "finding::mixed_training_can_weaken_motion_preference_learning",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "finding::preference_generalization_decomposition_and_conflict_handling_remain_difficult",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2610.22372v1",
+      "target": "finding::broader_layout_diversity_and_matched_no_preference_data_also_help",
+      "key": 0
+    },
+    {
+      "relation": "struggle with",
+      "source": "method::vla_policies",
+      "target": "concept::zero_shot_personalization",
+      "key": 0
+    },
+    {
+      "relation": "enables",
+      "source": "method::supervised_fine_tuning_sft",
+      "target": "concept::preference_learning",
+      "key": 0
+    },
+    {
+      "relation": "achieves better no-preference retention than",
+      "source": "method::mixed_training",
+      "target": "method::sequential_adaptation",
+      "key": 0
+    },
+    {
+      "relation": "improves performance with",
+      "source": "method::mixed_training",
+      "target": "method::contextual_prompts",
+      "key": 0
+    },
+    {
+      "relation": "compared with",
+      "source": "method::mixed_training",
+      "target": "method::preference_only_training",
+      "key": 0
+    },
+    {
+      "relation": "generates",
+      "source": "method::procedural_generation_pipeline",
+      "target": "metric::preference_satisfaction",
+      "key": 0
+    },
+    {
+      "relation": "is used in",
+      "source": "method::ompl_planner",
+      "target": "method::procedural_generation_pipeline",
+      "key": 0
+    },
+    {
+      "relation": "is used in",
+      "source": "method::vlm_grounding",
+      "target": "method::procedural_generation_pipeline",
+      "key": 0
+    },
+    {
+      "relation": "is used in",
+      "source": "method::vlm_planner",
+      "target": "method::procedural_generation_pipeline",
+      "key": 0
+    },
+    {
+      "relation": "is used in",
+      "source": "method::vlm_checker",
+      "target": "method::procedural_generation_pipeline",
+      "key": 0
+    },
+    {
+      "relation": "is a benchmark for",
+      "source": "dataset::libero_perm",
+      "target": "concept::personalized_robotic_manipulation_perm",
+      "key": 0
+    },
+    {
+      "relation": "introduces",
+      "source": "dataset::libero_perm",
+      "target": "method::procedural_generation_pipeline",
+      "key": 0
+    },
+    {
+      "relation": "introduces",
+      "source": "dataset::libero_perm",
+      "target": "concept::observable_preferences",
+      "key": 0
+    },
+    {
+      "relation": "comprises",
+      "source": "dataset::libero_perm",
+      "target": "dataset::libero_singlepref",
+      "key": 0
+    },
+    {
+      "relation": "comprises",
+      "source": "dataset::libero_perm",
+      "target": "dataset::libero_prefscale",
+      "key": 0
+    },
+    {
+      "relation": "comprises",
+      "source": "dataset::libero_perm",
+      "target": "dataset::libero_prefconflict",
+      "key": 0
+    },
+    {
+      "relation": "comprises",
+      "source": "dataset::libero_perm",
+      "target": "dataset::libero_prefcompose",
+      "key": 0
+    },
+    {
+      "relation": "comprises",
+      "source": "dataset::libero_perm",
+      "target": "dataset::libero_comprepref",
+      "key": 0
+    },
+    {
+      "relation": "evaluates",
+      "source": "metric::preference_satisfaction",
+      "target": "concept::personalized_robotic_manipulation_perm",
+      "key": 0
+    },
+    {
+      "relation": "evaluates",
+      "source": "metric::task_success",
+      "target": "concept::personalized_robotic_manipulation_perm",
+      "key": 0
+    },
+    {
+      "relation": "evaluates",
+      "source": "metric::no_preference_retention",
+      "target": "concept::personalized_robotic_manipulation_perm",
+      "key": 0
+    },
+    {
+      "relation": "is a type of",
+      "source": "concept::motion_preference",
+      "target": "concept::observable_preferences",
+      "key": 0
+    },
+    {
+      "relation": "is a type of",
+      "source": "concept::skill_preference",
+      "target": "concept::observable_preferences",
+      "key": 0
+    },
+    {
+      "relation": "is a type of",
+      "source": "concept::user_profile",
+      "target": "concept::observable_preferences",
+      "key": 0
+    }
+  ]
+}
