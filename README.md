@@ -1,268 +1,784 @@
-# research-paper-knowledge-graph-
-Autonomous Research Paper Summarization &amp; Knowledge Graph  Builder 
+# Autonomous Research Paper Summarization & Knowledge Graph Builder
 
+## 1. Project Overview
+
+The **Autonomous Research Paper Summarization & Knowledge Graph Builder** is an AI-powered application that ingests scientific research papers, extracts structured knowledge, builds knowledge graphs, and answers questions using Retrieval-Augmented Generation (RAG).
+
+The application combines vector-based retrieval, knowledge graph traversal, Large Language Models (LLMs), and LangGraph workflow orchestration to help researchers explore scientific papers more efficiently.
+
+Users can select an ingested paper from a Gradio interface and perform three main tasks:
+
+- **Question Answering:** Ask questions about a paper and receive answers grounded in relevant passages and knowledge graph relationships.
+- **Paper Summarization:** Generate a structured summary covering the objective, methodology, datasets, key findings, contributions, and limitations.
+- **Knowledge Extraction:** Extract research methods, datasets, metrics, concepts, findings, and relationships into structured JSON.
+
+The application also generates an interactive knowledge graph that visualizes the entities and relationships identified in a research paper.
+
+## 2. Key Features
+
+- **arXiv Integration:** Search for scientific papers and download their PDFs.
+- **PDF Processing:** Extract text from downloaded research papers.
+- **Text Chunking:** Split paper text into overlapping chunks for semantic retrieval.
+- **Semantic Search:** Generate embeddings using Sentence Transformers and store them in ChromaDB.
+- **Structured Knowledge Extraction:** Use Gemini to identify research entities and relationships.
+- **Entity Resolution:** Use RapidFuzz to identify and merge similar entity names.
+- **Knowledge Graph Construction:** Represent papers, entities, and relationships using NetworkX.
+- **Graph Visualization:** Generate interactive HTML visualizations using PyVis.
+- **Research Paper Summarization:** Generate structured summaries using Gemini.
+- **Graph-Enhanced RAG:** Combine vector retrieval and knowledge graph context to answer questions.
+- **Workflow Orchestration:** Use LangGraph to route requests and coordinate processing steps.
+- **Interactive UI:** Use Gradio to access Q&A, summarization, knowledge extraction, and graph visualization.
+
+## 3. Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python 3.11+ | Application development |
+| uv | Dependency and project management |
+| arXiv Python library | Search and download research papers |
+| PyMuPDF | Extract text from PDFs |
+| LangChain Text Splitters | Split extracted text into chunks |
+| Sentence Transformers | Generate semantic embeddings |
+| ChromaDB | Persist and retrieve paper chunks |
+| Google Gemini | Summarization, knowledge extraction, and answer generation |
+| Pydantic | Validate structured knowledge extraction output |
+| RapidFuzz | Match and resolve duplicate entities |
+| NetworkX | Construct and query knowledge graphs |
+| PyVis | Generate interactive knowledge graph visualizations |
+| LangGraph | Orchestrate research workflows |
+| Gradio | Provide the interactive user interface |
+
+## 4. High-Level Architecture
+
+The application has two major workflows: paper ingestion and research interaction.
+
+```mermaid
+flowchart TD
+    A[arXiv Search] --> B[Download PDF]
+    B --> C[Extract PDF Text]
+    C --> D[Create Text Chunks]
+    D --> E[Generate Embeddings]
+    E --> F[(ChromaDB)]
+    C --> G[Gemini Knowledge Extraction]
+    G --> H[Entity Resolution]
+    H --> I[Build NetworkX Graph]
+    I --> J[(Graph JSON)]
+    F --> K[Research QA]
+    J --> K
+    K --> L[Gemini Answer Generation]
+    L --> M[Answer with Citations]
+    C --> N[Gemini Summarization]
+    N --> O[Summary JSON]
+    M --> P[Gradio UI]
+    O --> P
+    J --> Q[PyVis Visualization]
+    Q --> P
+```
+
+### Architecture explanation
+
+1. The ingestion workflow downloads research papers and extracts their text.
+2. The extracted text is divided into chunks and embedded for semantic retrieval.
+3. Chunks and metadata are stored in ChromaDB.
+4. Gemini extracts structured entities and relationships from the paper.
+5. Entity resolution reduces duplicate entities before the graph is constructed.
+6. NetworkX stores the resulting knowledge graph, which is persisted as JSON.
+7. The QA workflow retrieves relevant text and graph relationships.
+8. Gemini uses the retrieved context to generate a grounded answer.
+9. Summarization and knowledge extraction provide separate outputs.
+10. Gradio exposes these capabilities through a single interface.
+
+## 5. Project Directory Structure
+
+The following structure describes the main modules and data directories used by the application.
+
+```text
 research-paper-knowledge-graph/
 │
-├── app.py                          # Gradio application entry point
-├── main.py                         # Pipeline entry point
-├── pyproject.toml                  # Dependencies and project configuration
-├── .env.example                    # Environment variable template
-├── .gitignore
-├── README.md
+├── scripts/
+│   ├── test_arxiv.py
+│   ├── test_pdf_processor.py
+│   ├── test_chunker.py
+│   ├── test_vector_store.py
+│   ├── test_knowledge_extractor.py
+│   ├── test_entity_resolver.py
+│   ├── test_entity_matching.py
+│   ├── test_graph_store.py
+│   ├── test_graph_connectivity.py
+│   ├── test_summarizer.py
+│   ├── test_qa_agent.py
+│   ├── test_research_graph.py
+│   ├── test_ingestion_graph.py
+│   ├── test_dynamic_graph.py
+│   └── test_filtered_search.py
 │
 ├── src/
 │   └── research_assistant/
 │       ├── __init__.py
-│       │
-│       ├── config.py               # Configuration and environment variables
-│       ├── models.py               # Pydantic data models
+│       ├── models.py
 │       │
 │       ├── ingestion/
 │       │   ├── __init__.py
-│       │   ├── arxiv_client.py     # Fetch papers from arXiv
-│       │   └── pdf_processor.py    # Extract text using PyMuPDF
+│       │   ├── arxiv_client.py
+│       │   └── pdf_processor.py
 │       │
 │       ├── processing/
 │       │   ├── __init__.py
-│       │   ├── chunker.py          # Split documents into chunks
-│       │   └── embeddings.py       # Generate embeddings
+│       │   ├── chunker.py
+│       │   ├── embeddings.py
+│       │   └── entity_resolver.py
 │       │
 │       ├── storage/
 │       │   ├── __init__.py
-│       │   ├── vector_store.py     # ChromaDB operations
-│       │   ├── document_store.py   # Paper text and metadata
-│       │   └── graph_store.py      # NetworkX graph operations
+│       │   ├── vector_store.py
+│       │   └── graph_store.py
 │       │
 │       ├── agents/
 │       │   ├── __init__.py
-│       │   ├── orchestrator.py     # LangGraph workflow
 │       │   ├── knowledge_extractor.py
-│       │   ├── graph_builder.py
 │       │   ├── summarizer.py
-│       │   └── qa_agent.py         # Graph + RAG question answering
+│       │   └── qa_agent.py
 │       │
 │       ├── workflows/
 │       │   ├── __init__.py
-│       │   └── research_graph.py   # LangGraph state and routing
-│       │
-│       ├── evaluation/
-│       │   ├── __init__.py
-│       │   ├── extraction_eval.py
-│       │   ├── retrieval_eval.py
-│       │   ├── summary_eval.py
-│       │   └── qa_eval.py
+│       │   ├── research_graph.py
+│       │   └── ingestion_graph.py
 │       │
 │       └── ui/
 │           ├── __init__.py
-│           └── graph_visualizer.py # PyVis visualization
+│           ├── app.py
+│           └── graph_visualizer.py
 │
 ├── data/
-│   ├── papers/                     # Downloaded PDFs
-│   ├── processed/                  # Extracted text and metadata
-│   └── evaluation/                 # Evaluation datasets
+│   ├── papers/
+│   ├── processed/
+│   ├── chunks/
+│   ├── chroma_db/
+│   └── graph/
 │
-├── tests/
-│   ├── test_ingestion.py
-│   ├── test_chunker.py
-│   ├── test_vector_store.py
-│   ├── test_graph_builder.py
-│   └── test_qa_agent.py
-│
-└── .github/
-    └── workflows/
-        └── tests.yml               # Optional GitHub Actions CI
+├── .env
+├── .gitignore
+├── pyproject.toml
+├── uv.lock
+└── README.md
+```
 
+**Note:** The test-script list reflects scripts created during development. If a script is not present in your current repository, create it before running it.
 
-Current Status
+### Directory responsibilities
 
-Successfully implemented and tested the initial ingestion, preprocessing, semantic retrieval, and knowledge extraction pipeline.
+| Directory | Responsibility |
+|---|---|
+| `ingestion/` | Search arXiv, download PDFs, and extract text |
+| `processing/` | Chunk text, generate embeddings, and resolve entities |
+| `storage/` | Persist vector data and knowledge graphs |
+| `agents/` | Implement summarization, knowledge extraction, and Q&A |
+| `workflows/` | Orchestrate ingestion and research tasks using LangGraph |
+| `ui/` | Provide the Gradio interface and graph visualization |
+| `scripts/` | Test individual modules and complete workflows |
+| `data/papers/` | Store downloaded PDFs |
+| `data/processed/` | Store extracted text, metadata, summaries, and extracted knowledge |
+| `data/chunks/` | Store generated chunk records |
+| `data/chroma_db/` | Store the persistent ChromaDB collection |
+| `data/graph/` | Store graph JSON files and generated HTML visualizations |
 
-Next planned steps:
+## 6. Module-by-Module Explanation
 
-Entity deduplication and resolution.
+### 6.1 `ingestion/arxiv_client.py`
 
-Knowledge graph construction using NetworkX.
+**Purpose:** Search arXiv and download research papers.
 
-Research paper summarization.
+Main function:
 
-Graph-based RAG question answering.
+- `fetch_papers(query, max_results)`
 
-LangGraph orchestration.
+Responsibilities:
 
-Gradio interface and PyVis visualization.
+1. Search arXiv using a query such as `cat:cs.LG`.
+2. Retrieve paper metadata, including title, authors, publication date, categories, and PDF URL.
+3. Download each PDF to `data/papers/`.
+4. Save metadata to `data/processed/papers.json`.
 
-Evaluation of extraction, retrieval, summaries, and Q&A.
+Example:
 
-## Implementation Progress
+```python
+from research_assistant.ingestion.arxiv_client import fetch_papers
 
-### Phase 1: Project Setup
-- Set up the Python 3.11 development environment using `uv` in VS Code.
-- Configured `pyproject.toml` for the `src`-based Python package structure.
-- Created modular packages for ingestion, processing, storage, and agents.
-- Organized test scripts under the root-level `scripts/` directory.
+papers = fetch_papers(
+    query="cat:cs.LG",
+    max_results=1,
+)
 
-### Phase 2: Research Paper Ingestion
-- Integrated the `arxiv` Python library to search for research papers.
-- Implemented paper retrieval and PDF downloading.
-- Retrieved paper metadata, including:
-  - Paper ID and title
-  - Abstract and authors
-  - Publication and update dates
-  - Categories and PDF URL
-- Saved downloaded PDFs under `data/papers/`.
-- Saved paper metadata to `data/processed/papers.json`.
+print(papers)
+```
 
-### Phase 3: PDF Text Extraction
-- Integrated PyMuPDF for PDF text extraction.
-- Implemented page-by-page text extraction with page numbers.
-- Captured the complete extracted text and paper metadata.
-- Saved extracted paper content as JSON files under `data/processed/`.
-- Successfully extracted text from a 24-page research paper.
+The returned paper records contain the paper ID and local PDF path required by subsequent processing steps.
 
-### Phase 4: Document Chunking
-- Integrated LangChain's `RecursiveCharacterTextSplitter`.
-- Implemented overlapping text chunking using:
-  - Chunk size: 1,000 characters
-  - Chunk overlap: 200 characters
-- Assigned unique chunk IDs and retained paper IDs and chunk indices.
-- Saved chunked documents as JSON files under `data/chunks/`.
-- Validated chunk generation and inspected sample chunks.
+### 6.2 `ingestion/pdf_processor.py`
 
-### Phase 5: Embeddings and Vector Storage
-- Integrated Sentence Transformers using `all-MiniLM-L6-v2`.
-- Generated 384-dimensional embeddings for paper chunks.
-- Integrated ChromaDB with persistent local storage.
-- Implemented chunk insertion and semantic similarity search.
-- Stored paper IDs and chunk indices as metadata.
-- Successfully tested semantic search using a natural-language query and retrieved relevant research-paper passages.
+**Purpose:** Extract readable text from a downloaded PDF.
 
-### Phase 6: LLM-Based Knowledge Extraction
-- Integrated Google Gemini through `langchain-google-genai`.
-- Configured Gemini API credentials using environment variables in `.env`.
-- Created Pydantic models for structured research knowledge:
-  - Methods
-  - Datasets
-  - Evaluation metrics
-  - Concepts
-  - Findings
-  - Relationships
-- Implemented knowledge extraction from research-paper text.
-- Configured structured LLM output using Pydantic.
-- Successfully extracted entities and relationships and saved the results as JSON under `data/processed/`.
+Main functions:
 
-### Current Status
-- Successfully implemented and tested the initial ingestion, preprocessing, semantic retrieval, and knowledge extraction pipeline.
-- Next planned steps:
-  1. Entity deduplication and resolution.
-  2. Knowledge graph construction using NetworkX.
-  3. Research paper summarization.
-  4. Graph-based RAG question answering.
-  5. LangGraph orchestration.
-  6. Gradio interface and PyVis visualization.
-  7. Evaluation of extraction, retrieval, summaries, and Q&A.
+- `extract_text(pdf_path)`
+- `save_extracted_text(pdf_path)`
 
+Responsibilities:
 
-  ## Development Progress – 18 October 2026
+1. Open the PDF using PyMuPDF.
+2. Extract text page by page.
+3. Preserve page numbers.
+4. Combine the extracted pages into `full_text`.
+5. Save the result as `data/processed/<paper_id>.json`.
 
-### 1. LangGraph Workflow Orchestration
+The saved JSON contains:
 
-Implemented a LangGraph-based workflow to coordinate research paper tasks.
+- `paper_id`
+- `pdf_path`
+- `total_pages`
+- `pages`
+- `full_text`
 
-**Request routing:**
-- Added a request router to classify user requests into Q&A, summarization, and knowledge extraction.
-- Implemented conditional edges to direct requests to the appropriate workflow branch.
+This structured output is consumed by the chunker, summarizer, and knowledge extractor.
 
-**Q&A workflow:**
-- Vector Retrieval Node – retrieves relevant paper chunks from ChromaDB.
-- Graph Retrieval Node – retrieves related entities and relationships from the NetworkX knowledge graph.
-- Answer Generation Node – uses Gemini to generate answers grounded in retrieved context, with paper ID and chunk citations.
+### 6.3 `processing/chunker.py`
 
-**Summarization workflow:**
-- Integrated the existing Gemini-based summarizer.
-- Generates six sections: Objective, Methodology, Datasets, Key Findings, Contributions, and Limitations.
-- Saves summaries as JSON under `data/processed/`.
+**Purpose:** Divide extracted paper text into manageable chunks.
 
-**Knowledge Extraction workflow:**
-- Integrated the existing structured knowledge extractor using Gemini and Pydantic.
-- Extracts methods, datasets, metrics, concepts, findings, and relationships.
-- Saves extracted knowledge as JSON under `data/processed/`.
+Main function:
 
-### 2. End-to-End Paper Ingestion Pipeline
+- `chunk_paper(json_path)`
 
-Created `src/research_assistant/workflows/ingestion_graph.py` to orchestrate paper ingestion.
+The current splitter uses:
 
-**Pipeline:**
+- Chunk size: 1,000 characters
+- Chunk overlap: 200 characters
 
-1. Search arXiv and download research papers.
-2. Extract PDF text using PyMuPDF.
-3. Split paper text into overlapping chunks.
-4. Generate embeddings and store chunks in ChromaDB.
-5. Extract research entities and relationships using Gemini.
-6. Resolve duplicate entities using RapidFuzz.
-7. Build a directed knowledge graph using NetworkX.
-8. Persist the graph as JSON under `data/graph/`.
+The overlap preserves context across adjacent chunks and helps reduce information loss at chunk boundaries.
 
-**Validation:** Successfully processed paper `2610.22372v1` (LIBERO-PeRM), extracted 22 pages, generated 116 chunks, stored them in ChromaDB, and built a knowledge graph containing 41 nodes and 64 edges.
+Each chunk contains:
 
-### 3. Paper-Specific Retrieval
+- `paper_id`
+- `chunk_id`
+- `chunk_index`
+- `text`
 
-Enhanced the vector store to support filtering by paper ID.
+Chunk records are saved to `data/chunks/<paper_id>_chunks.json`.
 
-- Updated `VectorStore.search()` to accept an optional `paper_id` parameter.
-- Added ChromaDB metadata filtering to retrieve chunks only from the selected paper.
-- Verified retrieval for `2610.22372v1`; all returned chunks belonged to the requested paper.
-- Enabled dynamic knowledge-graph loading using the selected paper's graph file.
+### 6.4 `processing/embeddings.py`
 
-### 4. Gradio User Interface
+**Purpose:** Convert text into numerical vectors for semantic search.
 
-Created `src/research_assistant/ui/app.py` using Gradio.
+The `EmbeddingGenerator` uses the Sentence Transformers model:
 
-**Implemented features:**
-- Select an ingested research paper.
-- Choose a task: Ask a question, Summarize paper, or Extract knowledge.
-- Display generated answers, summaries, and extracted knowledge.
-- Display source citations for Q&A results.
-- Generate and provide an interactive PyVis knowledge graph as an HTML file.
+`sentence-transformers/all-MiniLM-L6-v2`
 
-**Run the application:**
+The model produces 384-dimensional embeddings.
+
+These embeddings allow ChromaDB to retrieve semantically related passages even when the question and paper text do not use exactly the same words.
+
+### 6.5 `storage/vector_store.py`
+
+**Purpose:** Persist text chunks and retrieve relevant passages.
+
+The `VectorStore` class uses a persistent ChromaDB collection named `research_papers`.
+
+Main methods:
+
+- `add_chunks(chunks)` — generate embeddings and upsert chunks with metadata.
+- `search(query, top_k=3, paper_id=None)` — retrieve the most relevant chunks.
+
+Each stored record includes `paper_id` and `chunk_index` metadata.
+
+The optional `paper_id` parameter restricts retrieval to a selected paper:
+
+```python
+results = store.search(
+    query="What datasets are used in LIBERO-PeRM?",
+    top_k=3,
+    paper_id="2610.22372v1",
+)
+```
+
+Without a paper ID, the search can retrieve chunks across the collection. The QA workflow should pass the selected paper ID to keep the answer grounded in the intended paper.
+
+### 6.6 `models.py`
+
+**Purpose:** Define validated data structures for extracted research knowledge.
+
+The main Pydantic models are:
+
+- `ResearchEntity` — represents an entity, its type, and description.
+- `ResearchRelationship` — represents a source entity, relationship, and target entity.
+- `ResearchExtraction` — groups the extracted entity categories and relationships.
+
+Entity types include methods, datasets, metrics, concepts, and findings.
+
+These models provide a structured contract between Gemini knowledge extraction and downstream entity resolution and graph construction.
+
+### 6.7 `agents/knowledge_extractor.py`
+
+**Purpose:** Extract structured research knowledge from paper text.
+
+Main functions:
+
+- `create_llm()` — configure the Gemini client using environment variables.
+- `extract_knowledge(paper_text)` — extract entities and relationships using structured output.
+
+The extractor asks Gemini to identify:
+
+- Research methods
+- Datasets
+- Evaluation metrics
+- Concepts
+- Key findings
+- Relationships between entities
+
+The output is validated against the `ResearchExtraction` Pydantic model.
+
+The extraction result is subsequently used by the entity resolver and graph store.
+
+### 6.8 `processing/entity_resolver.py`
+
+**Purpose:** Identify duplicate or near-duplicate entity names.
+
+Main function:
+
+- `resolve_entities(entities, similarity_threshold=90)`
+
+The resolver:
+
+1. Groups entities by type.
+2. Normalizes entity names.
+3. Compares names using RapidFuzz.
+4. Uses string similarity and token-set similarity to identify potential duplicates.
+5. Returns canonical entities and an alias mapping.
+
+For example, `GeoState` and `Geostate` may be resolved to a common canonical name.
+
+Entity resolution improves graph quality by reducing duplicate nodes. Some relationships may still be skipped when their endpoints cannot be resolved unambiguously.
+
+### 6.9 `storage/graph_store.py`
+
+**Purpose:** Build and persist the research knowledge graph.
+
+The `KnowledgeGraphStore` class uses a NetworkX `MultiDiGraph`.
+
+Main methods:
+
+- `add_paper(paper_id, title)`
+- `add_entities(entities, paper_id)`
+- `add_relationships(relationships, entities, aliases)`
+- `save(filename)`
+- `print_summary()`
+
+The graph contains:
+
+- Paper nodes
+- Entity nodes
+- Paper-to-entity `contains` relationships
+- Research relationships extracted from the paper
+
+Node identifiers include the entity type and normalized name. This helps distinguish entities with identical names but different types.
+
+Graphs are saved as JSON files under `data/graph/`, using filenames such as:
+
+`2610.22372v1_graph.json`
+
+### 6.10 `agents/summarizer.py`
+
+**Purpose:** Generate a structured summary of a research paper.
+
+Main functions:
+
+- `summarize_paper(paper)`
+- `save_summary(summary)`
+
+Gemini generates six sections:
+
+1. Objective
+2. Methodology
+3. Datasets
+4. Key Findings
+5. Contributions
+6. Limitations
+
+The summarizer uses the extracted paper text and instructs the model not to invent unsupported findings or limitations.
+
+Summaries are saved to:
+
+`data/processed/<paper_id>_summary.json`
+
+### 6.11 `agents/qa_agent.py`
+
+**Purpose:** Answer research questions using retrieved text and knowledge graph context.
+
+The `ResearchQAAgent` combines:
+
+- ChromaDB semantic retrieval
+- NetworkX graph traversal
+- Gemini answer generation
+
+Its graph retrieval logic identifies entities mentioned in the question and collects incoming and outgoing relationships for those nodes.
+
+The retrieved passages and relationships are supplied to Gemini with instructions to answer only from the available evidence and cite textual sources.
+
+A typical citation looks like:
+
+`[Paper ID: 2610.22372v1, Chunk: 26]`
+
+The agent supports loading a graph through its `graph_path` parameter. The workflow should provide the selected paper's graph path when processing a question.
+
+### 6.12 `workflows/ingestion_graph.py`
+
+**Purpose:** Orchestrate end-to-end ingestion using LangGraph.
+
+Current workflow:
+
+```mermaid
+flowchart TD
+    A[START] --> B[Fetch arXiv Papers]
+    B --> C[Extract PDF Text]
+    C --> D[Create Chunks]
+    D --> E[Index Chunks in ChromaDB]
+    E --> F[Extract Knowledge]
+    F --> G[Resolve Entities]
+    G --> H[Build Knowledge Graph]
+    H --> I[Save Graph JSON]
+    I --> J[END]
+```
+
+The workflow uses three nodes:
+
+- `fetch_node` — searches arXiv and downloads PDFs.
+- `process_node` — extracts text, creates chunks, and indexes them.
+- `graph_node` — extracts knowledge, resolves entities, and saves a graph for each successfully processed paper.
+
+This workflow connects the existing modules without duplicating their core logic.
+
+### 6.13 `workflows/research_graph.py`
+
+**Purpose:** Route research requests to the appropriate workflow.
+
+The current request router uses deterministic keyword rules to classify requests into:
+
+- `qa`
+- `summarize`
+- `extract`
+
+The selected request type determines the branch executed by LangGraph.
+
+```mermaid
+flowchart TD
+    A[START] --> B[Request Router]
+    B -->|qa| C[Vector Retrieval]
+    C --> D[Graph Retrieval]
+    D --> E[Answer Generation]
+    E --> F[END]
+    B -->|summarize| G[Summarization Node]
+    G --> F
+    B -->|extract| H[Knowledge Extraction Node]
+    H --> F
+```
+
+#### Q&A branch
+
+1. Retrieve relevant paper chunks from ChromaDB.
+2. Retrieve related graph relationships from NetworkX.
+3. Pass both contexts to Gemini.
+4. Return an answer with source citations.
+
+#### Summarization branch
+
+1. Load the processed paper text.
+2. Call `summarize_paper()`.
+3. Save the structured summary.
+4. Return the summary.
+
+#### Knowledge extraction branch
+
+1. Load the processed paper text.
+2. Call `extract_knowledge()`.
+3. Save structured entities and relationships.
+4. Return the extracted knowledge.
+
+The current router is rule-based, not an LLM-based planner. The Gradio task selection supplies a request phrase, and the router uses its keywords to select the branch.
+
+### 6.14 `ui/graph_visualizer.py`
+
+**Purpose:** Convert a saved graph JSON file into an interactive HTML visualization.
+
+Main function:
+
+- `visualize_graph(graph_json, output_html)`
+
+The visualizer:
+
+1. Loads the NetworkX graph from JSON.
+2. Creates PyVis nodes and edges.
+3. Colors nodes according to entity type.
+4. Displays entity descriptions and relationship labels.
+5. Saves the interactive graph as HTML.
+
+The visualization is generated under `data/graph/`.
+
+### 6.15 `ui/app.py`
+
+**Purpose:** Provide the user-facing Gradio interface.
+
+The UI currently supports:
+
+- Selecting an ingested paper
+- Asking questions
+- Generating paper summaries
+- Extracting structured knowledge
+- Displaying source citations
+- Viewing the interactive knowledge graph embedded in the page
+
+Paper choices are discovered from local processed-paper and graph files. Titles are loaded from `data/processed/papers.json`, with fallback logic for missing titles.
+
+The UI invokes `research_graph` to execute the selected task and uses `visualize_graph()` to generate the corresponding graph HTML.
+
+Dynamic arXiv search and ingestion directly from the UI are planned enhancements.
+
+## 7. Environment Configuration
+
+Create a `.env` file in the project root:
+
+```dotenv
+GOOGLE_API_KEY=your_google_api_key
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+Use a valid Google AI API key and the Gemini model configured for your environment.
+
+**Security guidelines:**
+
+- Never commit `.env` to Git.
+- Ensure `.env` is listed in `.gitignore`.
+- Do not print API keys in logs.
+- Do not place API keys directly in Python source files.
+
+## 8. Installation and Setup
+
+### Prerequisites
+
+- Python 3.11 or later
+- uv installed
+- Internet access for arXiv downloads and Gemini requests
+- A valid Google API key
+
+### Step 1: Navigate to the project
+
+```bash
+cd research-paper-knowledge-graph
+```
+
+### Step 2: Install dependencies
+
+```bash
+uv sync
+```
+
+If setting up the project before the dependencies have been added, the main dependencies include:
+
+```bash
+uv add arxiv pymupdf langchain-text-splitters sentence-transformers chromadb langchain-google-genai python-dotenv rapidfuzz networkx pyvis langgraph gradio
+```
+
+Use the existing `pyproject.toml` and `uv.lock` as the source of truth for your installed dependency versions.
+
+### Step 3: Configure the API key
+
+Create the `.env` file described in Section 7.
+
+### Step 4: Verify the environment
+
+```bash
+uv run python --version
+```
+
+Confirm that the project runs under Python 3.11 or later.
+
+## 9. Running the Application
+
+### 9.1 Launch the Gradio UI
+
+From the project root:
 
 ```bash
 uv run python -m research_assistant.ui.app
 ```
 
-### 5. Validation and Test Scripts
+Open the local URL printed by Gradio, typically:
 
-Added and executed test scripts to validate individual components and workflows:
+`http://127.0.0.1:7860`
 
-- `scripts/test_research_graph.py` – LangGraph routing and task execution.
-- `scripts/test_ingestion_graph.py` – End-to-end ingestion and graph construction.
-- `scripts/test_dynamic_graph.py` – Loading and retrieving relationships from a selected paper's graph.
-- `scripts/test_filtered_search.py` – Paper-specific ChromaDB retrieval.
+### 9.2 Use the application
 
-### 6. Current Project Status
+1. Select a paper from the dropdown.
+2. Select **Ask a question**, **Summarize paper**, or **Extract knowledge**.
+3. Enter a question when using Q&A.
+4. Click **Run**.
+5. Review the result and source citations.
+6. Explore the interactive knowledge graph.
 
-| Component | Status |
+The current UI uses papers already ingested and represented in the local data directories.
+
+### 9.3 Run the ingestion workflow
+
+To download and process a new paper through the LangGraph ingestion workflow, use:
+
+```bash
+uv run python scripts/test_ingestion_graph.py
+```
+
+The test script currently requests a small number of papers using its configured arXiv query.
+
+After ingestion, the processed paper should have:
+
+- A downloaded PDF
+- Extracted text JSON
+- Chunk JSON
+- ChromaDB records
+- A knowledge extraction JSON
+- A knowledge graph JSON
+
+## 10. Testing and Validation
+
+The project includes scripts for testing individual modules and end-to-end workflows.
+
+Run the scripts from the project root using `uv run python`.
+
+### 10.1 Individual module tests
+
+| Script | What it validates | Command |
+|---|---|---|
+| `test_arxiv.py` | arXiv search and PDF download | `uv run python scripts/test_arxiv.py` |
+| `test_pdf_processor.py` | PDF text extraction | `uv run python scripts/test_pdf_processor.py` |
+| `test_chunker.py` | Text chunking | `uv run python scripts/test_chunker.py` |
+| `test_vector_store.py` | Embedding storage and semantic retrieval | `uv run python scripts/test_vector_store.py` |
+| `test_knowledge_extractor.py` | Structured Gemini extraction | `uv run python scripts/test_knowledge_extractor.py` |
+| `test_entity_resolver.py` | Entity deduplication | `uv run python scripts/test_entity_resolver.py` |
+| `test_entity_matching.py` | Entity name matching and aliases | `uv run python scripts/test_entity_matching.py` |
+| `test_graph_store.py` | Graph construction and persistence | `uv run python scripts/test_graph_store.py` |
+| `test_graph_connectivity.py` | Graph connectivity checks | `uv run python scripts/test_graph_connectivity.py` |
+| `test_summarizer.py` | Summary generation and saving | `uv run python scripts/test_summarizer.py` |
+| `test_qa_agent.py` | Standalone QA retrieval and generation | `uv run python scripts/test_qa_agent.py` |
+
+### 10.2 Workflow tests
+
+**Test LangGraph routing and execution**
+
+```bash
+uv run python scripts/test_research_graph.py
+```
+
+Validates the QA, summarization, and extraction branches according to the requests configured in the script.
+
+**Test end-to-end ingestion**
+
+```bash
+uv run python scripts/test_ingestion_graph.py
+```
+
+Validates paper download, text extraction, chunk creation, vector indexing, knowledge extraction, and graph construction.
+
+**Test dynamic graph loading**
+
+```bash
+uv run python scripts/test_dynamic_graph.py
+```
+
+Validates that the QA agent can load a graph using a specified paper ID and retrieve its relationships.
+
+**Test paper-specific vector retrieval**
+
+```bash
+uv run python scripts/test_filtered_search.py
+```
+
+Validates that ChromaDB returns chunks belonging to the requested paper ID.
+
+### 10.3 Testing notes
+
+- Scripts that call arXiv require internet access.
+- Scripts that call Gemini require a valid API key and may incur API usage.
+- The ingestion workflow writes files and modifies the persistent vector database.
+- Run ingestion tests with a small `max_results` value to limit processing time and API usage.
+- The test scripts described here are standalone scripts; run only those present in your repository.
+- If a module's interface changes, update the corresponding test script.
+
+## 11. Data Artifacts
+
+The main output files are:
+
+| Artifact | Location |
 |---|---|
-| arXiv ingestion and PDF processing | Implemented |
-| Text chunking and embeddings | Implemented |
-| ChromaDB vector storage and filtered retrieval | Implemented |
-| Gemini knowledge extraction | Implemented |
+| Downloaded PDFs | `data/papers/` |
+| arXiv metadata | `data/processed/papers.json` |
+| Extracted paper text | `data/processed/<paper_id>.json` |
+| Chunk records | `data/chunks/<paper_id>_chunks.json` |
+| Vector database | `data/chroma_db/` |
+| Knowledge extraction | `data/processed/<paper_id>_extraction.json` |
+| Paper summary | `data/processed/<paper_id>_summary.json` |
+| Knowledge graph | `data/graph/<paper_id>_graph.json` |
+| Interactive graph HTML | `data/graph/<paper_id>_graph.html` |
+
+The vector database is persistent. Re-running ingestion should use the same chunk IDs to upsert existing chunks instead of creating duplicate records.
+
+## 12. Current Implementation Status
+
+| Capability | Status |
+|---|---|
+| arXiv paper ingestion | Implemented |
+| PDF text extraction | Implemented |
+| Chunking and embeddings | Implemented |
+| ChromaDB semantic retrieval | Implemented |
+| Paper-specific retrieval | Implemented |
+| Structured knowledge extraction | Implemented |
 | Entity resolution | Implemented |
 | NetworkX knowledge graph construction | Implemented |
-| PyVis graph visualization | Implemented |
-| Gemini paper summarization | Implemented |
-| LangGraph request routing | Implemented |
-| Graph-based RAG Q&A | Implemented |
-| End-to-end ingestion workflow | Implemented |
-| Gradio UI | Implemented and tested |
+| PyVis visualization | Implemented |
+| Gemini summarization | Implemented |
+| Graph-enhanced RAG Q&A | Implemented |
+| LangGraph conditional request routing | Implemented |
+| LangGraph ingestion workflow | Implemented |
+| Gradio UI | Implemented |
+| Embedded knowledge graph | Implemented |
+| Dynamic arXiv search in the UI | Planned |
+| UI improvements and enhanced graph filtering | Planned |
 
-### 7. Planned Improvements
+## 13. Known Limitations
 
-- Display paper titles alongside paper IDs in the Gradio dropdown.
-- Embed the interactive knowledge graph directly in the UI.
-- Improve graph readability through layout tuning and relationship filtering.
-- Allow users to search for and ingest papers directly from the UI.
-- Improve entity resolution and reduce unresolved or ambiguous graph relationships.
-- Add robust error handling and validation for missing papers, graphs, and retrieval results.
-- Expand automated tests for routing, ingestion, retrieval, and output validation.
+- The request router uses keyword rules and may need improvement when users phrase requests differently.
+- Entity resolution can merge similar names incorrectly or leave ambiguous relationships unresolved.
+- Graph retrieval currently uses entity-name matching and neighboring relationships; it is not a full graph-reasoning engine.
+- The quality of answers depends on retrieval quality and the evidence contained in the selected paper.
+- The UI currently discovers papers from local files rather than searching arXiv dynamically.
+- The current workflow uses the configured Gemini model for generation and requires an external API connection.
+- Paper titles may fall back to paper IDs when metadata is unavailable.
+- Graphs can become crowded as the number of extracted entities and relationships increases.
 
+## 14. Future Enhancements
+
+Potential next steps include:
+
+1. Add dynamic arXiv search and ingestion from the Gradio UI.
+2. Improve request classification and workflow error handling.
+3. Improve graph retrieval using entity relevance and relationship filtering.
+4. Improve entity resolution and relationship validation.
+5. Add retrieval evaluation and answer-quality measurements.
+6. Add automated tests for workflow branches and failure scenarios.
+7. Improve graph layouts, filtering, and search within the UI.
+8. Add support for processing and comparing multiple research papers.
+9. Improve summary citations and provenance tracking.
+10. Add monitoring, logging, and execution status reporting.
+
+## 15. End-to-End Workflow Summary
+
+The project transforms a scientific paper into multiple useful research artifacts:
+
+**Research paper → Extracted text → Text chunks → Embeddings and vector index → Structured knowledge → Entity resolution → Knowledge graph → Q&A, summarization, and visualization**
+
+The result is an interactive research assistant that combines semantic retrieval, explicit knowledge relationships, and LLM-based generation to help users explore scientific literature.
