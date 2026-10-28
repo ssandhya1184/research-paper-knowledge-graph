@@ -110,139 +110,64 @@ The following structure describes the main modules and data directories used by 
 ```text
 
 research-paper-knowledge-graph/
-
-│
-
 ├── scripts/
-
 │   ├── test_arxiv.py
-
 │   ├── test_pdf_processor.py
-
 │   ├── test_chunker.py
-
 │   ├── test_vector_store.py
-
 │   ├── test_knowledge_extractor.py
-
 │   ├── test_entity_resolver.py
-
 │   ├── test_entity_matching.py
-
 │   ├── test_graph_store.py
-
 │   ├── test_graph_connectivity.py
-
 │   ├── test_summarizer.py
-
 │   ├── test_qa_agent.py
-
 │   ├── test_research_graph.py
-
 │   ├── test_ingestion_graph.py
-
 │   ├── test_dynamic_graph.py
-
 │   └── test_filtered_search.py
-
 │
-
 ├── src/
-
 │   └── research_assistant/
-
 │       ├── __init__.py
-
-│       ├── models.py
-
-│       │
-
+│       ├── models.py     
 │       ├── ingestion/
-
 │       │   ├── __init__.py
-
 │       │   ├── arxiv_client.py
-
 │       │   └── pdf_processor.py
-
 │       │
-
 │       ├── processing/
-
 │       │   ├── __init__.py
-
 │       │   ├── chunker.py
-
 │       │   ├── embeddings.py
-
 │       │   └── entity_resolver.py
-
-│       │
-
 │       ├── storage/
-
 │       │   ├── __init__.py
-
 │       │   ├── vector_store.py
-
 │       │   └── graph_store.py
-
-│       │
-
 │       ├── agents/
-
 │       │   ├── __init__.py
-
 │       │   ├── knowledge_extractor.py
-
 │       │   ├── summarizer.py
-
 │       │   └── qa_agent.py
-
-│       │
-
 │       ├── workflows/
-
 │       │   ├── __init__.py
-
 │       │   ├── research_graph.py
-
 │       │   └── ingestion_graph.py
-
-│       │
-
 │       └── ui/
-
 │           ├── __init__.py
-
 │           ├── app.py
-
 │           └── graph_visualizer.py
-
-│
-
 ├── data/
-
 │   ├── papers/
-
 │   ├── processed/
-
 │   ├── chunks/
-
 │   ├── chroma_db/
-
 │   └── graph/
-
-│
-
 ├── .env
-
 ├── .gitignore
-
 ├── pyproject.toml
-
 ├── uv.lock
-
 └── README.md
 
 ```
