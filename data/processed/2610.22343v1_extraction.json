@@ -8,37 +8,27 @@
     {
       "name": "Scene Tokenizer",
       "entity_type": "Method",
-      "description": "Aggregates multi-view GFM features into a view-decoupled scene state."
+      "description": "A component of GeoState that aggregates multi-view Geometry Foundation Model (GFM) features into a view-decoupled scene state."
     },
     {
       "name": "Geometry Decoder",
       "entity_type": "Method",
-      "description": "Queries the scene state using camera rays to reconstruct a depth map."
+      "description": "A component of GeoState that queries the scene state using camera rays to reconstruct depth."
     },
     {
       "name": "Autoregressive World Model",
       "entity_type": "Method",
-      "description": "Predicts future scene states using a sliding four-state context."
+      "description": "A component of GeoState that predicts future scene states using a sliding four-state context."
     },
     {
       "name": "Camera Prediction Model",
       "entity_type": "Method",
-      "description": "A separately trained model that predicts future camera trajectories."
+      "description": "An optional model that predicts future camera trajectories, modeled separately from scene state prediction in GeoState."
     },
     {
       "name": "VGGT-Ω",
       "entity_type": "Method",
-      "description": "A geometry foundation model used as a backbone for GeoState to extract geometry-aware features."
-    },
-    {
-      "name": "Perceiver-style Tokenizer",
-      "entity_type": "Method",
-      "description": "Used by the Scene Tokenizer to aggregate variable-length memory into a fixed-length scene state."
-    },
-    {
-      "name": "Masked Factorized Transformer",
-      "entity_type": "Method",
-      "description": "Architecture adopted for scene-state prediction within the Autoregressive World Model."
+      "description": "A Geometry Foundation Model (GFM) used as a frozen backbone by GeoState to extract geometry-aware features."
     },
     {
       "name": "VGGT-World",
@@ -49,47 +39,57 @@
       "name": "FR3D",
       "entity_type": "Method",
       "description": "A prior 3D world model that predicts the latent state of a pretrained 3D reconstruction model while modeling ego-motion separately."
+    },
+    {
+      "name": "Perceiver-style Tokenizer",
+      "entity_type": "Method",
+      "description": "An architecture used by the Scene Tokenizer for aggregating variable-length memory into a fixed-length scene state."
+    },
+    {
+      "name": "Masked Factorized Transformer",
+      "entity_type": "Method",
+      "description": "The architecture adopted by GeoState's Autoregressive World Model for scene-state prediction."
     }
   ],
   "datasets": [
     {
       "name": "Waymo",
       "entity_type": "Dataset",
-      "description": "A large-scale dynamic driving scenes dataset used for in-domain evaluation."
+      "description": "A large-scale dataset of dynamic driving scenes used for in-domain evaluation of GeoState."
     },
     {
       "name": "KITTI",
       "entity_type": "Dataset",
-      "description": "A driving dataset used for zero-shot transfer evaluation."
+      "description": "A driving dataset used for zero-shot transfer evaluation of GeoState."
     },
     {
       "name": "nuScenes",
       "entity_type": "Dataset",
-      "description": "A driving dataset used for zero-shot transfer evaluation."
+      "description": "A driving dataset used for zero-shot transfer evaluation of GeoState."
     }
   ],
   "metrics": [
     {
-      "name": "Depth Forecasting",
+      "name": "depth forecasting",
       "entity_type": "Metric",
-      "description": "Evaluation of the model's ability to predict future scene geometry."
+      "description": "The task of predicting future depth maps, used for evaluating 3D world models."
     },
     {
-      "name": "Mean Absolute Log-Depth Error (Llog D)",
+      "name": "mean absolute log-depth error (Llog D)",
       "entity_type": "Metric",
-      "description": "Measures the mean absolute log-depth error over valid pixels for geometry reconstruction."
+      "description": "A metric used to measure the accuracy of depth reconstruction."
     },
     {
-      "name": "Local Depth Gradients (Lgrad)",
+      "name": "local depth gradients (Lgrad)",
       "entity_type": "Metric",
-      "description": "Supervises local depth gradients during geometry reconstruction training."
+      "description": "A metric used to supervise local depth gradients during geometry-state learning."
     }
   ],
   "concepts": [
     {
-      "name": "3D World Modeling",
+      "name": "View-decoupled geometry state",
       "entity_type": "Concept",
-      "description": "The goal of learning to predict how the physical world evolves in a geometrically grounded state space."
+      "description": "The core concept of GeoState, a representation where scene geometry is explicitly separated from camera-dependent observation."
     },
     {
       "name": "Geometry Foundation Models (GFMs)",
@@ -97,64 +97,34 @@
       "description": "Models that provide strong pretrained priors for multi-view 3D perception by learning rich geometric representations."
     },
     {
-      "name": "View-decoupled Geometry State",
+      "name": "View dependence",
       "entity_type": "Concept",
-      "description": "A geometry representation that separates scene content from how the scene is observed, making it independent of the observation viewpoint."
+      "description": "A limitation of GFM features where changes in camera viewpoint induce substantial changes in the representation even when the underlying physical scene remains unchanged."
     },
     {
-      "name": "Scene Dynamics",
+      "name": "Scene state",
       "entity_type": "Concept",
-      "description": "The genuine physical evolution and changes within a scene."
+      "description": "A compact, fixed-length representation of the underlying 3D scene geometry."
     },
     {
-      "name": "Camera-induced Variation",
+      "name": "Geometric consistency",
       "entity_type": "Concept",
-      "description": "Changes in a representation caused by camera viewpoint shifts, rather than actual scene evolution."
+      "description": "The property of maintaining accurate and coherent 3D structure across different viewpoints or over time."
     },
     {
-      "name": "Scene State",
+      "name": "Zero-shot generalization",
       "entity_type": "Concept",
-      "description": "A compact representation of the underlying 3D scene geometry."
+      "description": "The ability of a model to perform well on new, unseen datasets without requiring additional training."
     },
     {
-      "name": "Viewpoint Coupling",
+      "name": "Scene gauge",
       "entity_type": "Concept",
-      "description": "A limitation in GFM features where changes in camera viewpoint induce substantial changes in the representation, even if the scene is static."
-    },
-    {
-      "name": "Geometric Priors",
-      "entity_type": "Concept",
-      "description": "Strong geometric knowledge captured by large-scale pretraining that generalizes across scenes and tasks."
-    },
-    {
-      "name": "Scene Coordinate System",
-      "entity_type": "Concept",
-      "description": "A shared coordinate system used to express multi-view geometry and maintain consistency across timestamps."
-    },
-    {
-      "name": "Camera Rays",
-      "entity_type": "Concept",
-      "description": "Plücker ray fields constructed from a query camera's intrinsics and pose, used for geometry decoding."
-    },
-    {
-      "name": "Cross-view Querying",
-      "entity_type": "Concept",
-      "description": "The ability to query the same scene state from different viewpoints to obtain consistent observations."
-    },
-    {
-      "name": "Zero-shot Generalization",
-      "entity_type": "Concept",
-      "description": "The ability of a model to perform well on new, unseen datasets without explicit training on them."
-    },
-    {
-      "name": "Scale Alignment",
-      "entity_type": "Concept",
-      "description": "The process of ensuring consistent metric scale across different frames or predictions, which GeoState avoids needing per-frame."
+      "description": "A consistent scale maintained throughout temporal prediction and geometry decoding in GeoState."
     }
   ],
   "findings": [
     {
-      "name": "GeoState outperforms prior 3D world models on Waymo in depth forecasting.",
+      "name": "GeoState outperforms prior 3D world models on Waymo in depth forecasting across all reported horizons.",
       "entity_type": "Finding",
       "description": ""
     },
@@ -179,22 +149,12 @@
       "description": ""
     },
     {
-      "name": "View-decoupled geometry states derived from pretrained GFMs are an effective representation for predictive 3D world modeling.",
-      "entity_type": "Finding",
-      "description": ""
-    },
-    {
       "name": "Viewpoint coupling in GFM features is a limitation when using them as predictive world states.",
       "entity_type": "Finding",
       "description": ""
     }
   ],
   "relationships": [
-    {
-      "source": "GeoState",
-      "relation": "is a",
-      "target": "View-decoupled Geometry State"
-    },
     {
       "source": "GeoState",
       "relation": "uses",
@@ -212,48 +172,23 @@
     },
     {
       "source": "GeoState",
-      "relation": "can use",
-      "target": "Camera Prediction Model"
+      "relation": "uses as backbone",
+      "target": "VGGT-Ω"
     },
     {
       "source": "Scene Tokenizer",
-      "relation": "aggregates",
-      "target": "GFM features"
-    },
-    {
-      "source": "Scene Tokenizer",
-      "relation": "produces",
-      "target": "GeoState"
+      "relation": "aggregates features from",
+      "target": "Geometry Foundation Models (GFMs)"
     },
     {
       "source": "Geometry Decoder",
       "relation": "queries",
-      "target": "GeoState"
-    },
-    {
-      "source": "Geometry Decoder",
-      "relation": "uses",
-      "target": "Camera Rays"
+      "target": "Scene state"
     },
     {
       "source": "Autoregressive World Model",
       "relation": "predicts",
-      "target": "Scene State"
-    },
-    {
-      "source": "GeoState",
-      "relation": "is derived from",
-      "target": "Geometry Foundation Models (GFMs)"
-    },
-    {
-      "source": "VGGT-Ω",
-      "relation": "is a type of",
-      "target": "Geometry Foundation Models (GFMs)"
-    },
-    {
-      "source": "VGGT-Ω",
-      "relation": "is used as a backbone for",
-      "target": "GeoState"
+      "target": "Scene state"
     },
     {
       "source": "GeoState",
@@ -282,78 +217,53 @@
     },
     {
       "source": "GeoState",
-      "relation": "is evaluated using",
-      "target": "Depth Forecasting"
+      "relation": "achieves",
+      "target": "Geometric consistency"
     },
     {
       "source": "GeoState",
-      "relation": "is evaluated using",
-      "target": "Cross-view Querying"
-    },
-    {
-      "source": "GeoState",
-      "relation": "is evaluated using",
-      "target": "Zero-shot Generalization"
-    },
-    {
-      "source": "GeoState",
-      "relation": "is trained with",
-      "target": "Mean Absolute Log-Depth Error (Llog D)"
-    },
-    {
-      "source": "GeoState",
-      "relation": "is trained with",
-      "target": "Local Depth Gradients (Lgrad)"
-    },
-    {
-      "source": "Viewpoint Coupling",
-      "relation": "is a limitation of",
-      "target": "GFM features"
-    },
-    {
-      "source": "View-decoupled Geometry State",
-      "relation": "addresses",
-      "target": "Viewpoint Coupling"
-    },
-    {
-      "source": "View-decoupled Geometry State",
-      "relation": "separates",
-      "target": "Scene Dynamics"
-    },
-    {
-      "source": "View-decoupled Geometry State",
-      "relation": "separates",
-      "target": "Camera-induced Variation"
-    },
-    {
-      "source": "Scene Tokenizer",
-      "relation": "uses",
-      "target": "Perceiver-style Tokenizer"
-    },
-    {
-      "source": "Autoregressive World Model",
-      "relation": "uses",
-      "target": "Masked Factorized Transformer"
-    },
-    {
-      "source": "3D World Modeling",
-      "relation": "is a goal of",
-      "target": "GeoState"
-    },
-    {
-      "source": "Geometry Foundation Models (GFMs)",
-      "relation": "provide",
-      "target": "Geometric Priors"
-    },
-    {
-      "source": "Scene Tokenizer",
-      "relation": "aggregates features into a",
-      "target": "Scene Coordinate System"
+      "relation": "achieves",
+      "target": "Zero-shot generalization"
     },
     {
       "source": "GeoState",
       "relation": "maintains",
-      "target": "Scale Alignment"
+      "target": "Scene gauge"
+    },
+    {
+      "source": "View decoupling",
+      "relation": "improves",
+      "target": "View-decoupled geometry state predictability"
+    },
+    {
+      "source": "View dependence",
+      "relation": "is a limitation of",
+      "target": "Geometry Foundation Models (GFMs)"
+    },
+    {
+      "source": "GeoState",
+      "relation": "addresses",
+      "target": "View dependence"
+    },
+    {
+      "source": "mean absolute log-depth error (Llog D)",
+      "relation": "measures accuracy of",
+      "target": "depth forecasting"
+    },
+    {
+      "source": "local depth gradients (Lgrad)",
+      "relation": "supervises",
+      "target": "depth forecasting"
+    },
+    {
+      "source": "Scene Tokenizer",
+      "relation": "employs",
+      "target": "Perceiver-style Tokenizer"
+    },
+    {
+      "source": "Autoregressive World Model",
+      "relation": "adopts",
+      "target": "Masked Factorized Transformer"
     }
   ]
 }

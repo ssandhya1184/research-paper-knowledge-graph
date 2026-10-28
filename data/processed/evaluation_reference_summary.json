@@ -1,0 +1,4 @@
+{
+  "paper_id": "2610.22372v1",
+  "reference_summary": "LIBERO-PeRM introduces a benchmark for personalized robotic manipulation. It provides five task suites with preference-conditioned demonstrations and evaluation protocols. The paper investigates zero-shot personalization, preference learning, learning efficiency, generalization, preference composition, and conflict handling. Its experiments show that supervised fine-tuning can teach policies to learn preferences, while mixed training can improve no-preference behavior and contextual-prompt robustness but may weaken motion-preference learning."
+}

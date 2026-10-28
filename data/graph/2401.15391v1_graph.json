@@ -1,0 +1,681 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {},
+  "nodes": [
+    {
+      "name": "MultiHop-RAG: Benchmarking Retrieval-Augmented Generation for Multi-Hop Queries",
+      "node_type": "Paper",
+      "paper_id": "2401.15391v1",
+      "id": "paper::2401.15391v1"
+    },
+    {
+      "name": "Retrieval-Augmented Generation (RAG)",
+      "node_type": "Method",
+      "description": "Augments large language models by retrieving relevant knowledge to mitigate hallucinations and enhance response quality.",
+      "id": "method::retrieval_augmented_generation_rag"
+    },
+    {
+      "name": "MultiHop-RAG (dataset construction)",
+      "node_type": "Method",
+      "description": "A procedure for building the MultiHop-RAG dataset, involving steps like dataset collection, evidence extraction, claim/bridge generation, query/answer generation, and quality assurance.",
+      "id": "method::multihop_rag_dataset_construction"
+    },
+    {
+      "name": "Similarity matching methods",
+      "node_type": "Method",
+      "description": "Traditional methods like cosine similarity used for retrieving evidence.",
+      "id": "method::similarity_matching_methods"
+    },
+    {
+      "name": "LlamaIndex",
+      "node_type": "Method",
+      "description": "An LLM-based framework specializing in supporting RAG pipelines, used to implement the RAG system in experiments.",
+      "id": "method::llamaindex"
+    },
+    {
+      "name": "LangChain",
+      "node_type": "Method",
+      "description": "An LLM-based framework specializing in supporting RAG pipelines.",
+      "id": "method::langchain"
+    },
+    {
+      "name": "GPT-4 (data generator)",
+      "node_type": "Method",
+      "description": "Used to automatically generate high-quality multi-hop queries, rephrase evidence into claims, identify bridge-entities and bridge-topics, and generate queries and answers. Also used for quality assurance.",
+      "id": "method::gpt_4_data_generator"
+    },
+    {
+      "name": "UniEval",
+      "node_type": "Method",
+      "description": "A framework used for fact-checking to verify the alignment between generated claims and original evidence.",
+      "id": "method::unieval"
+    },
+    {
+      "name": "mediastack API",
+      "node_type": "Method",
+      "description": "A REST API interface used for downloading worldwide news data for dataset collection.",
+      "id": "method::mediastack_api"
+    },
+    {
+      "name": "Trained language model (for evidence extraction)",
+      "node_type": "Method",
+      "description": "Used to extract factual or opinion sentences from news articles.",
+      "id": "method::trained_language_model_for_evidence_extraction"
+    },
+    {
+      "name": "Manual review",
+      "node_type": "Method",
+      "description": "A quality assurance approach involving human examination of a subset sample of generated multi-hop queries, evidence sets, and answers.",
+      "id": "method::manual_review"
+    },
+    {
+      "name": "LLM (response generation)",
+      "node_type": "Method",
+      "description": "A large language model used to generate a final answer given a user query, retrieved chunks, and an optional prompt.",
+      "id": "method::llm_response_generation"
+    },
+    {
+      "name": "Embedding models",
+      "node_type": "Method",
+      "description": "Models used to transform document chunks into vector representations for storage in an embedding database, compared for retrieving evidence.",
+      "id": "method::embedding_models"
+    },
+    {
+      "name": "MultiHop-RAG",
+      "node_type": "Dataset",
+      "description": "A novel dataset developed for benchmarking Retrieval-Augmented Generation (RAG) for multi-hop queries, consisting of a knowledge base, multi-hop queries, ground-truth answers, and supporting evidence.",
+      "id": "dataset::multihop_rag"
+    },
+    {
+      "name": "English news article dataset",
+      "node_type": "Dataset",
+      "description": "The underlying RAG knowledge base for MultiHop-RAG, collected from various English-language news websites.",
+      "id": "dataset::english_news_article_dataset"
+    },
+    {
+      "name": "RGB",
+      "node_type": "Dataset",
+      "description": "An existing RAG benchmark dataset that primarily evaluates queries solvable with a single piece of evidence.",
+      "id": "dataset::rgb"
+    },
+    {
+      "name": "RECALL",
+      "node_type": "Dataset",
+      "description": "An existing RAG benchmark dataset that primarily evaluates queries solvable with a single piece of evidence.",
+      "id": "dataset::recall"
+    },
+    {
+      "name": "Mean Average Precision at K (MAP@K)",
+      "node_type": "Metric",
+      "description": "A retrieval evaluation metric measuring the average top-K retrieval precision across all queries.",
+      "id": "metric::mean_average_precision_at_k_map_k"
+    },
+    {
+      "name": "Mean Reciprocal Rank at K (MRR@K)",
+      "node_type": "Metric",
+      "description": "A retrieval evaluation metric calculating the average of the reciprocal ranks of the first relevant chunk for each query, considering the top-K retrieved set.",
+      "id": "metric::mean_reciprocal_rank_at_k_mrr_k"
+    },
+    {
+      "name": "Hit Rate at K (Hit@K)",
+      "node_type": "Metric",
+      "description": "A retrieval evaluation metric measuring the fraction of evidence that appears in the top-K retrieved set.",
+      "id": "metric::hit_rate_at_k_hit_k"
+    },
+    {
+      "name": "Retrieval Evaluation",
+      "node_type": "Metric",
+      "description": "An assessment aspect of an RAG system that compares the retrieved set with the ground truth evidence.",
+      "id": "metric::retrieval_evaluation"
+    },
+    {
+      "name": "Response Evaluation",
+      "node_type": "Metric",
+      "description": "An assessment aspect of an RAG system that compares the LLM response with the ground truth answer to evaluate reasoning capability.",
+      "id": "metric::response_evaluation"
+    },
+    {
+      "name": "Large Language Models (LLMs)",
+      "node_type": "Concept",
+      "description": "General term for models like ChatGPT, GPT-4, PaLM, Llama2-70B, Mixtral-8x7B, which are augmented by RAG.",
+      "id": "concept::large_language_models_llms"
+    },
+    {
+      "name": "Hallucinations (LLM)",
+      "node_type": "Concept",
+      "description": "The generation of incorrect or fabricated information by LLMs.",
+      "id": "concept::hallucinations_llm"
+    },
+    {
+      "name": "Multi-hop queries",
+      "node_type": "Concept",
+      "description": "Queries that necessitate retrieving and reasoning over multiple pieces of supporting evidence to formulate an answer.",
+      "id": "concept::multi_hop_queries"
+    },
+    {
+      "name": "Single-hop query",
+      "node_type": "Concept",
+      "description": "A query whose answer can be directly derived from a single piece of evidence.",
+      "id": "concept::single_hop_query"
+    },
+    {
+      "name": "Knowledge base",
+      "node_type": "Concept",
+      "description": "An external corpus of documents that serves as a source of information for RAG systems.",
+      "id": "concept::knowledge_base"
+    },
+    {
+      "name": "Embedding database",
+      "node_type": "Concept",
+      "description": "A storage system for vector representations of document chunks.",
+      "id": "concept::embedding_database"
+    },
+    {
+      "name": "Inference query",
+      "node_type": "Concept",
+      "description": "A type of multi-hop query where the answer is deduced through reasoning from the retrieval set.",
+      "id": "concept::inference_query"
+    },
+    {
+      "name": "Comparison query",
+      "node_type": "Concept",
+      "description": "A type of multi-hop query where the answer requires a comparison of evidence within the retrieval set.",
+      "id": "concept::comparison_query"
+    },
+    {
+      "name": "Temporal query",
+      "node_type": "Concept",
+      "description": "A type of multi-hop query where the answer requires an analysis of the temporal information of retrieved chunks.",
+      "id": "concept::temporal_query"
+    },
+    {
+      "name": "Null query",
+      "node_type": "Concept",
+      "description": "A type of multi-hop query where the answer cannot be derived from the knowledge base, used to assess LLM hallucination.",
+      "id": "concept::null_query"
+    },
+    {
+      "name": "Bridge-entity",
+      "node_type": "Concept",
+      "description": "A shared entity across multiple pieces of evidence that links them for constructing multi-hop queries.",
+      "id": "concept::bridge_entity"
+    },
+    {
+      "name": "Bridge-topic",
+      "node_type": "Concept",
+      "description": "A shared topic across multiple pieces of evidence that links them for constructing multi-hop queries.",
+      "id": "concept::bridge_topic"
+    },
+    {
+      "name": "Claims",
+      "node_type": "Concept",
+      "description": "Paraphrased factual sentences derived from original evidence, generated by GPT-4.",
+      "id": "concept::claims"
+    },
+    {
+      "name": "Retrieval set",
+      "node_type": "Concept",
+      "description": "The collection of top-K chunks retrieved by an RAG system that best match a user query.",
+      "id": "concept::retrieval_set"
+    },
+    {
+      "name": "Prompt",
+      "node_type": "Concept",
+      "description": "An optional instruction provided to an LLM along with the query and retrieved chunks to guide answer generation.",
+      "id": "concept::prompt"
+    },
+    {
+      "name": "Existing RAG systems are inadequate in answering multi-hop queries",
+      "node_type": "Finding",
+      "description": "Existing Retrieval-Augmented Generation systems are found to be insufficient for answering queries that require reasoning over multiple pieces of evidence.",
+      "id": "finding::existing_rag_systems_are_inadequate_in_answering_multi_hop_queries"
+    },
+    {
+      "name": "No existing RAG benchmarking dataset focuses on multi-hop queries",
+      "node_type": "Finding",
+      "description": "There is a gap in current RAG benchmarking datasets, as none specifically address the evaluation of multi-hop queries.",
+      "id": "finding::no_existing_rag_benchmarking_dataset_focuses_on_multi_hop_queries"
+    },
+    {
+      "name": "Existing RAG methods perform unsatisfactorily in retrieving and answering multi-hop queries",
+      "node_type": "Finding",
+      "description": "Experiments reveal that current Retrieval-Augmented Generation methods do not perform well in both retrieving relevant evidence and generating answers for multi-hop queries.",
+      "id": "finding::existing_rag_methods_perform_unsatisfactorily_in_retrieving_and_answering_multi_hop_queries"
+    },
+    {
+      "name": "Current RAG implementations are inadequate for effectively retrieving and answering multi-hop queries",
+      "node_type": "Finding",
+      "description": "The results from experiments indicate that present Retrieval-Augmented Generation implementations are not effective in handling the retrieval and answering of multi-hop queries.",
+      "id": "finding::current_rag_implementations_are_inadequate_for_effectively_retrieving_and_answering_multi_hop_queries"
+    },
+    {
+      "name": "MultiHop-RAG dataset samples show high accuracy and data quality",
+      "node_type": "Finding",
+      "description": "Manual examination of a subset of the generated MultiHop-RAG dataset samples confirmed a high degree of accuracy and overall data quality.",
+      "id": "finding::multihop_rag_dataset_samples_show_high_accuracy_and_data_quality"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::retrieval_augmented_generation_rag",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::multihop_rag_dataset_construction",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::similarity_matching_methods",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::llamaindex",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::langchain",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::gpt_4_data_generator",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::unieval",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::mediastack_api",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::trained_language_model_for_evidence_extraction",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::manual_review",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::llm_response_generation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "method::embedding_models",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "dataset::multihop_rag",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "dataset::english_news_article_dataset",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "dataset::rgb",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "dataset::recall",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "metric::mean_average_precision_at_k_map_k",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "metric::mean_reciprocal_rank_at_k_mrr_k",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "metric::hit_rate_at_k_hit_k",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "metric::retrieval_evaluation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "metric::response_evaluation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::large_language_models_llms",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::hallucinations_llm",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::multi_hop_queries",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::single_hop_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::knowledge_base",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::embedding_database",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::inference_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::comparison_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::temporal_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::null_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::bridge_entity",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::bridge_topic",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::claims",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::retrieval_set",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "concept::prompt",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "finding::existing_rag_systems_are_inadequate_in_answering_multi_hop_queries",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "finding::no_existing_rag_benchmarking_dataset_focuses_on_multi_hop_queries",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "finding::existing_rag_methods_perform_unsatisfactorily_in_retrieving_and_answering_multi_hop_queries",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "finding::current_rag_implementations_are_inadequate_for_effectively_retrieving_and_answering_multi_hop_queries",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2401.15391v1",
+      "target": "finding::multihop_rag_dataset_samples_show_high_accuracy_and_data_quality",
+      "key": 0
+    },
+    {
+      "relation": "augments",
+      "source": "method::retrieval_augmented_generation_rag",
+      "target": "concept::large_language_models_llms",
+      "key": 0
+    },
+    {
+      "relation": "mitigates",
+      "source": "method::retrieval_augmented_generation_rag",
+      "target": "concept::hallucinations_llm",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "dataset::english_news_article_dataset",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "method::mediastack_api",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "method::trained_language_model_for_evidence_extraction",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "method::gpt_4_data_generator",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "method::unieval",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "method::manual_review",
+      "key": 0
+    },
+    {
+      "relation": "implements RAG system with",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "method::llamaindex",
+      "key": 0
+    },
+    {
+      "relation": "compares",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "method::embedding_models",
+      "key": 0
+    },
+    {
+      "relation": "examines capabilities of",
+      "source": "method::multihop_rag_dataset_construction",
+      "target": "concept::large_language_models_llms",
+      "key": 0
+    },
+    {
+      "relation": "generates",
+      "source": "method::gpt_4_data_generator",
+      "target": "concept::claims",
+      "key": 0
+    },
+    {
+      "relation": "identifies",
+      "source": "method::gpt_4_data_generator",
+      "target": "concept::bridge_entity",
+      "key": 0
+    },
+    {
+      "relation": "identifies",
+      "source": "method::gpt_4_data_generator",
+      "target": "concept::bridge_topic",
+      "key": 0
+    },
+    {
+      "relation": "benchmarks",
+      "source": "dataset::multihop_rag",
+      "target": "method::retrieval_augmented_generation_rag",
+      "key": 0
+    },
+    {
+      "relation": "focuses on",
+      "source": "dataset::multihop_rag",
+      "target": "concept::multi_hop_queries",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "dataset::multihop_rag",
+      "target": "concept::inference_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "dataset::multihop_rag",
+      "target": "concept::comparison_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "dataset::multihop_rag",
+      "target": "concept::temporal_query",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "dataset::multihop_rag",
+      "target": "concept::null_query",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "metric::retrieval_evaluation",
+      "target": "metric::mean_average_precision_at_k_map_k",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "metric::retrieval_evaluation",
+      "target": "metric::mean_reciprocal_rank_at_k_mrr_k",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "metric::retrieval_evaluation",
+      "target": "metric::hit_rate_at_k_hit_k",
+      "key": 0
+    },
+    {
+      "relation": "assesses",
+      "source": "concept::null_query",
+      "target": "concept::hallucinations_llm",
+      "key": 0
+    },
+    {
+      "relation": "is a finding about",
+      "source": "finding::existing_rag_systems_are_inadequate_in_answering_multi_hop_queries",
+      "target": "concept::multi_hop_queries",
+      "key": 0
+    },
+    {
+      "relation": "is a finding about",
+      "source": "finding::no_existing_rag_benchmarking_dataset_focuses_on_multi_hop_queries",
+      "target": "dataset::multihop_rag",
+      "key": 0
+    },
+    {
+      "relation": "is a finding about",
+      "source": "finding::existing_rag_methods_perform_unsatisfactorily_in_retrieving_and_answering_multi_hop_queries",
+      "target": "method::retrieval_augmented_generation_rag",
+      "key": 0
+    },
+    {
+      "relation": "is a finding about",
+      "source": "finding::current_rag_implementations_are_inadequate_for_effectively_retrieving_and_answering_multi_hop_queries",
+      "target": "method::retrieval_augmented_generation_rag",
+      "key": 0
+    },
+    {
+      "relation": "is a finding about",
+      "source": "finding::multihop_rag_dataset_samples_show_high_accuracy_and_data_quality",
+      "target": "dataset::multihop_rag",
+      "key": 0
+    }
+  ]
+}

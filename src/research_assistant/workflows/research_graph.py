@@ -52,18 +52,36 @@ def route_request(
     return state["request_type"]
 
 
+
+
 def vector_retrieval_node(state: ResearchState) -> dict:
-    results = qa_agent.vector_store.search(state["question"], top_k=3, paper_id=state["paper_id"],)
+    """Retrieve only sufficiently similar chunks for the selected paper."""
+
+    max_distance = 0.55
+
+    results = qa_agent.vector_store.search(
+        state["question"],
+        top_k=3,
+        paper_id=state["paper_id"],
+    )
 
     documents = results.get("documents", [[]])[0]
     metadatas = results.get("metadatas", [[]])[0]
+    distances = results.get("distances", [[]])[0]
 
     vector_context = []
     sources = []
 
-    for document, metadata in zip(documents, metadatas):
+    for document, metadata, distance in zip(
+        documents, metadatas, distances
+    ):
+        # Skip chunks whose similarity is too low.
+        if distance is None or float(distance) > max_distance:
+            continue
+
         paper_id = metadata.get("paper_id", "Unknown")
         chunk_index = metadata.get("chunk_index", "Unknown")
+        distance = float(distance)
 
         vector_context.append(
             f"Paper ID: {paper_id}\n"
@@ -71,14 +89,24 @@ def vector_retrieval_node(state: ResearchState) -> dict:
             f"Content:\n{document}"
         )
 
-        source = {
+        sources.append({
             "paper_id": paper_id,
             "chunk_index": chunk_index,
-        }
-        if source not in sources:
-            sources.append(source)
+            "distance": distance,
+        })
 
-    return {"vector_context": vector_context, "sources": sources}
+    print(
+        f"[RETRIEVAL] Retrieved: {len(documents)}, "
+        f"accepted: {len(vector_context)}, "
+        f"max_distance: {max_distance}"
+    )
+
+    return {
+        "vector_context": vector_context,
+        "sources": sources,
+    }
+
+
 
 
 def graph_retrieval_node(state: ResearchState) -> dict:
@@ -104,28 +132,35 @@ def answer_generation_node(state: ResearchState) -> dict:
     vector_context = state["vector_context"]
     relationships = state["graph_relationships"]
 
-    if not vector_context and not relationships:
-        return {"answer": "No relevant text or graph context was found."}
+    if not vector_context:
+        return {
+            "answer": (
+                "I couldn't find sufficiently relevant information "
+                "in the selected paper to answer this question."
+            ),
+            "sources": [],
+            "graph_relationships": [],
+        }
 
     prompt = f"""
-You are a scientific research assistant.
-Answer using only the evidence below.
+        You are a scientific research assistant.
+        Answer using only the evidence below.
 
-Rules:
-- Do not invent facts or relationships.
-- Say so if evidence is insufficient.
-- Cite text using [Paper ID: <id>, Chunk: <index>].
-- Treat graph relationships as supporting context, not independent proof.
+        Rules:
+        - Do not invent facts or relationships.
+        - Say so if evidence is insufficient.
+        - Cite text using [Paper ID: <id>, Chunk: <index>].
+        - Treat graph relationships as supporting context, not independent proof.
 
-RETRIEVED PAPER PASSAGES:
-{chr(10).join(vector_context) or "No relevant passages found."}
+        RETRIEVED PAPER PASSAGES:
+        {chr(10).join(vector_context) or "No relevant passages found."}
 
-KNOWLEDGE GRAPH RELATIONSHIPS:
-{chr(10).join(relationships) or "No matching graph relationships found."}
+        KNOWLEDGE GRAPH RELATIONSHIPS:
+        {chr(10).join(relationships) or "No matching graph relationships found."}
 
-QUESTION:
-{state["question"]}
-"""
+        QUESTION:
+        {state["question"]}
+        """
 
     response = qa_agent.llm.invoke(prompt)
     return {"answer": response.content}

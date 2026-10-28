@@ -31,11 +31,14 @@ class KnowledgeGraphStore:
 
     def add_entities(self, entities: list[dict], paper_id: str) -> None:
         paper_node = f"paper::{paper_id}"
-
+        print("entities->",entities)
         for entity in entities:
             name = entity["name"].strip()
+            print("name:",name  )
             entity_type = entity["entity_type"]
+            print("entity_type:",entity_type)
             node_id = f"{entity_type.lower()}::{normalize_name(name)}"
+            print("node_id:",node_id)
 
             self.graph.add_node(
                 node_id,

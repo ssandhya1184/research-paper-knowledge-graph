@@ -19,7 +19,7 @@ def visualize_graph(
     graph = nx.node_link_graph(data, directed=True, multigraph=True)
 
     net = Network(
-        height="750px",
+        height="900px",
         width="100%",
         directed=True,
         bgcolor="#ffffff",

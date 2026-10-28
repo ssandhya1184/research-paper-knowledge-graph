@@ -149,3 +149,92 @@ def build_ingestion_graph():
 
 
 ingestion_graph = build_ingestion_graph()
+
+
+
+def ingest_selected_paper(paper: dict) -> dict:
+    """Download and ingest one selected arXiv paper."""
+
+    from research_assistant.ingestion.arxiv_client import download_paper
+
+    # 1. Download the selected paper and save its metadata.
+    downloaded_paper = download_paper(paper)
+    paper_id = downloaded_paper["paper_id"]
+
+    # 2. Extract text from the PDF.
+    extracted_path = save_extracted_text(
+        Path(downloaded_paper["pdf_path"])
+    )
+
+    processed = json.loads(
+        Path(extracted_path).read_text(encoding="utf-8")
+    )
+
+    # 3. Split the text into chunks and index them in ChromaDB.
+    chunks = chunk_paper(extracted_path)
+
+    if not chunks:
+        raise ValueError(
+            f"No text chunks were generated for {paper_id}"
+        )
+
+    vector_store = VectorStore()
+    vector_store.add_chunks(chunks)
+
+    # 4. Extract entities and relationships using the LLM.
+    extraction = extract_knowledge(processed["full_text"])
+    extraction_data = extraction.model_dump()
+
+    # Save the extraction results for inspection.
+    extraction_path = (
+        Path("data/processed") / f"{paper_id}_extraction.json"
+    )
+    extraction_path.parent.mkdir(parents=True, exist_ok=True)
+    extraction_path.write_text(
+        json.dumps(
+            extraction_data,
+            indent=2,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    # 5. Resolve duplicate entities.
+    entities = []
+    for category in (
+        "methods",
+        "datasets",
+        "metrics",
+        "concepts",
+        "findings",
+    ):
+        entities.extend(extraction_data.get(category, []))
+
+    unique_entities, aliases = resolve_entities(entities)
+
+    # 6. Build and save the knowledge graph.
+    graph_store = KnowledgeGraphStore()
+    graph_store.add_paper(
+        paper_id=paper_id,
+        title=downloaded_paper.get("title", paper_id),
+    )
+    graph_store.add_entities(unique_entities, paper_id)
+    graph_store.add_relationships(
+        relationships=extraction_data.get("relationships", []),
+        entities=unique_entities,
+        aliases=aliases,
+    )
+
+    graph_path = graph_store.save(
+        filename=f"{paper_id}_graph.json"
+    )
+
+    graph_store.print_summary()
+
+    return {
+        "paper_id": paper_id,
+        "title": downloaded_paper.get("title", paper_id),
+        "chunks": len(chunks),
+        "graph_path": str(graph_path),
+        "status": "Ingested successfully",
+    }

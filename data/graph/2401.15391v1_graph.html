@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "#222222"}, "group": "Paper", "id": "paper::2401.15391v1", "label": "MultiHop-RAG: Benchmarking Retrieval-Augmented Generation for Multi-Hop Queries", "shape": "dot", "title": "Paper: MultiHop-RAG: Benchmarking Retrieval-Augmented Generation for Multi-Hop Queries\n"}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::retrieval_augmented_generation_rag", "label": "Retrieval-Augmented Generation (RAG)", "shape": "dot", "title": "Method: Retrieval-Augmented Generation (RAG)\nAugments large language models by retrieving relevant knowledge to mitigate hallucinations and enhance response quality."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::multihop_rag_dataset_construction", "label": "MultiHop-RAG (dataset construction)", "shape": "dot", "title": "Method: MultiHop-RAG (dataset construction)\nA procedure for building the MultiHop-RAG dataset, involving steps like dataset collection, evidence extraction, claim/bridge generation, query/answer generation, and quality assurance."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::similarity_matching_methods", "label": "Similarity matching methods", "shape": "dot", "title": "Method: Similarity matching methods\nTraditional methods like cosine similarity used for retrieving evidence."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::llamaindex", "label": "LlamaIndex", "shape": "dot", "title": "Method: LlamaIndex\nAn LLM-based framework specializing in supporting RAG pipelines, used to implement the RAG system in experiments."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::langchain", "label": "LangChain", "shape": "dot", "title": "Method: LangChain\nAn LLM-based framework specializing in supporting RAG pipelines."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::gpt_4_data_generator", "label": "GPT-4 (data generator)", "shape": "dot", "title": "Method: GPT-4 (data generator)\nUsed to automatically generate high-quality multi-hop queries, rephrase evidence into claims, identify bridge-entities and bridge-topics, and generate queries and answers. Also used for quality assurance."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::unieval", "label": "UniEval", "shape": "dot", "title": "Method: UniEval\nA framework used for fact-checking to verify the alignment between generated claims and original evidence."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::mediastack_api", "label": "mediastack API", "shape": "dot", "title": "Method: mediastack API\nA REST API interface used for downloading worldwide news data for dataset collection."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::trained_language_model_for_evidence_extraction", "label": "Trained language model (for evidence extraction)", "shape": "dot", "title": "Method: Trained language model (for evidence extraction)\nUsed to extract factual or opinion sentences from news articles."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::manual_review", "label": "Manual review", "shape": "dot", "title": "Method: Manual review\nA quality assurance approach involving human examination of a subset sample of generated multi-hop queries, evidence sets, and answers."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::llm_response_generation", "label": "LLM (response generation)", "shape": "dot", "title": "Method: LLM (response generation)\nA large language model used to generate a final answer given a user query, retrieved chunks, and an optional prompt."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::embedding_models", "label": "Embedding models", "shape": "dot", "title": "Method: Embedding models\nModels used to transform document chunks into vector representations for storage in an embedding database, compared for retrieving evidence."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::multihop_rag", "label": "MultiHop-RAG", "shape": "dot", "title": "Dataset: MultiHop-RAG\nA novel dataset developed for benchmarking Retrieval-Augmented Generation (RAG) for multi-hop queries, consisting of a knowledge base, multi-hop queries, ground-truth answers, and supporting evidence."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::english_news_article_dataset", "label": "English news article dataset", "shape": "dot", "title": "Dataset: English news article dataset\nThe underlying RAG knowledge base for MultiHop-RAG, collected from various English-language news websites."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::rgb", "label": "RGB", "shape": "dot", "title": "Dataset: RGB\nAn existing RAG benchmark dataset that primarily evaluates queries solvable with a single piece of evidence."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::recall", "label": "RECALL", "shape": "dot", "title": "Dataset: RECALL\nAn existing RAG benchmark dataset that primarily evaluates queries solvable with a single piece of evidence."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::mean_average_precision_at_k_map_k", "label": "Mean Average Precision at K (MAP@K)", "shape": "dot", "title": "Metric: Mean Average Precision at K (MAP@K)\nA retrieval evaluation metric measuring the average top-K retrieval precision across all queries."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::mean_reciprocal_rank_at_k_mrr_k", "label": "Mean Reciprocal Rank at K (MRR@K)", "shape": "dot", "title": "Metric: Mean Reciprocal Rank at K (MRR@K)\nA retrieval evaluation metric calculating the average of the reciprocal ranks of the first relevant chunk for each query, considering the top-K retrieved set."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::hit_rate_at_k_hit_k", "label": "Hit Rate at K (Hit@K)", "shape": "dot", "title": "Metric: Hit Rate at K (Hit@K)\nA retrieval evaluation metric measuring the fraction of evidence that appears in the top-K retrieved set."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::retrieval_evaluation", "label": "Retrieval Evaluation", "shape": "dot", "title": "Metric: Retrieval Evaluation\nAn assessment aspect of an RAG system that compares the retrieved set with the ground truth evidence."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::response_evaluation", "label": "Response Evaluation", "shape": "dot", "title": "Metric: Response Evaluation\nAn assessment aspect of an RAG system that compares the LLM response with the ground truth answer to evaluate reasoning capability."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::large_language_models_llms", "label": "Large Language Models (LLMs)", "shape": "dot", "title": "Concept: Large Language Models (LLMs)\nGeneral term for models like ChatGPT, GPT-4, PaLM, Llama2-70B, Mixtral-8x7B, which are augmented by RAG."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::hallucinations_llm", "label": "Hallucinations (LLM)", "shape": "dot", "title": "Concept: Hallucinations (LLM)\nThe generation of incorrect or fabricated information by LLMs."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::multi_hop_queries", "label": "Multi-hop queries", "shape": "dot", "title": "Concept: Multi-hop queries\nQueries that necessitate retrieving and reasoning over multiple pieces of supporting evidence to formulate an answer."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::single_hop_query", "label": "Single-hop query", "shape": "dot", "title": "Concept: Single-hop query\nA query whose answer can be directly derived from a single piece of evidence."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::knowledge_base", "label": "Knowledge base", "shape": "dot", "title": "Concept: Knowledge base\nAn external corpus of documents that serves as a source of information for RAG systems."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::embedding_database", "label": "Embedding database", "shape": "dot", "title": "Concept: Embedding database\nA storage system for vector representations of document chunks."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::inference_query", "label": "Inference query", "shape": "dot", "title": "Concept: Inference query\nA type of multi-hop query where the answer is deduced through reasoning from the retrieval set."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::comparison_query", "label": "Comparison query", "shape": "dot", "title": "Concept: Comparison query\nA type of multi-hop query where the answer requires a comparison of evidence within the retrieval set."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::temporal_query", "label": "Temporal query", "shape": "dot", "title": "Concept: Temporal query\nA type of multi-hop query where the answer requires an analysis of the temporal information of retrieved chunks."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::null_query", "label": "Null query", "shape": "dot", "title": "Concept: Null query\nA type of multi-hop query where the answer cannot be derived from the knowledge base, used to assess LLM hallucination."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::bridge_entity", "label": "Bridge-entity", "shape": "dot", "title": "Concept: Bridge-entity\nA shared entity across multiple pieces of evidence that links them for constructing multi-hop queries."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::bridge_topic", "label": "Bridge-topic", "shape": "dot", "title": "Concept: Bridge-topic\nA shared topic across multiple pieces of evidence that links them for constructing multi-hop queries."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::claims", "label": "Claims", "shape": "dot", "title": "Concept: Claims\nParaphrased factual sentences derived from original evidence, generated by GPT-4."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::retrieval_set", "label": "Retrieval set", "shape": "dot", "title": "Concept: Retrieval set\nThe collection of top-K chunks retrieved by an RAG system that best match a user query."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::prompt", "label": "Prompt", "shape": "dot", "title": "Concept: Prompt\nAn optional instruction provided to an LLM along with the query and retrieved chunks to guide answer generation."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::existing_rag_systems_are_inadequate_in_answering_multi_hop_queries", "label": "Existing RAG systems are inadequate in answering multi-hop queries", "shape": "dot", "title": "Finding: Existing RAG systems are inadequate in answering multi-hop queries\nExisting Retrieval-Augmented Generation systems are found to be insufficient for answering queries that require reasoning over multiple pieces of evidence."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::no_existing_rag_benchmarking_dataset_focuses_on_multi_hop_queries", "label": "No existing RAG benchmarking dataset focuses on multi-hop queries", "shape": "dot", "title": "Finding: No existing RAG benchmarking dataset focuses on multi-hop queries\nThere is a gap in current RAG benchmarking datasets, as none specifically address the evaluation of multi-hop queries."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::existing_rag_methods_perform_unsatisfactorily_in_retrieving_and_answering_multi_hop_queries", "label": "Existing RAG methods perform unsatisfactorily in retrieving and answering multi-hop queries", "shape": "dot", "title": "Finding: Existing RAG methods perform unsatisfactorily in retrieving and answering multi-hop queries\nExperiments reveal that current Retrieval-Augmented Generation methods do not perform well in both retrieving relevant evidence and generating answers for multi-hop queries."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::current_rag_implementations_are_inadequate_for_effectively_retrieving_and_answering_multi_hop_queries", "label": "Current RAG implementations are inadequate for effectively retrieving and answering multi-hop queries", "shape": "dot", "title": "Finding: Current RAG implementations are inadequate for effectively retrieving and answering multi-hop queries\nThe results from experiments indicate that present Retrieval-Augmented Generation implementations are not effective in handling the retrieval and answering of multi-hop queries."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::multihop_rag_dataset_samples_show_high_accuracy_and_data_quality", "label": "MultiHop-RAG dataset samples show high accuracy and data quality", "shape": "dot", "title": "Finding: MultiHop-RAG dataset samples show high accuracy and data quality\nManual examination of a subset of the generated MultiHop-RAG dataset samples confirmed a high degree of accuracy and overall data quality."}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::retrieval_augmented_generation_rag"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::multihop_rag_dataset_construction"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::similarity_matching_methods"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::llamaindex"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::langchain"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::gpt_4_data_generator"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::unieval"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::mediastack_api"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::trained_language_model_for_evidence_extraction"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::manual_review"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::llm_response_generation"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "method::embedding_models"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "dataset::multihop_rag"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "dataset::english_news_article_dataset"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "dataset::rgb"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "dataset::recall"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "metric::mean_average_precision_at_k_map_k"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "metric::mean_reciprocal_rank_at_k_mrr_k"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "metric::hit_rate_at_k_hit_k"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "metric::retrieval_evaluation"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "metric::response_evaluation"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::large_language_models_llms"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::hallucinations_llm"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::multi_hop_queries"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::single_hop_query"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::knowledge_base"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::embedding_database"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::inference_query"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::comparison_query"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::temporal_query"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::null_query"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::bridge_entity"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::bridge_topic"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::claims"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::retrieval_set"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "concept::prompt"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "finding::existing_rag_systems_are_inadequate_in_answering_multi_hop_queries"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "finding::no_existing_rag_benchmarking_dataset_focuses_on_multi_hop_queries"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "finding::existing_rag_methods_perform_unsatisfactorily_in_retrieving_and_answering_multi_hop_queries"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "finding::current_rag_implementations_are_inadequate_for_effectively_retrieving_and_answering_multi_hop_queries"}, {"arrows": "to", "from": "paper::2401.15391v1", "label": "contains", "title": "contains", "to": "finding::multihop_rag_dataset_samples_show_high_accuracy_and_data_quality"}, {"arrows": "to", "from": "method::retrieval_augmented_generation_rag", "label": "augments", "title": "augments", "to": "concept::large_language_models_llms"}, {"arrows": "to", "from": "method::retrieval_augmented_generation_rag", "label": "mitigates", "title": "mitigates", "to": "concept::hallucinations_llm"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "uses", "title": "uses", "to": "dataset::english_news_article_dataset"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "uses", "title": "uses", "to": "method::mediastack_api"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "uses", "title": "uses", "to": "method::trained_language_model_for_evidence_extraction"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "uses", "title": "uses", "to": "method::gpt_4_data_generator"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "uses", "title": "uses", "to": "method::unieval"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "uses", "title": "uses", "to": "method::manual_review"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "implements RAG system with", "title": "implements RAG system with", "to": "method::llamaindex"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "compares", "title": "compares", "to": "method::embedding_models"}, {"arrows": "to", "from": "method::multihop_rag_dataset_construction", "label": "examines capabilities of", "title": "examines capabilities of", "to": "concept::large_language_models_llms"}, {"arrows": "to", "from": "method::gpt_4_data_generator", "label": "generates", "title": "generates", "to": "concept::claims"}, {"arrows": "to", "from": "method::gpt_4_data_generator", "label": "identifies", "title": "identifies", "to": "concept::bridge_entity"}, {"arrows": "to", "from": "method::gpt_4_data_generator", "label": "identifies", "title": "identifies", "to": "concept::bridge_topic"}, {"arrows": "to", "from": "dataset::multihop_rag", "label": "benchmarks", "title": "benchmarks", "to": "method::retrieval_augmented_generation_rag"}, {"arrows": "to", "from": "dataset::multihop_rag", "label": "focuses on", "title": "focuses on", "to": "concept::multi_hop_queries"}, {"arrows": "to", "from": "dataset::multihop_rag", "label": "contains", "title": "contains", "to": "concept::inference_query"}, {"arrows": "to", "from": "dataset::multihop_rag", "label": "contains", "title": "contains", "to": "concept::comparison_query"}, {"arrows": "to", "from": "dataset::multihop_rag", "label": "contains", "title": "contains", "to": "concept::temporal_query"}, {"arrows": "to", "from": "dataset::multihop_rag", "label": "contains", "title": "contains", "to": "concept::null_query"}, {"arrows": "to", "from": "metric::retrieval_evaluation", "label": "uses", "title": "uses", "to": "metric::mean_average_precision_at_k_map_k"}, {"arrows": "to", "from": "metric::retrieval_evaluation", "label": "uses", "title": "uses", "to": "metric::mean_reciprocal_rank_at_k_mrr_k"}, {"arrows": "to", "from": "metric::retrieval_evaluation", "label": "uses", "title": "uses", "to": "metric::hit_rate_at_k_hit_k"}, {"arrows": "to", "from": "concept::null_query", "label": "assesses", "title": "assesses", "to": "concept::hallucinations_llm"}, {"arrows": "to", "from": "finding::existing_rag_systems_are_inadequate_in_answering_multi_hop_queries", "label": "is a finding about", "title": "is a finding about", "to": "concept::multi_hop_queries"}, {"arrows": "to", "from": "finding::no_existing_rag_benchmarking_dataset_focuses_on_multi_hop_queries", "label": "is a finding about", "title": "is a finding about", "to": "dataset::multihop_rag"}, {"arrows": "to", "from": "finding::existing_rag_methods_perform_unsatisfactorily_in_retrieving_and_answering_multi_hop_queries", "label": "is a finding about", "title": "is a finding about", "to": "method::retrieval_augmented_generation_rag"}, {"arrows": "to", "from": "finding::current_rag_implementations_are_inadequate_for_effectively_retrieving_and_answering_multi_hop_queries", "label": "is a finding about", "title": "is a finding about", "to": "method::retrieval_augmented_generation_rag"}, {"arrows": "to", "from": "finding::multihop_rag_dataset_samples_show_high_accuracy_and_data_quality", "label": "is a finding about", "title": "is a finding about", "to": "dataset::multihop_rag"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

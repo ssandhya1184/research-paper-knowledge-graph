@@ -1,0 +1,31 @@
+{
+  "paper_id": "2610.22372v1",
+  "entities": [
+    "LIBERO-PeRM",
+    "LIBERO-ComprePref",
+    "LIBERO-PrefCompose",
+    "LIBERO-PrefConflict",
+    "LIBERO-PrefScale",
+    "LIBERO-SinglePref",
+    "LoRA",
+    "Mixed training",
+    "Motion Preference",
+    "No-preference retention",
+    "OMPL planner",
+    "Preference composition",
+    "Preference conflicts",
+    "Preference generalization",
+    "Preference learning",
+    "Preference satisfaction",
+    "Preference-only training",
+    "Sequential adaptation",
+    "Supervised Fine-Tuning (SFT)",
+    "Task success",
+    "Trajectory smoothing",
+    "User Profile",
+    "VLA policies",
+    "VLM checker",
+    "VLM planner",
+    "Zero-shot personalization"
+  ]
+}

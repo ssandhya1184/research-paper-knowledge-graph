@@ -775,6 +775,13 @@ Potential next steps include:
 9. Improve summary citations and provenance tracking.
 10. Add monitoring, logging, and execution status reporting.
 
+- **Evaluation Framework:** Evaluate the system across five dimensions:
+  - **Entity Extraction Accuracy:** Measure how accurately entities and relationships are extracted from research papers.
+  - **Graph Connectivity:** Assess the connectivity and completeness of the generated knowledge graph.
+  - **Retrieval Relevance:** Evaluate whether the retrieved paper chunks and graph relationships are relevant to the user's query.
+  - **Summary Quality:** Assess the accuracy, completeness, and relevance of generated paper summaries.
+  - **Q&A Performance:** Evaluate answer correctness, relevance, and factual grounding against the source papers.
+
 ## 15. End-to-End Workflow Summary
 
 The project transforms a scientific paper into multiple useful research artifacts:

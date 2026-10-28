@@ -1,0 +1,19 @@
+{
+  "paper_id": "2610.22372v1",
+  "queries": [
+    {
+      "query": "How does mixed training affect no-preference retention?",
+      "relevant_chunk_ids": [
+       "2610.22372v1_chunk_45",
+        "2610.22372v1_chunk_49",
+        "2610.22372v1_chunk_48"
+      ]
+    },
+    {
+      "query": "What are the challenges in zero-shot personalization?",
+      "relevant_chunk_ids": [
+        "REPLACE_WITH_VERIFIED_CHUNK_ID"
+      ]
+    }
+  ]
+}

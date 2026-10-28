@@ -1,0 +1,2187 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {},
+  "nodes": [
+    {
+      "name": "Knowledge Graph Curation: A Practical Framework",
+      "node_type": "Paper",
+      "paper_id": "2208.08130v1",
+      "id": "paper::2208.08130v1"
+    },
+    {
+      "name": "Practical knowledge graph curation framework",
+      "node_type": "Method",
+      "description": "A proposed framework for improving the quality of Knowledge Graphs.",
+      "id": "method::practical_knowledge_graph_curation_framework"
+    },
+    {
+      "name": "Knowledge graph assessment",
+      "node_type": "Method",
+      "description": "The first step to curate KGs, involving assessing their status based on quality dimensions.",
+      "id": "method::knowledge_graph_assessment"
+    },
+    {
+      "name": "Knowledge graph cleaning",
+      "node_type": "Method",
+      "description": "A task aiming to improve the correctness of KGs by addressing syntax and semantic errors.",
+      "id": "method::knowledge_graph_cleaning"
+    },
+    {
+      "name": "Knowledge graph enrichment",
+      "node_type": "Method",
+      "description": "A process of high practical relevance to improve the completeness of KGs.",
+      "id": "method::knowledge_graph_enrichment"
+    },
+    {
+      "name": "Verification of KGs",
+      "node_type": "Method",
+      "description": "The process of evaluating KGs with formal specifications of integrity constraints.",
+      "id": "method::verification_of_kgs"
+    },
+    {
+      "name": "Validation of KGs",
+      "node_type": "Method",
+      "description": "A critical task to provide accurate, correct, and reliable knowledge by checking if assertions correspond to the 'real' world.",
+      "id": "method::validation_of_kgs"
+    },
+    {
+      "name": "Duplicate detection",
+      "node_type": "Method",
+      "description": "Identifying where two or more records in a single or various KGs refer to the same entity.",
+      "id": "method::duplicate_detection"
+    },
+    {
+      "name": "Knowledge fusion",
+      "node_type": "Method",
+      "description": "Handling situations where duplicated entities have different values for the same property.",
+      "id": "method::knowledge_fusion"
+    },
+    {
+      "name": "Query-based approaches",
+      "node_type": "Method",
+      "description": "Methods for verifying KGs using query languages.",
+      "id": "method::query_based_approaches"
+    },
+    {
+      "name": "Inference-based approaches",
+      "node_type": "Method",
+      "description": "Methods for verifying KGs using inference rules.",
+      "id": "method::inference_based_approaches"
+    },
+    {
+      "name": "Structural languages",
+      "node_type": "Method",
+      "description": "Methods for verifying KGs using structural definitions.",
+      "id": "method::structural_languages"
+    },
+    {
+      "name": "Internal approaches (for validation)",
+      "node_type": "Method",
+      "description": "Methods for validating KGs that rely on statements or triples within the KG itself.",
+      "id": "method::internal_approaches_for_validation"
+    },
+    {
+      "name": "Identifying and resolving duplicates",
+      "node_type": "Method",
+      "description": "A task within knowledge graph enrichment to find and link records referring to the same entity.",
+      "id": "method::identifying_and_resolving_duplicates"
+    },
+    {
+      "name": "Resolving conflicting property value assertions",
+      "node_type": "Method",
+      "description": "A task within knowledge graph enrichment to handle different values for the same property across duplicated entities.",
+      "id": "method::resolving_conflicting_property_value_assertions"
+    },
+    {
+      "name": "Instance matching",
+      "node_type": "Method",
+      "description": "A process used in enrichment to detect duplicates in KGs.",
+      "id": "method::instance_matching"
+    },
+    {
+      "name": "Entity fusion process",
+      "node_type": "Method",
+      "description": "A process supported by fusion strategies to resolve conflicting property values.",
+      "id": "method::entity_fusion_process"
+    },
+    {
+      "name": "Configuration learning module",
+      "node_type": "Method",
+      "description": "A module that tries to find a tuned configuration for instance matching.",
+      "id": "method::configuration_learning_module"
+    },
+    {
+      "name": "Defining weights of importance",
+      "node_type": "Method",
+      "description": "A user-driven method to assign importance to quality dimensions for specific application scenarios.",
+      "id": "method::defining_weights_of_importance"
+    },
+    {
+      "name": "Schemarama",
+      "node_type": "Method",
+      "description": "A query-based approach for KG verification that applies the XPath method and uses SquisQL language.",
+      "id": "method::schemarama"
+    },
+    {
+      "name": "SPARQL Query Language",
+      "node_type": "Method",
+      "description": "A query language used in query-based approaches for KG verification.",
+      "id": "method::sparql_query_language"
+    },
+    {
+      "name": "Simple Application-Specific Constraints",
+      "node_type": "Method",
+      "description": "A query-based approach for KG verification.",
+      "id": "method::simple_application_specific_constraints"
+    },
+    {
+      "name": "SPARQL Inferencing Notation (SPIN)",
+      "node_type": "Method",
+      "description": "A query-based approach for KG verification.",
+      "id": "method::sparql_inferencing_notation_spin"
+    },
+    {
+      "name": "RDFUnit",
+      "node_type": "Method",
+      "description": "A query-based approach for KG verification.",
+      "id": "method::rdfunit"
+    },
+    {
+      "name": "Shape Expressions (ShEx)",
+      "node_type": "Method",
+      "description": "A query-based approach for KG verification that uses SPARQL queries.",
+      "id": "method::shape_expressions_shex"
+    },
+    {
+      "name": "Shapes Constraint Language (SHACL)",
+      "node_type": "Method",
+      "description": "A query-based approach for KG verification that uses SPARQL queries.",
+      "id": "method::shapes_constraint_language_shacl"
+    },
+    {
+      "name": "TreeHugger",
+      "node_type": "Method",
+      "description": "An inference-based approach for KG verification that uses XPath.",
+      "id": "method::treehugger"
+    },
+    {
+      "name": "Schematron rules",
+      "node_type": "Method",
+      "description": "An inference-based approach for KG verification that uses XPath.",
+      "id": "method::schematron_rules"
+    },
+    {
+      "name": "Stardog ICV",
+      "node_type": "Method",
+      "description": "An inference-based approach for KG verification that implements various constraints.",
+      "id": "method::stardog_icv"
+    },
+    {
+      "name": "OSLC Resource Shape",
+      "node_type": "Method",
+      "description": "A structural language for KG verification that defines property constraints.",
+      "id": "method::oslc_resource_shape"
+    },
+    {
+      "name": "Dublin Core Application Profiles",
+      "node_type": "Method",
+      "description": "A structural language for KG verification that defines constraints of values and cardinality of properties.",
+      "id": "method::dublin_core_application_profiles"
+    },
+    {
+      "name": "RDF Data Description (RDD)",
+      "node_type": "Method",
+      "description": "A structural language for KG verification that defines property and class constraints.",
+      "id": "method::rdf_data_description_rdd"
+    },
+    {
+      "name": "COPAAL",
+      "node_type": "Method",
+      "description": "A tool for internal KG validation that evaluates possible interesting relationships between entity pairs.",
+      "id": "method::copaal"
+    },
+    {
+      "name": "KGTtm",
+      "node_type": "Method",
+      "description": "A tool for internal KG validation that evaluates possible interesting relationships between entity pairs.",
+      "id": "method::kgttm"
+    },
+    {
+      "name": "De-Facto",
+      "node_type": "Method",
+      "description": "A tool for external KG validation that relies on the Web and/or external knowledge sources.",
+      "id": "method::de_facto"
+    },
+    {
+      "name": "ExFaKT",
+      "node_type": "Method",
+      "description": "A tool for external KG validation that relies on the Web and/or external knowledge sources.",
+      "id": "method::exfakt"
+    },
+    {
+      "name": "Leopard",
+      "node_type": "Method",
+      "description": "A tool for external KG validation that relies on the Web and/or external knowledge sources.",
+      "id": "method::leopard"
+    },
+    {
+      "name": "FactCheck",
+      "node_type": "Method",
+      "description": "A tool for external KG validation that relies on the Web and/or external knowledge sources.",
+      "id": "method::factcheck"
+    },
+    {
+      "name": "FacTify",
+      "node_type": "Method",
+      "description": "A tool for external KG validation that relies on the Web and/or external knowledge sources.",
+      "id": "method::factify"
+    },
+    {
+      "name": "ADEL",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::adel"
+    },
+    {
+      "name": "DDaaS",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::ddaas"
+    },
+    {
+      "name": "Dedupe",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::dedupe"
+    },
+    {
+      "name": "DuDe",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::dude"
+    },
+    {
+      "name": "Duke",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::duke"
+    },
+    {
+      "name": "Legato",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::legato"
+    },
+    {
+      "name": "LIMES",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::limes"
+    },
+    {
+      "name": "SERIMI",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::serimi"
+    },
+    {
+      "name": "Silk",
+      "node_type": "Method",
+      "description": "A tool for identifying and resolving duplicates in KGs.",
+      "id": "method::silk"
+    },
+    {
+      "name": "FAGI",
+      "node_type": "Method",
+      "description": "A tool for resolving conflicting property value assertions, focusing on geospatial data.",
+      "id": "method::fagi"
+    },
+    {
+      "name": "Sieve",
+      "node_type": "Method",
+      "description": "A tool for resolving conflicting property value assertions.",
+      "id": "method::sieve"
+    },
+    {
+      "name": "SLIPO Toolkit",
+      "node_type": "Method",
+      "description": "A tool for resolving conflicting property value assertions.",
+      "id": "method::slipo_toolkit"
+    },
+    {
+      "name": "Genetic algorithm",
+      "node_type": "Method",
+      "description": "An algorithm that can automatically tune a configuration for duplicate detection.",
+      "id": "method::genetic_algorithm"
+    },
+    {
+      "name": "Amazon Product Knowledge Graph",
+      "node_type": "Dataset",
+      "description": "A proprietary knowledge graph.",
+      "id": "dataset::amazon_product_knowledge_graph"
+    },
+    {
+      "name": "Bing Knowledge Graph",
+      "node_type": "Dataset",
+      "description": "A large knowledge graph.",
+      "id": "dataset::bing_knowledge_graph"
+    },
+    {
+      "name": "eBay’s Product Knowledge Graph",
+      "node_type": "Dataset",
+      "description": "A proprietary knowledge graph.",
+      "id": "dataset::ebay_s_product_knowledge_graph"
+    },
+    {
+      "name": "Google’s Knowledge Graph",
+      "node_type": "Dataset",
+      "description": "A very large semantic net that integrates various and heterogeneous information sources.",
+      "id": "dataset::google_s_knowledge_graph"
+    },
+    {
+      "name": "DBpedia",
+      "node_type": "Dataset",
+      "description": "An open knowledge graph.",
+      "id": "dataset::dbpedia"
+    },
+    {
+      "name": "Wikidata",
+      "node_type": "Dataset",
+      "description": "An open knowledge graph.",
+      "id": "dataset::wikidata"
+    },
+    {
+      "name": "Freebase",
+      "node_type": "Dataset",
+      "description": "A data source used for comparative analysis of data quality dimensions and as an external source for validation.",
+      "id": "dataset::freebase"
+    },
+    {
+      "name": "OpenCyc",
+      "node_type": "Dataset",
+      "description": "A data source used for comparative analysis of data quality dimensions.",
+      "id": "dataset::opencyc"
+    },
+    {
+      "name": "YAGO",
+      "node_type": "Dataset",
+      "description": "A data source used for comparative analysis of data quality dimensions.",
+      "id": "dataset::yago"
+    },
+    {
+      "name": "Linked Open Data datasets",
+      "node_type": "Dataset",
+      "description": "External sources used for validating KGs.",
+      "id": "dataset::linked_open_data_datasets"
+    },
+    {
+      "name": "Wikipedia pages",
+      "node_type": "Dataset",
+      "description": "External sources frequently used for validating KGs and as open corpora.",
+      "id": "dataset::wikipedia_pages"
+    },
+    {
+      "name": "Quality metrics",
+      "node_type": "Metric",
+      "description": "A set of measures for assessing the status of Knowledge Graphs.",
+      "id": "metric::quality_metrics"
+    },
+    {
+      "name": "Accessibility",
+      "node_type": "Metric",
+      "description": "A quality dimension implying that the KG must be available, provide a public SPARQL endpoint, be retrievable in RDF format, support content negotiation, and describe a licence.",
+      "id": "metric::accessibility"
+    },
+    {
+      "name": "Accuracy",
+      "node_type": "Metric",
+      "description": "A quality dimension defining the syntactic and semantic validity of assertions contained in the KG.",
+      "id": "metric::accuracy"
+    },
+    {
+      "name": "Appropriate amount",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating whether the KG contains knowledge for specific use case scenarios.",
+      "id": "metric::appropriate_amount"
+    },
+    {
+      "name": "Believability",
+      "node_type": "Metric",
+      "description": "A quality dimension measuring whether the KG provides provenance information and is verifiable.",
+      "id": "metric::believability"
+    },
+    {
+      "name": "Completeness",
+      "node_type": "Metric",
+      "description": "A quality dimension in terms of schema and instance level for a specific use case.",
+      "id": "metric::completeness"
+    },
+    {
+      "name": "Concise representation",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating the use of blank nodes and reification.",
+      "id": "metric::concise_representation"
+    },
+    {
+      "name": "Consistent representation",
+      "node_type": "Metric",
+      "description": "A quality dimension detecting the existence of disjoint inconsistencies of classes and schema restrictions in the KG.",
+      "id": "metric::consistent_representation"
+    },
+    {
+      "name": "Cost-effectiveness",
+      "node_type": "Metric",
+      "description": "A quality dimension measuring the degree to which accurate data is necessary.",
+      "id": "metric::cost_effectiveness"
+    },
+    {
+      "name": "Ease of manipulation",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating the existence of documentation for manipulating the knowledge contained in the KG.",
+      "id": "metric::ease_of_manipulation"
+    },
+    {
+      "name": "Ease of operation",
+      "node_type": "Metric",
+      "description": "A quality dimension referring to the possibility of updating, downloading, and integrating the KG.",
+      "id": "metric::ease_of_operation"
+    },
+    {
+      "name": "Ease of understanding",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating whether self-descriptive URIs are used and knowledge is presented in more than one language.",
+      "id": "metric::ease_of_understanding"
+    },
+    {
+      "name": "Free-of-error",
+      "node_type": "Metric",
+      "description": "A quality dimension referring to the total number of wrong and missing assertions contained in the KG.",
+      "id": "metric::free_of_error"
+    },
+    {
+      "name": "Interoperability",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating whether the KG re-uses standard vocabularies and complies with Linked Open Data 5 Star.",
+      "id": "metric::interoperability"
+    },
+    {
+      "name": "Objectivity",
+      "node_type": "Metric",
+      "description": "A quality dimension defining the degree to which the KG is unbiased and impartial.",
+      "id": "metric::objectivity"
+    },
+    {
+      "name": "Relevancy",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating the level of applicability, in terms of domain coverage, of the KG to a specific use case.",
+      "id": "metric::relevancy"
+    },
+    {
+      "name": "Reputation",
+      "node_type": "Metric",
+      "description": "A quality dimension measuring whether explicit trust ratings exist for the KG or qualifiers exist on KG’s statements.",
+      "id": "metric::reputation"
+    },
+    {
+      "name": "Security",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating the degree to which the KG uses a digital signature and verifies the identity of the publisher.",
+      "id": "metric::security"
+    },
+    {
+      "name": "Timeliness",
+      "node_type": "Metric",
+      "description": "A quality dimension measuring the frequency of updates occurring in the KG and the validity period of its statements.",
+      "id": "metric::timeliness"
+    },
+    {
+      "name": "Traceability",
+      "node_type": "Metric",
+      "description": "A quality dimension evaluating the degree to which the KG provides provenance information and keeps a log of edits and changes.",
+      "id": "metric::traceability"
+    },
+    {
+      "name": "Variety",
+      "node_type": "Metric",
+      "description": "A quality dimension referring to the degree to which the KG contains knowledge from different sources and various domains.",
+      "id": "metric::variety"
+    },
+    {
+      "name": "Weights of importance",
+      "node_type": "Metric",
+      "description": "User-defined degrees of importance for quality dimensions.",
+      "id": "metric::weights_of_importance"
+    },
+    {
+      "name": "Knowledge Graphs (KGs)",
+      "node_type": "Concept",
+      "description": "Very large semantic nets that integrate various and heterogeneous information sources to represent knowledge about certain domains of discourse.",
+      "id": "concept::knowledge_graphs_kgs"
+    },
+    {
+      "name": "Knowledge graph curation",
+      "node_type": "Concept",
+      "description": "The process of improving the quality of knowledge graphs.",
+      "id": "concept::knowledge_graph_curation"
+    },
+    {
+      "name": "Knowledge graph refinement",
+      "node_type": "Concept",
+      "description": "Another term for knowledge graph curation.",
+      "id": "concept::knowledge_graph_refinement"
+    },
+    {
+      "name": "Knowledge assessment",
+      "node_type": "Concept",
+      "description": "A critical task in knowledge graph curation to provide reliable, correct, and complete knowledge.",
+      "id": "concept::knowledge_assessment"
+    },
+    {
+      "name": "Knowledge cleaning",
+      "node_type": "Concept",
+      "description": "A critical task in knowledge graph curation to provide reliable, correct, and complete knowledge.",
+      "id": "concept::knowledge_cleaning"
+    },
+    {
+      "name": "Knowledge enrichment",
+      "node_type": "Concept",
+      "description": "A critical task in knowledge graph curation to provide reliable, correct, and complete knowledge.",
+      "id": "concept::knowledge_enrichment"
+    },
+    {
+      "name": "Semantic nets",
+      "node_type": "Concept",
+      "description": "A type of data structure that Knowledge Graphs are described as.",
+      "id": "concept::semantic_nets"
+    },
+    {
+      "name": "Structured data",
+      "node_type": "Concept",
+      "description": "Data provided by KGs for customer applications.",
+      "id": "concept::structured_data"
+    },
+    {
+      "name": "Inconsistencies (in KGs)",
+      "node_type": "Concept",
+      "description": "Issues such as duplicates, wrong assertions, and missing values that compromise business intelligence applications.",
+      "id": "concept::inconsistencies_in_kgs"
+    },
+    {
+      "name": "Duplicates",
+      "node_type": "Concept",
+      "description": "Errors in KGs where two or more records refer to the same entity.",
+      "id": "concept::duplicates"
+    },
+    {
+      "name": "Wrong assertions",
+      "node_type": "Concept",
+      "description": "Errors in KGs that compromise business intelligence applications.",
+      "id": "concept::wrong_assertions"
+    },
+    {
+      "name": "Missing values",
+      "node_type": "Concept",
+      "description": "Errors in KGs that compromise business intelligence applications.",
+      "id": "concept::missing_values"
+    },
+    {
+      "name": "Correctness (of KGs)",
+      "node_type": "Concept",
+      "description": "An aspect of KG quality that knowledge graph cleaning aims to improve.",
+      "id": "concept::correctness_of_kgs"
+    },
+    {
+      "name": "Completeness (of KGs)",
+      "node_type": "Concept",
+      "description": "An aspect of KG quality that knowledge graph enrichment aims to improve.",
+      "id": "concept::completeness_of_kgs"
+    },
+    {
+      "name": "Quality dimensions",
+      "node_type": "Concept",
+      "description": "Criteria used for assessing the status of KGs.",
+      "id": "concept::quality_dimensions"
+    },
+    {
+      "name": "Fitness for use",
+      "node_type": "Concept",
+      "description": "The challenge for a data consumer to define a useful data source for specific tasks.",
+      "id": "concept::fitness_for_use"
+    },
+    {
+      "name": "Schema conformance",
+      "node_type": "Concept",
+      "description": "An aspect evaluated during the verification of KGs.",
+      "id": "concept::schema_conformance"
+    },
+    {
+      "name": "Integrity constraints",
+      "node_type": "Concept",
+      "description": "Formal specifications used to evaluate KGs during verification.",
+      "id": "concept::integrity_constraints"
+    },
+    {
+      "name": "Real world (representation)",
+      "node_type": "Concept",
+      "description": "What KGs should accurately describe or represent, checked during validation.",
+      "id": "concept::real_world_representation"
+    },
+    {
+      "name": "Conflicting property value assertions",
+      "node_type": "Concept",
+      "description": "Situations where duplicated entities have different values for the same property.",
+      "id": "concept::conflicting_property_value_assertions"
+    },
+    {
+      "name": "Data fusion",
+      "node_type": "Concept",
+      "description": "The task of resolving conflicting property value assertions.",
+      "id": "concept::data_fusion"
+    },
+    {
+      "name": "Automation",
+      "node_type": "Concept",
+      "description": "The ability to perform tasks without human intervention, a challenge for quality dimensions.",
+      "id": "concept::automation"
+    },
+    {
+      "name": "Cost-effectiveness (concept)",
+      "node_type": "Concept",
+      "description": "A finding related to the high cost of validating KGs.",
+      "id": "concept::cost_effectiveness_concept"
+    },
+    {
+      "name": "Dynamic data",
+      "node_type": "Concept",
+      "description": "Fast-changing data that adds complexity to KG curation.",
+      "id": "concept::dynamic_data"
+    },
+    {
+      "name": "Prevention (of errors)",
+      "node_type": "Concept",
+      "description": "The concept of catching syntactic and semantic errors during KG creation and hosting.",
+      "id": "concept::prevention_of_errors"
+    },
+    {
+      "name": "Reproducibility",
+      "node_type": "Concept",
+      "description": "A finding related to the documentation and usability issues of KG curation tools.",
+      "id": "concept::reproducibility"
+    },
+    {
+      "name": "Re-usability",
+      "node_type": "Concept",
+      "description": "A finding related to how knowledge assessment frameworks can help identify reliable KGs and the limitations of similarity metrics.",
+      "id": "concept::re_usability"
+    },
+    {
+      "name": "User-in-the-Loop",
+      "node_type": "Concept",
+      "description": "A concept where users define the degree of importance for quality dimensions.",
+      "id": "concept::user_in_the_loop"
+    },
+    {
+      "name": "Scalability",
+      "node_type": "Concept",
+      "description": "A finding indicating that existing frameworks lack the ability to handle large KGs.",
+      "id": "concept::scalability"
+    },
+    {
+      "name": "Trade-off between completeness and correctness",
+      "node_type": "Concept",
+      "description": "A common challenge in KG curation where improving one may negatively impact the other.",
+      "id": "concept::trade_off_between_completeness_and_correctness"
+    },
+    {
+      "name": "Schema alignment",
+      "node_type": "Concept",
+      "description": "A semi-automatic mapping between KGs.",
+      "id": "concept::schema_alignment"
+    },
+    {
+      "name": "SPARQL endpoint",
+      "node_type": "Concept",
+      "description": "A public interface for querying KGs.",
+      "id": "concept::sparql_endpoint"
+    },
+    {
+      "name": "RDF format",
+      "node_type": "Concept",
+      "description": "A standard format for retrieving KGs.",
+      "id": "concept::rdf_format"
+    },
+    {
+      "name": "Content negotiation",
+      "node_type": "Concept",
+      "description": "A mechanism for serving different representations of a resource.",
+      "id": "concept::content_negotiation"
+    },
+    {
+      "name": "Licence",
+      "node_type": "Concept",
+      "description": "Information describing the terms of use for a KG.",
+      "id": "concept::licence"
+    },
+    {
+      "name": "Syntactic validity",
+      "node_type": "Concept",
+      "description": "The correctness of the structure of assertions.",
+      "id": "concept::syntactic_validity"
+    },
+    {
+      "name": "Semantic validity",
+      "node_type": "Concept",
+      "description": "The correctness of the meaning of assertions.",
+      "id": "concept::semantic_validity"
+    },
+    {
+      "name": "Provenance information",
+      "node_type": "Concept",
+      "description": "Information about the origin or source of knowledge.",
+      "id": "concept::provenance_information"
+    },
+    {
+      "name": "Blank nodes",
+      "node_type": "Concept",
+      "description": "Nodes in RDF graphs that are not identified by a URI or literal.",
+      "id": "concept::blank_nodes"
+    },
+    {
+      "name": "Reification",
+      "node_type": "Concept",
+      "description": "The process of making statements about statements in RDF.",
+      "id": "concept::reification"
+    },
+    {
+      "name": "Disjoint inconsistencies",
+      "node_type": "Concept",
+      "description": "Conflicts where classes are defined as mutually exclusive but contain common instances.",
+      "id": "concept::disjoint_inconsistencies"
+    },
+    {
+      "name": "Schema restrictions",
+      "node_type": "Concept",
+      "description": "Constraints defined within a KG's schema.",
+      "id": "concept::schema_restrictions"
+    },
+    {
+      "name": "Documentation",
+      "node_type": "Concept",
+      "description": "Information describing how to manipulate knowledge in a KG.",
+      "id": "concept::documentation"
+    },
+    {
+      "name": "Self-descriptive URIs",
+      "node_type": "Concept",
+      "description": "URIs that convey meaning about the resource they identify.",
+      "id": "concept::self_descriptive_uris"
+    },
+    {
+      "name": "Standard vocabularies",
+      "node_type": "Concept",
+      "description": "Pre-defined sets of terms used for interoperability.",
+      "id": "concept::standard_vocabularies"
+    },
+    {
+      "name": "Linked Open Data 5 Star",
+      "node_type": "Concept",
+      "description": "A compliance level for linked data.",
+      "id": "concept::linked_open_data_5_star"
+    },
+    {
+      "name": "Unbiased data",
+      "node_type": "Concept",
+      "description": "Data that does not show prejudice towards a particular group or viewpoint.",
+      "id": "concept::unbiased_data"
+    },
+    {
+      "name": "Impartial data",
+      "node_type": "Concept",
+      "description": "Data that is fair and objective.",
+      "id": "concept::impartial_data"
+    },
+    {
+      "name": "Domain coverage",
+      "node_type": "Concept",
+      "description": "The extent to which a KG covers a specific area of knowledge.",
+      "id": "concept::domain_coverage"
+    },
+    {
+      "name": "Trust ratings",
+      "node_type": "Concept",
+      "description": "Explicit evaluations of the trustworthiness of a KG.",
+      "id": "concept::trust_ratings"
+    },
+    {
+      "name": "Qualifiers on statements",
+      "node_type": "Concept",
+      "description": "Additional information attached to statements to indicate their context or reliability.",
+      "id": "concept::qualifiers_on_statements"
+    },
+    {
+      "name": "Digital signature",
+      "node_type": "Concept",
+      "description": "A cryptographic mechanism for verifying the authenticity and integrity of data.",
+      "id": "concept::digital_signature"
+    },
+    {
+      "name": "Publisher identity",
+      "node_type": "Concept",
+      "description": "Information identifying the creator or maintainer of a KG.",
+      "id": "concept::publisher_identity"
+    },
+    {
+      "name": "Validity period (of statements)",
+      "node_type": "Concept",
+      "description": "The timeframe during which a statement in a KG is considered accurate.",
+      "id": "concept::validity_period_of_statements"
+    },
+    {
+      "name": "Log of edits and changes",
+      "node_type": "Concept",
+      "description": "A record of modifications made to a KG.",
+      "id": "concept::log_of_edits_and_changes"
+    },
+    {
+      "name": "Different sources (for KGs)",
+      "node_type": "Concept",
+      "description": "Various origins from which knowledge in a KG is derived.",
+      "id": "concept::different_sources_for_kgs"
+    },
+    {
+      "name": "Various domains (for KGs)",
+      "node_type": "Concept",
+      "description": "Multiple subject areas covered by a KG.",
+      "id": "concept::various_domains_for_kgs"
+    },
+    {
+      "name": "Constraint language",
+      "node_type": "Concept",
+      "description": "A language used for defining formal specifications of integrity constraints for KGs.",
+      "id": "concept::constraint_language"
+    },
+    {
+      "name": "Outlier detection techniques",
+      "node_type": "Concept",
+      "description": "Methods used in internal validation to identify property values outside assumed distributions.",
+      "id": "concept::outlier_detection_techniques"
+    },
+    {
+      "name": "Embedding models",
+      "node_type": "Concept",
+      "description": "Models used in internal validation approaches.",
+      "id": "concept::embedding_models"
+    },
+    {
+      "name": "Topic coherence",
+      "node_type": "Concept",
+      "description": "A technique used in external validation to assess the semantic relatedness of topics.",
+      "id": "concept::topic_coherence"
+    },
+    {
+      "name": "Information extraction",
+      "node_type": "Concept",
+      "description": "A technique used in external validation to derive structured information from unstructured text.",
+      "id": "concept::information_extraction"
+    },
+    {
+      "name": "Open corpora",
+      "node_type": "Concept",
+      "description": "Publicly available collections of text or data, used to overcome validation costs.",
+      "id": "concept::open_corpora"
+    },
+    {
+      "name": "Proprietary services",
+      "node_type": "Concept",
+      "description": "Services that are privately owned and may incur high deployment costs for KG validation.",
+      "id": "concept::proprietary_services"
+    },
+    {
+      "name": "Similarity metrics",
+      "node_type": "Concept",
+      "description": "Measures used in duplicate detection frameworks to compare records.",
+      "id": "concept::similarity_metrics"
+    },
+    {
+      "name": "Automation of quality dimensions is difficult",
+      "node_type": "Finding",
+      "description": "Various quality dimensions can hardly be fully automated for technical or operational reasons.",
+      "id": "finding::automation_of_quality_dimensions_is_difficult"
+    },
+    {
+      "name": "Validating KGs can be costly",
+      "node_type": "Finding",
+      "description": "Validating KGs may lead to a high cost of deployment due to dependency on proprietary services.",
+      "id": "finding::validating_kgs_can_be_costly"
+    },
+    {
+      "name": "Open corpora can reduce cost but lower performance",
+      "node_type": "Finding",
+      "description": "The cost of KG validation can be overcome by using open corpora (e.g., Wikipedia), but its performance lowers down.",
+      "id": "finding::open_corpora_can_reduce_cost_but_lower_performance"
+    },
+    {
+      "name": "Dynamic data adds complexity to KG curation",
+      "node_type": "Finding",
+      "description": "The complexity of dynamic data (i.e., fast-changing data) should be considered in KG curation as statements can be represented differently over time.",
+      "id": "finding::dynamic_data_adds_complexity_to_kg_curation"
+    },
+    {
+      "name": "Errors can be prevented during KG creation and hosting",
+      "node_type": "Finding",
+      "description": "Syntactic and semantic errors can be caught during the creation and hosting of KGs, for instance, by checking input data conformance to a specific schema.",
+      "id": "finding::errors_can_be_prevented_during_kg_creation_and_hosting"
+    },
+    {
+      "name": "Expressivity of constraint languages is related to SPARQL expressivity",
+      "node_type": "Finding",
+      "description": "The expressivity of constraint languages is directly related to the expressivity of SPARQL.",
+      "id": "finding::expressivity_of_constraint_languages_is_related_to_sparql_expressivity"
+    },
+    {
+      "name": "KG curation tools have usability and maintenance issues",
+      "node_type": "Finding",
+      "description": "Most KG curation tools provide documentation but have usability issues, are complex to apply in different domains, and many are abandoned or no longer maintained.",
+      "id": "finding::kg_curation_tools_have_usability_and_maintenance_issues"
+    },
+    {
+      "name": "Knowledge assessment frameworks help identify reliable KGs for re-use",
+      "node_type": "Finding",
+      "description": "Knowledge assessment frameworks may help to identify reliable and trustworthy KGs, to which user’s KG can be interlinked.",
+      "id": "finding::knowledge_assessment_frameworks_help_identify_reliable_kgs_for_re_use"
+    },
+    {
+      "name": "Duplicate detection frameworks often offer simple similarity metrics",
+      "node_type": "Finding",
+      "description": "Most duplicate detection frameworks offer only simple similarity metrics, but complex cases require complex metrics.",
+      "id": "finding::duplicate_detection_frameworks_often_offer_simple_similarity_metrics"
+    },
+    {
+      "name": "Users can define importance weights for quality dimensions",
+      "node_type": "Finding",
+      "description": "Users can define the degree of importance of a quality dimension (i.e., weights) for assessing a KG, according to the task at hand.",
+      "id": "finding::users_can_define_importance_weights_for_quality_dimensions"
+    },
+    {
+      "name": "Existing frameworks lack scalability for large KGs",
+      "node_type": "Finding",
+      "description": "Existing frameworks are still lacking scalability to large KGs.",
+      "id": "finding::existing_frameworks_lack_scalability_for_large_kgs"
+    },
+    {
+      "name": "Genetic algorithm can tune configuration for duplicate detection",
+      "node_type": "Finding",
+      "description": "Applying a genetic algorithm can automatically tune a configuration for duplicate detection (i.e., Configuration learning process).",
+      "id": "finding::genetic_algorithm_can_tune_configuration_for_duplicate_detection"
+    },
+    {
+      "name": "Trade-off between completeness and correctness exists in KG curation",
+      "node_type": "Finding",
+      "description": "Curation of KGs usually implies a trade-off between correctness and completeness.",
+      "id": "finding::trade_off_between_completeness_and_correctness_exists_in_kg_curation"
+    },
+    {
+      "name": "Most approaches detect errors but leave correction to users",
+      "node_type": "Finding",
+      "description": "Most of the approaches only detect errors or missing values but leave the correction part completely to users.",
+      "id": "finding::most_approaches_detect_errors_but_leave_correction_to_users"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::practical_knowledge_graph_curation_framework",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::knowledge_graph_assessment",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::knowledge_graph_cleaning",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::knowledge_graph_enrichment",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::verification_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::validation_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::duplicate_detection",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::knowledge_fusion",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::query_based_approaches",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::inference_based_approaches",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::structural_languages",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::internal_approaches_for_validation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::identifying_and_resolving_duplicates",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::resolving_conflicting_property_value_assertions",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::instance_matching",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::entity_fusion_process",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::configuration_learning_module",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::defining_weights_of_importance",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::schemarama",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::sparql_query_language",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::simple_application_specific_constraints",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::sparql_inferencing_notation_spin",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::rdfunit",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::shape_expressions_shex",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::shapes_constraint_language_shacl",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::treehugger",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::schematron_rules",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::stardog_icv",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::oslc_resource_shape",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::dublin_core_application_profiles",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::rdf_data_description_rdd",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::copaal",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::kgttm",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::de_facto",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::exfakt",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::leopard",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::factcheck",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::factify",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::adel",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::ddaas",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::dedupe",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::dude",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::duke",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::legato",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::limes",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::serimi",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::silk",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::fagi",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::sieve",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::slipo_toolkit",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "method::genetic_algorithm",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::amazon_product_knowledge_graph",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::bing_knowledge_graph",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::ebay_s_product_knowledge_graph",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::google_s_knowledge_graph",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::dbpedia",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::wikidata",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::freebase",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::opencyc",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::yago",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::linked_open_data_datasets",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "dataset::wikipedia_pages",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::quality_metrics",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::accessibility",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::accuracy",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::appropriate_amount",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::believability",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::completeness",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::concise_representation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::consistent_representation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::cost_effectiveness",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::ease_of_manipulation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::ease_of_operation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::ease_of_understanding",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::free_of_error",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::interoperability",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::objectivity",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::relevancy",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::reputation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::security",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::timeliness",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::traceability",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::variety",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "metric::weights_of_importance",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::knowledge_graphs_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::knowledge_graph_curation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::knowledge_graph_refinement",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::knowledge_assessment",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::knowledge_cleaning",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::knowledge_enrichment",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::semantic_nets",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::structured_data",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::inconsistencies_in_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::duplicates",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::wrong_assertions",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::missing_values",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::correctness_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::completeness_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::quality_dimensions",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::fitness_for_use",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::schema_conformance",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::integrity_constraints",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::real_world_representation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::conflicting_property_value_assertions",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::data_fusion",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::automation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::cost_effectiveness_concept",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::dynamic_data",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::prevention_of_errors",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::reproducibility",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::re_usability",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::user_in_the_loop",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::scalability",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::trade_off_between_completeness_and_correctness",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::schema_alignment",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::sparql_endpoint",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::rdf_format",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::content_negotiation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::licence",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::syntactic_validity",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::semantic_validity",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::provenance_information",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::blank_nodes",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::reification",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::disjoint_inconsistencies",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::schema_restrictions",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::documentation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::self_descriptive_uris",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::standard_vocabularies",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::linked_open_data_5_star",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::unbiased_data",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::impartial_data",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::domain_coverage",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::trust_ratings",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::qualifiers_on_statements",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::digital_signature",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::publisher_identity",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::validity_period_of_statements",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::log_of_edits_and_changes",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::different_sources_for_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::various_domains_for_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::constraint_language",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::outlier_detection_techniques",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::embedding_models",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::topic_coherence",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::information_extraction",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::open_corpora",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::proprietary_services",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "concept::similarity_metrics",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::automation_of_quality_dimensions_is_difficult",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::validating_kgs_can_be_costly",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::open_corpora_can_reduce_cost_but_lower_performance",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::dynamic_data_adds_complexity_to_kg_curation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::errors_can_be_prevented_during_kg_creation_and_hosting",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::expressivity_of_constraint_languages_is_related_to_sparql_expressivity",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::kg_curation_tools_have_usability_and_maintenance_issues",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::knowledge_assessment_frameworks_help_identify_reliable_kgs_for_re_use",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::duplicate_detection_frameworks_often_offer_simple_similarity_metrics",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::users_can_define_importance_weights_for_quality_dimensions",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::existing_frameworks_lack_scalability_for_large_kgs",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::genetic_algorithm_can_tune_configuration_for_duplicate_detection",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::trade_off_between_completeness_and_correctness_exists_in_kg_curation",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2208.08130v1",
+      "target": "finding::most_approaches_detect_errors_but_leave_correction_to_users",
+      "key": 0
+    },
+    {
+      "relation": "improves quality of",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "concept::knowledge_graphs_kgs",
+      "key": 0
+    },
+    {
+      "relation": "defines",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "metric::quality_metrics",
+      "key": 0
+    },
+    {
+      "relation": "describes",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "method::verification_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "describes",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "method::validation_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "presents",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "method::duplicate_detection",
+      "key": 0
+    },
+    {
+      "relation": "presents",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "method::knowledge_fusion",
+      "key": 0
+    },
+    {
+      "relation": "involves",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "method::knowledge_graph_assessment",
+      "key": 0
+    },
+    {
+      "relation": "involves",
+      "source": "method::practical_knowledge_graph_curation_framework",
+      "target": "concept::knowledge_enrichment",
+      "key": 0
+    },
+    {
+      "relation": "is the first step to",
+      "source": "method::knowledge_graph_assessment",
+      "target": "concept::knowledge_graph_curation",
+      "key": 0
+    },
+    {
+      "relation": "aims to improve",
+      "source": "method::knowledge_graph_cleaning",
+      "target": "concept::correctness_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "aims to improve",
+      "source": "method::knowledge_graph_enrichment",
+      "target": "concept::completeness_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "evaluates",
+      "source": "method::verification_of_kgs",
+      "target": "concept::schema_conformance",
+      "key": 0
+    },
+    {
+      "relation": "evaluates",
+      "source": "method::verification_of_kgs",
+      "target": "concept::integrity_constraints",
+      "key": 0
+    },
+    {
+      "relation": "checks whether KGs accurately describe",
+      "source": "method::validation_of_kgs",
+      "target": "concept::real_world_representation",
+      "key": 0
+    },
+    {
+      "relation": "are used for",
+      "source": "method::query_based_approaches",
+      "target": "method::verification_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "are used for",
+      "source": "method::inference_based_approaches",
+      "target": "method::verification_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "are used for",
+      "source": "method::structural_languages",
+      "target": "method::verification_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "rely on statements within a KG for",
+      "source": "method::internal_approaches_for_validation",
+      "target": "method::validation_of_kgs",
+      "key": 0
+    },
+    {
+      "relation": "use external sources for",
+      "source": "method::internal_approaches_for_validation",
+      "target": "method::validation_of_kgs",
+      "key": 1
+    },
+    {
+      "relation": "is a task of",
+      "source": "method::identifying_and_resolving_duplicates",
+      "target": "method::knowledge_graph_enrichment",
+      "key": 0
+    },
+    {
+      "relation": "is a task of",
+      "source": "method::resolving_conflicting_property_value_assertions",
+      "target": "method::knowledge_graph_enrichment",
+      "key": 0
+    },
+    {
+      "relation": "is used for",
+      "source": "method::instance_matching",
+      "target": "method::identifying_and_resolving_duplicates",
+      "key": 0
+    },
+    {
+      "relation": "is used for",
+      "source": "method::entity_fusion_process",
+      "target": "method::resolving_conflicting_property_value_assertions",
+      "key": 0
+    },
+    {
+      "relation": "helps with",
+      "source": "method::configuration_learning_module",
+      "target": "method::instance_matching",
+      "key": 0
+    },
+    {
+      "relation": "can tune configuration for",
+      "source": "method::genetic_algorithm",
+      "target": "method::duplicate_detection",
+      "key": 0
+    },
+    {
+      "relation": "are for",
+      "source": "metric::weights_of_importance",
+      "target": "concept::quality_dimensions",
+      "key": 0
+    },
+    {
+      "relation": "is the process of improving the quality of",
+      "source": "concept::knowledge_graph_curation",
+      "target": "concept::knowledge_graphs_kgs",
+      "key": 0
+    },
+    {
+      "relation": "is a critical task for",
+      "source": "concept::knowledge_assessment",
+      "target": "concept::knowledge_graph_curation",
+      "key": 0
+    },
+    {
+      "relation": "helps decide which KG is best for",
+      "source": "concept::knowledge_assessment",
+      "target": "method::resolving_conflicting_property_value_assertions",
+      "key": 0
+    },
+    {
+      "relation": "is a critical task for",
+      "source": "concept::knowledge_cleaning",
+      "target": "concept::knowledge_graph_curation",
+      "key": 0
+    },
+    {
+      "relation": "is a critical task for",
+      "source": "concept::knowledge_enrichment",
+      "target": "concept::knowledge_graph_curation",
+      "key": 0
+    },
+    {
+      "relation": "are used for",
+      "source": "concept::quality_dimensions",
+      "target": "method::knowledge_graph_assessment",
+      "key": 0
+    },
+    {
+      "relation": "is difficult for",
+      "source": "concept::automation",
+      "target": "concept::quality_dimensions",
+      "key": 0
+    },
+    {
+      "relation": "adds complexity to",
+      "source": "concept::dynamic_data",
+      "target": "concept::knowledge_graph_curation",
+      "key": 0
+    },
+    {
+      "relation": "exists in",
+      "source": "concept::trade_off_between_completeness_and_correctness",
+      "target": "concept::knowledge_graph_curation",
+      "key": 0
+    },
+    {
+      "relation": "is due to",
+      "source": "finding::validating_kgs_can_be_costly",
+      "target": "concept::proprietary_services",
+      "key": 0
+    }
+  ]
+}

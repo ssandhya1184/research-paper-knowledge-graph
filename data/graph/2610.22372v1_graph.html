@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "#222222"}, "group": "Paper", "id": "paper::2610.22372v1", "label": "LIBERO-PeRM: Benchmarking Personalized Robotic Manipulation", "shape": "dot", "title": "Paper: LIBERO-PeRM: Benchmarking Personalized Robotic Manipulation\n"}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::vla_policies", "label": "VLA policies", "shape": "dot", "title": "Method: VLA policies\nVision-Language-Action policies, a type of generalist robotic manipulation model."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::supervised_fine_tuning_sft", "label": "Supervised Fine-Tuning (SFT)", "shape": "dot", "title": "Method: Supervised Fine-Tuning (SFT)\nA method used to make preferences learnable for robotic policies."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::mixed_training", "label": "Mixed training", "shape": "dot", "title": "Method: Mixed training\nA training strategy that combines different types of data or objectives."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::sequential_adaptation", "label": "Sequential adaptation", "shape": "dot", "title": "Method: Sequential adaptation\nA training strategy where models are adapted sequentially."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::contextual_prompts", "label": "Contextual prompts", "shape": "dot", "title": "Method: Contextual prompts\nPrompts that provide additional context to guide policy behavior."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::preference_only_training", "label": "Preference-only training", "shape": "dot", "title": "Method: Preference-only training\nA training strategy focused solely on learning preferences."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::lora", "label": "LoRA", "shape": "dot", "title": "Method: LoRA\nLow-Rank Adaptation, a technique mentioned in relation to preference-only training."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::procedural_generation_pipeline", "label": "Procedural generation pipeline", "shape": "dot", "title": "Method: Procedural generation pipeline\nA pipeline used to automatically instantiate tasks and their preference-conditioned variants, generating demonstrations, metrics, and metadata."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::ompl_planner", "label": "OMPL planner", "shape": "dot", "title": "Method: OMPL planner\nAn Open Motion Planning Library planner used to generate trajectories within the data generation pipeline."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::trajectory_smoothing", "label": "Trajectory smoothing", "shape": "dot", "title": "Method: Trajectory smoothing\nA technique applied to generated trajectories within the data generation pipeline."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::vlm_grounding", "label": "VLM grounding", "shape": "dot", "title": "Method: VLM grounding\nA process used to select preference targets within the data generation pipeline."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::vlm_planner", "label": "VLM planner", "shape": "dot", "title": "Method: VLM planner\nA Vision-Language Model planner used for preference-conditioned task planning within the data generation pipeline."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::vlm_checker", "label": "VLM checker", "shape": "dot", "title": "Method: VLM checker\nA Vision-Language Model checker used to verify skill satisfaction within the data generation pipeline."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::libero_perm", "label": "LIBERO-PeRM", "shape": "dot", "title": "Dataset: LIBERO-PeRM\nA benchmark for personalized robotic manipulation, comprising five task suites and 312 preference-conditioned tasks with pipeline-generated, human-reviewed demonstrations."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::libero_singlepref", "label": "LIBERO-SinglePref", "shape": "dot", "title": "Dataset: LIBERO-SinglePref\nA task suite within LIBERO-PeRM for evaluating single-preference learning."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::libero_prefscale", "label": "LIBERO-PrefScale", "shape": "dot", "title": "Dataset: LIBERO-PrefScale\nA task suite within LIBERO-PeRM for evaluating preference learning efficiency and generalization across data sizes, tasks, and layouts."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::libero_prefconflict", "label": "LIBERO-PrefConflict", "shape": "dot", "title": "Dataset: LIBERO-PrefConflict\nA task suite within LIBERO-PeRM for evaluating preference-preference and task-preference conflicts."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::libero_prefcompose", "label": "LIBERO-PrefCompose", "shape": "dot", "title": "Dataset: LIBERO-PrefCompose\nA task suite within LIBERO-PeRM for evaluating multi-preference composition."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::libero_comprepref", "label": "LIBERO-ComprePref", "shape": "dot", "title": "Dataset: LIBERO-ComprePref\nA task suite within LIBERO-PeRM for evaluating realistic preference-conditioned reasoning based on contextual language."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::preference_satisfaction", "label": "Preference satisfaction", "shape": "dot", "title": "Metric: Preference satisfaction\nA metric to evaluate how well a policy adheres to user preferences."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::task_success", "label": "Task success", "shape": "dot", "title": "Metric: Task success\nA metric to evaluate if the nominal task goal is completed."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::no_preference_retention", "label": "No-preference retention", "shape": "dot", "title": "Metric: No-preference retention\nA metric to evaluate how well a policy retains performance on tasks without preferences."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::personalized_robotic_manipulation_perm", "label": "Personalized Robotic Manipulation (PeRM)", "shape": "dot", "title": "Concept: Personalized Robotic Manipulation (PeRM)\nThe field of study focusing on enabling robots to execute tasks in ways that align with individual user preferences, habits, and constraints."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::preference_learning", "label": "Preference learning", "shape": "dot", "title": "Concept: Preference learning\nThe process by which embodied agents acquire user preferences from demonstrations or other signals."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::zero_shot_personalization", "label": "Zero-shot personalization", "shape": "dot", "title": "Concept: Zero-shot personalization\nThe ability of policies to follow preferences without explicit preference data."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::preference_generalization", "label": "Preference generalization", "shape": "dot", "title": "Concept: Preference generalization\nThe ability of learned preferences to apply across different layouts and tasks."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::preference_composition", "label": "Preference composition", "shape": "dot", "title": "Concept: Preference composition\nThe ability of policies to combine multiple preferences."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::preference_conflicts", "label": "Preference conflicts", "shape": "dot", "title": "Concept: Preference conflicts\nSituations where multiple preferences or a preference and a task goal are in opposition."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::observable_preferences", "label": "Observable preferences", "shape": "dot", "title": "Concept: Observable preferences\nPreferences that can be expressed in language, instantiated without changing the original task goal, evaluated automatically, and reused across tasks."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::motion_preference", "label": "Motion Preference", "shape": "dot", "title": "Concept: Motion Preference\nA type of observable preference that constrains the physical properties of the trajectory (Pmotion)."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::skill_preference", "label": "Skill Preference", "shape": "dot", "title": "Concept: Skill Preference\nA type of observable preference that alters the execution behavior of a specific skill (Pskill)."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::user_profile", "label": "User Profile", "shape": "dot", "title": "Concept: User Profile\nA type of observable preference that uses a user profile or context to guide subtask-level semantic choices (Pprofile)."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::vision_language_action_vla_models", "label": "Vision-Language-Action (VLA) models", "shape": "dot", "title": "Concept: Vision-Language-Action (VLA) models\nModels that integrate vision, language, and action for robotic control."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::current_vla_policies_struggle_with_zero_shot_personalization", "label": "Current VLA policies struggle with zero-shot personalization.", "shape": "dot", "title": "Finding: Current VLA policies struggle with zero-shot personalization.\nObservation that existing Vision-Language-Action policies perform poorly when asked to follow preferences without prior preference data."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::supervised_fine_tuning_sft_makes_preferences_learnable", "label": "Supervised Fine-Tuning (SFT) makes preferences learnable.", "shape": "dot", "title": "Finding: Supervised Fine-Tuning (SFT) makes preferences learnable.\nFinding that applying Supervised Fine-Tuning enables policies to learn and incorporate user preferences."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::mixed_training_achieves_better_no_preference_retention_than_sequential_adaptation", "label": "Mixed training achieves better no-preference retention than sequential adaptation.", "shape": "dot", "title": "Finding: Mixed training achieves better no-preference retention than sequential adaptation.\nResult indicating that a mixed training approach helps policies maintain performance on tasks without preferences more effectively than sequential adaptation."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::mixed_training_improves_performance_with_contextual_prompts_compared_with_preference_only_training", "label": "Mixed training improves performance with contextual prompts compared with preference-only training.", "shape": "dot", "title": "Finding: Mixed training improves performance with contextual prompts compared with preference-only training.\nFinding that mixed training, when combined with contextual prompts, leads to better task success and preference satisfaction than training solely on preferences."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::mixed_training_can_weaken_motion_preference_learning", "label": "Mixed training can weaken motion-preference learning.", "shape": "dot", "title": "Finding: Mixed training can weaken motion-preference learning.\nObservation that while mixed training has benefits, it may negatively impact the learning of motion-specific preferences."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::preference_generalization_decomposition_and_conflict_handling_remain_difficult", "label": "Preference generalization, decomposition, and conflict handling remain difficult.", "shape": "dot", "title": "Finding: Preference generalization, decomposition, and conflict handling remain difficult.\nConclusion that current methods still face significant challenges in applying learned preferences to new situations, breaking down complex preferences, and resolving conflicting preferences."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::broader_layout_diversity_and_matched_no_preference_data_also_help", "label": "Broader layout diversity and matched no-preference data also help.", "shape": "dot", "title": "Finding: Broader layout diversity and matched no-preference data also help.\nFinding that increasing the variety of layouts and providing corresponding no-preference data can improve policy performance."}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::vla_policies"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::supervised_fine_tuning_sft"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::mixed_training"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::sequential_adaptation"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::contextual_prompts"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::preference_only_training"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::lora"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::procedural_generation_pipeline"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::ompl_planner"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::trajectory_smoothing"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::vlm_grounding"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::vlm_planner"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "method::vlm_checker"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "dataset::libero_perm"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "dataset::libero_singlepref"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "dataset::libero_prefscale"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "dataset::libero_prefconflict"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "dataset::libero_prefcompose"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "dataset::libero_comprepref"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "metric::preference_satisfaction"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "metric::task_success"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "metric::no_preference_retention"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::personalized_robotic_manipulation_perm"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::preference_learning"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::zero_shot_personalization"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::preference_generalization"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::preference_composition"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::preference_conflicts"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::observable_preferences"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::motion_preference"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::skill_preference"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::user_profile"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "concept::vision_language_action_vla_models"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "finding::current_vla_policies_struggle_with_zero_shot_personalization"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "finding::supervised_fine_tuning_sft_makes_preferences_learnable"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "finding::mixed_training_achieves_better_no_preference_retention_than_sequential_adaptation"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "finding::mixed_training_improves_performance_with_contextual_prompts_compared_with_preference_only_training"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "finding::mixed_training_can_weaken_motion_preference_learning"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "finding::preference_generalization_decomposition_and_conflict_handling_remain_difficult"}, {"arrows": "to", "from": "paper::2610.22372v1", "label": "contains", "title": "contains", "to": "finding::broader_layout_diversity_and_matched_no_preference_data_also_help"}, {"arrows": "to", "from": "method::vla_policies", "label": "struggle with", "title": "struggle with", "to": "concept::zero_shot_personalization"}, {"arrows": "to", "from": "method::supervised_fine_tuning_sft", "label": "enables", "title": "enables", "to": "concept::preference_learning"}, {"arrows": "to", "from": "method::mixed_training", "label": "achieves better no-preference retention than", "title": "achieves better no-preference retention than", "to": "method::sequential_adaptation"}, {"arrows": "to", "from": "method::mixed_training", "label": "improves performance with", "title": "improves performance with", "to": "method::contextual_prompts"}, {"arrows": "to", "from": "method::mixed_training", "label": "compared with", "title": "compared with", "to": "method::preference_only_training"}, {"arrows": "to", "from": "method::procedural_generation_pipeline", "label": "generates", "title": "generates", "to": "metric::preference_satisfaction"}, {"arrows": "to", "from": "method::ompl_planner", "label": "is used in", "title": "is used in", "to": "method::procedural_generation_pipeline"}, {"arrows": "to", "from": "method::vlm_grounding", "label": "is used in", "title": "is used in", "to": "method::procedural_generation_pipeline"}, {"arrows": "to", "from": "method::vlm_planner", "label": "is used in", "title": "is used in", "to": "method::procedural_generation_pipeline"}, {"arrows": "to", "from": "method::vlm_checker", "label": "is used in", "title": "is used in", "to": "method::procedural_generation_pipeline"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "is a benchmark for", "title": "is a benchmark for", "to": "concept::personalized_robotic_manipulation_perm"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "introduces", "title": "introduces", "to": "method::procedural_generation_pipeline"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "introduces", "title": "introduces", "to": "concept::observable_preferences"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "comprises", "title": "comprises", "to": "dataset::libero_singlepref"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "comprises", "title": "comprises", "to": "dataset::libero_prefscale"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "comprises", "title": "comprises", "to": "dataset::libero_prefconflict"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "comprises", "title": "comprises", "to": "dataset::libero_prefcompose"}, {"arrows": "to", "from": "dataset::libero_perm", "label": "comprises", "title": "comprises", "to": "dataset::libero_comprepref"}, {"arrows": "to", "from": "metric::preference_satisfaction", "label": "evaluates", "title": "evaluates", "to": "concept::personalized_robotic_manipulation_perm"}, {"arrows": "to", "from": "metric::task_success", "label": "evaluates", "title": "evaluates", "to": "concept::personalized_robotic_manipulation_perm"}, {"arrows": "to", "from": "metric::no_preference_retention", "label": "evaluates", "title": "evaluates", "to": "concept::personalized_robotic_manipulation_perm"}, {"arrows": "to", "from": "concept::motion_preference", "label": "is a type of", "title": "is a type of", "to": "concept::observable_preferences"}, {"arrows": "to", "from": "concept::skill_preference", "label": "is a type of", "title": "is a type of", "to": "concept::observable_preferences"}, {"arrows": "to", "from": "concept::user_profile", "label": "is a type of", "title": "is a type of", "to": "concept::observable_preferences"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
