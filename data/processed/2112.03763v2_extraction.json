@@ -1,0 +1,88 @@
+{
+  "methods": [
+    {
+      "name": "Imitation Learning",
+      "entity_type": "Method",
+      "description": "Learning from human demonstrations to instill intelligent behavioural priors in agents."
+    },
+    {
+      "name": "Self-Supervised Learning",
+      "entity_type": "Method",
+      "description": "Auxiliary training objective used in conjunction with imitation learning to improve performance."
+    },
+    {
+      "name": "Behavioural Cloning (BC)",
+      "entity_type": "Method",
+      "description": "Sequence learning technique used for imitation learning from trajectories of human behaviour."
+    },
+    {
+      "name": "Contrastive Self-Supervised Learning",
+      "entity_type": "Method",
+      "description": "Contrastive representation learning technique involving cross-modality matching between vision and language."
+    },
+    {
+      "name": "Hierarchical Action Selection",
+      "entity_type": "Method",
+      "description": "Architectural technique that improves agent performance, implemented via a hierarchical movement policy."
+    }
+  ],
+  "datasets": [
+    {
+      "name": "Playhouse Dataset",
+      "entity_type": "Dataset",
+      "description": "Dataset collected in the Playhouse environment comprising 275,676 train episodes and 34,399 test episodes."
+    }
+  ],
+  "metrics": [],
+  "concepts": [
+    {
+      "name": "MIA (Multimodal Interactive Agent)",
+      "entity_type": "Concept",
+      "description": "A multimodal interactive agent that interacts naturally with humans in a simulated world."
+    },
+    {
+      "name": "Playhouse",
+      "entity_type": "Concept",
+      "description": "A 3D virtual multi-room environment based on the Unity game engine for studying natural interactions."
+    },
+    {
+      "name": "Language Games",
+      "entity_type": "Concept",
+      "description": "A collection of prompted interaction-types and free-form instructions centering Playhouse interactions."
+    }
+  ],
+  "findings": [
+    {
+      "name": "Agent Success Rate",
+      "entity_type": "Finding",
+      "description": "MIA successfully interacts with non-adversarial humans 75% of the time."
+    }
+  ],
+  "relationships": [
+    {
+      "source": "MIA (Multimodal Interactive Agent)",
+      "relation": "interacts with",
+      "target": "Playhouse"
+    },
+    {
+      "source": "MIA (Multimodal Interactive Agent)",
+      "relation": "trained using",
+      "target": "Behavioural Cloning (BC)"
+    },
+    {
+      "source": "MIA (Multimodal Interactive Agent)",
+      "relation": "uses",
+      "target": "Hierarchical Action Selection"
+    },
+    {
+      "source": "Contrastive Self-Supervised Learning",
+      "relation": "applied to",
+      "target": "MIA (Multimodal Interactive Agent)"
+    },
+    {
+      "source": "Playhouse Dataset",
+      "relation": "collected in",
+      "target": "Playhouse"
+    }
+  ]
+}

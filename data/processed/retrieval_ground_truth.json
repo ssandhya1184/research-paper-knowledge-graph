@@ -1,18 +1,66 @@
 {
-  "paper_id": "2610.22372v1",
-  "queries": [
+  "papers": [
     {
-      "query": "How does mixed training affect no-preference retention?",
-      "relevant_chunk_ids": [
-       "2610.22372v1_chunk_45",
-        "2610.22372v1_chunk_49",
-        "2610.22372v1_chunk_48"
+      "paper_id": "2610.22372v1",
+      "queries": [
+        {
+          "query": "How does mixed training affect no-preference retention?",
+          "relevant_chunk_ids": [
+            "2610.22372v1_chunk_45",
+            "2610.22372v1_chunk_49",
+            "2610.22372v1_chunk_48"
+          ]
+        }
       ]
     },
     {
-      "query": "What are the challenges in zero-shot personalization?",
-      "relevant_chunk_ids": [
-        "REPLACE_WITH_VERIFIED_CHUNK_ID"
+      "paper_id": "2401.15391v1",
+      "queries": [
+        {
+          "query": "What are the main challenges existing RAG systems face when answering multi-hop queries, and how does the MultiHop-RAG dataset help evaluate these limitations?",
+          "relevant_chunk_ids": [
+            "2401.15391v1_chunk_54",
+            "2401.15391v1_chunk_38",
+            "2401.15391v1_chunk_10"
+          ]
+        }
+      ]
+    },
+    {
+      "paper_id": "2112.03763v2",
+      "queries": [
+        {
+          "query": "What training methods are used for MIA?",
+          "relevant_chunk_ids": [
+            "2112.03763v2_chunk_39",
+            "2112.03763v2_chunk_29"
+          ]
+        }
+      ]
+    },
+    {
+      "paper_id": "2208.08130v1",
+      "queries": [
+        {
+          "query": "What are the main steps involved in knowledge graph curation?",
+          "relevant_chunk_ids": [
+            "2208.08130v1_chunk_2",
+            "2208.08130v1_chunk_26"
+          ]
+        }
+      ]
+    },
+    {
+      "paper_id": "2305.09349v1",
+      "queries": [
+        {
+          "query": "How does the proposed framework establish and evaluate shared understanding between two agents?",
+          "relevant_chunk_ids": [
+            "2305.09349v1_chunk_27",
+            "2305.09349v1_chunk_8",
+            "2305.09349v1_chunk_0"
+          ]
+        }
       ]
     }
   ]

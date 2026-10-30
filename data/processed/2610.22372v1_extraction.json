@@ -1,494 +1,149 @@
 {
   "methods": [
     {
-      "name": "Procedural pipeline",
+      "name": "LIBERO-PeRM",
       "entity_type": "Method",
-      "description": "A pipeline that generates preference-conditioned demonstrations, rich metadata, and preference-satisfaction metrics."
+      "description": "A controlled benchmark and procedural generation pipeline for preference learning in embodied agents, built on the LIBERO framework."
     },
     {
-      "name": "VLA policies",
+      "name": "Vision-Language-Action (VLA)",
       "entity_type": "Method",
-      "description": "Vision-Language-Action models used for generalist robotic manipulation."
+      "description": "Models driven by multimodal inputs used for generalist robotic manipulation and evaluated on zero-shot personalization."
     },
     {
-      "name": "SFT",
+      "name": "Supervised Fine-Tuning (SFT)",
       "entity_type": "Method",
-      "description": "Supervised Fine-Tuning, a method that makes preferences learnable."
+      "description": "A training technique that makes preferences learnable in policies."
     },
     {
       "name": "Mixed training",
       "entity_type": "Method",
-      "description": "A training strategy that combines different data or objectives."
-    },
-    {
-      "name": "Sequential adaptation",
-      "entity_type": "Method",
-      "description": "A training strategy."
-    },
-    {
-      "name": "Contextual prompts",
-      "entity_type": "Method",
-      "description": "Prompts used to improve performance in mixed training."
-    },
-    {
-      "name": "Preference-only LoRA",
-      "entity_type": "Method",
-      "description": "A training strategy, likely using Low-Rank Adaptation, focused on preferences."
+      "description": "Training approach that achieves better no-preference retention than sequential adaptation."
     },
     {
       "name": "OMPL planner",
       "entity_type": "Method",
-      "description": "A planner used to generate trajectories within the data generation pipeline."
-    },
-    {
-      "name": "VLM planner",
-      "entity_type": "Method",
-      "description": "A Vision-Language Model planner used for preference-conditioned task planning."
-    },
-    {
-      "name": "VLM checker",
-      "entity_type": "Method",
-      "description": "A Vision-Language Model checker used for verifying skill preference satisfaction."
+      "description": "A heuristic skill library planner used to generate trajectories and perform trajectory smoothing."
     }
   ],
   "datasets": [
     {
-      "name": "LIBERO-PeRM",
-      "entity_type": "Dataset",
-      "description": "A benchmark for personalized robotic manipulation, comprising five task suites and 312 preference-conditioned tasks with 40.8k demonstrations."
-    },
-    {
       "name": "LIBERO-SinglePref",
       "entity_type": "Dataset",
-      "description": "A task suite within LIBERO-PeRM for evaluating single-preference learning (100 tasks)."
+      "description": "A task suite comprising 100 tasks designed to evaluate single-preference learning."
     },
     {
       "name": "LIBERO-PrefScale",
       "entity_type": "Dataset",
-      "description": "A task suite within LIBERO-PeRM for evaluating scaling across data sizes, tasks, and layouts (100 tasks)."
+      "description": "A task suite comprising 100 tasks designed to evaluate scaling across data sizes, tasks, and layouts."
     },
     {
       "name": "LIBERO-PrefConflict",
       "entity_type": "Dataset",
-      "description": "A task suite within LIBERO-PeRM for evaluating preference-preference and task-preference conflicts (48 tasks)."
+      "description": "A task suite comprising 48 tasks designed to evaluate preference-preference and task-preference conflicts."
     },
     {
       "name": "LIBERO-PrefCompose",
       "entity_type": "Dataset",
-      "description": "A task suite within LIBERO-PeRM for evaluating multi-preference composition (64 tasks)."
+      "description": "A task suite comprising 64 tasks designed to evaluate multi-preference composition."
     },
     {
       "name": "LIBERO-ComprePref",
       "entity_type": "Dataset",
-      "description": "A task suite within LIBERO-PeRM for evaluating realistic preference-conditioned reasoning based on contextual language."
-    },
-    {
-      "name": "ManiSkill2",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 30k trajectories and 20 tasks."
-    },
-    {
-      "name": "RLBench",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 2.7k trajectories and 100 tasks."
-    },
-    {
-      "name": "LIBERO",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark and framework for LIBERO-PeRM with 6.5k trajectories and 130 tasks."
-    },
-    {
-      "name": "CALVIN",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 37.5k trajectories and 34 tasks."
-    },
-    {
-      "name": "VLABench",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 1.6k trajectories and 100 tasks."
-    },
-    {
-      "name": "RoboCasa",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 77k trajectories and 100 tasks."
-    },
-    {
-      "name": "RoboTwin 2.0",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 100k trajectories and 50 tasks."
-    },
-    {
-      "name": "InternVLA-M1",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 244k trajectories and 200 tasks."
-    },
-    {
-      "name": "InternData-A1",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 630k trajectories and 70 tasks."
-    },
-    {
-      "name": "RoboMIND",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 107k trajectories and 479 tasks."
-    },
-    {
-      "name": "RoboCerebra",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 1k trajectories and 100 tasks."
-    },
-    {
-      "name": "LIBERO-OOD",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 20 tasks."
-    },
-    {
-      "name": "LIBERO-Plus",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 22.4k trajectories."
-    },
-    {
-      "name": "LIBERO-Pro",
-      "entity_type": "Dataset",
-      "description": "An existing generalized manipulation benchmark."
-    },
-    {
-      "name": "LIBERO-X",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 2.5k trajectories and 600 tasks."
-    },
-    {
-      "name": "LIBERO-Para",
-      "entity_type": "Dataset",
-      "description": "An existing manipulation benchmark with 10 tasks."
+      "description": "A task suite designed to evaluate realistic preference-conditioned reasoning based on contextual language."
     }
   ],
   "metrics": [
     {
       "name": "Preference-satisfaction metrics",
       "entity_type": "Metric",
-      "description": "Metrics used to evaluate how well user preferences are met."
+      "description": "Metrics generated by the pipeline to measure how well a policy adheres to user preferences within a trajectory without compromising task success."
     },
     {
       "name": "Task success",
       "entity_type": "Metric",
-      "description": "A general metric for evaluating task completion."
+      "description": "Standard measure of whether a robot completes the nominal task goal."
     }
   ],
   "concepts": [
     {
-      "name": "Personalization",
-      "entity_type": "Concept",
-      "description": "The requirement for embodied agents to execute tasks aligning with user preferences, habits, and constraints."
-    },
-    {
-      "name": "Personalized Robotic Manipulation (PeRM)",
-      "entity_type": "Concept",
-      "description": "Robotic manipulation that satisfies user-specific constraints on strategies and actions."
-    },
-    {
-      "name": "Preferences",
-      "entity_type": "Concept",
-      "description": "User-specific constraints on how actions are performed or strategies are selected for identical goals."
-    },
-    {
-      "name": "Observable preferences in simulation",
-      "entity_type": "Concept",
-      "description": "A controlled taxonomy of preferences covering motion, skill, and user-profile choices, restricted to language-expressible, automatically evaluable, and reusable preferences."
-    },
-    {
       "name": "Motion Preference",
       "entity_type": "Concept",
-      "description": "A type of preference that constrains the physical properties of a trajectory."
+      "description": "A type of preference that constrains the physical properties of the trajectory while preserving task completion, denoted as Pmotion."
     },
     {
       "name": "Skill Preference",
       "entity_type": "Concept",
-      "description": "A type of preference that alters the execution behavior of a specific skill."
+      "description": "A type of preference that alters the execution behavior of a specific skill c while preserving task completion, denoted as Pskill."
     },
     {
       "name": "User Profile",
       "entity_type": "Concept",
-      "description": "A type of preference that uses background knowledge (user profile/context) to guide subtask-level semantic choices."
+      "description": "A type of preference that uses a user profile or context as background knowledge to guide subtask-level semantic choices, denoted as Pprofile."
     },
     {
-      "name": "Zero-shot personalization",
+      "name": "Personalized robotic manipulation (PeRM)",
       "entity_type": "Concept",
-      "description": "The ability of policies to follow preferences without preference data."
-    },
-    {
-      "name": "Single preference learning",
-      "entity_type": "Concept",
-      "description": "The ability of policies to learn individual preferences from demonstrations."
-    },
-    {
-      "name": "Learning efficiency",
-      "entity_type": "Concept",
-      "description": "How efficiently policies acquire preferences as demonstrations increase."
-    },
-    {
-      "name": "Preference generalization",
-      "entity_type": "Concept",
-      "description": "How learned preferences generalize across layouts and tasks."
-    },
-    {
-      "name": "Preference composition and conflict handling",
-      "entity_type": "Concept",
-      "description": "How policies compose multiple preferences and behave under conflicts."
-    },
-    {
-      "name": "Household manipulation",
-      "entity_type": "Concept",
-      "description": "A long-standing goal in robotics and embodied AI."
-    },
-    {
-      "name": "Embodied AI",
-      "entity_type": "Concept",
-      "description": "A field related to robots operating in physical environments."
-    },
-    {
-      "name": "Generalist robotic manipulation",
-      "entity_type": "Concept",
-      "description": "Robotic manipulation that generalizes across diverse inputs and embodiments."
-    },
-    {
-      "name": "Cross-embodiment generalization",
-      "entity_type": "Concept",
-      "description": "The ability of a robot policy to work across different robot bodies."
-    },
-    {
-      "name": "Generalized manipulation",
-      "entity_type": "Concept",
-      "description": "Broad manipulation capabilities."
-    },
-    {
-      "name": "Long-horizon reasoning",
-      "entity_type": "Concept",
-      "description": "The ability to plan and execute complex, multi-step tasks."
-    },
-    {
-      "name": "Sim-to-real transfer",
-      "entity_type": "Concept",
-      "description": "The ability to transfer policies learned in simulation to real-world robots."
-    },
-    {
-      "name": "Lifelong learning",
-      "entity_type": "Concept",
-      "description": "The ability of a system to continuously learn over its lifetime."
-    },
-    {
-      "name": "Task generalization",
-      "entity_type": "Concept",
-      "description": "The ability of a policy to perform well on new, unseen tasks."
-    },
-    {
-      "name": "Implicit preference alignment",
-      "entity_type": "Concept",
-      "description": "A way personalization is defined in some prior work, often via human feedback or reward signals."
-    },
-    {
-      "name": "Multi-user style adaptation",
-      "entity_type": "Concept",
-      "description": "A way personalization is defined in some prior work, adapting to different user styles."
-    },
-    {
-      "name": "User-specific object-receptacle pairing",
-      "entity_type": "Concept",
-      "description": "A way personalization is defined in some prior work, involving specific object-receptacle choices."
-    },
-    {
-      "name": "Helpful action prediction",
-      "entity_type": "Concept",
-      "description": "A way personalization is defined in some prior work, predicting actions that are helpful to users."
-    },
-    {
-      "name": "Subtask decompositions",
-      "entity_type": "Concept",
-      "description": "Breaking down a task into smaller, manageable subtasks."
-    },
-    {
-      "name": "Subgoal-image annotations",
-      "entity_type": "Concept",
-      "description": "Images associated with specific subgoals within a task."
+      "description": "Robotic manipulation that requires executing tasks in ways that align with the preferences, habits, and constraints of individual users."
     }
   ],
   "findings": [
     {
       "name": "Current VLA policies struggle with zero-shot personalization",
       "entity_type": "Finding",
-      "description": "Experiments show that current Vision-Language-Action policies have difficulty following preferences in zero-shot settings."
+      "description": "Experiments show that current Vision-Language-Action policies struggle to follow new preferences without preference data."
     },
     {
       "name": "SFT makes preferences learnable",
       "entity_type": "Finding",
-      "description": "Supervised Fine-Tuning (SFT) is effective in enabling policies to learn preferences."
+      "description": "Supervised fine-tuning allows embodied agents to successfully learn preferences from demonstrations."
     },
     {
-      "name": "Mixed training achieves better no-preference retention than sequential adaptation",
+      "name": "Mixed training improves no-preference retention",
       "entity_type": "Finding",
-      "description": "A mixed training approach maintains better performance on tasks without preferences compared to sequential adaptation."
-    },
-    {
-      "name": "Mixed training improves performance with contextual prompts compared with preference-only training",
-      "entity_type": "Finding",
-      "description": "Mixed training, when combined with contextual prompts, leads to better task success and preference satisfaction than preference-only LoRA."
-    },
-    {
-      "name": "Mixed training can weaken motion-preference learning",
-      "entity_type": "Finding",
-      "description": "While beneficial in some aspects, mixed training may negatively impact the learning of motion preferences."
-    },
-    {
-      "name": "Broader layout diversity and matched no-preference data help",
-      "entity_type": "Finding",
-      "description": "Increasing the diversity of layouts and providing corresponding no-preference data improves performance."
-    },
-    {
-      "name": "Preference generalization, decomposition, and conflict handling remain difficult",
-      "entity_type": "Finding",
-      "description": "The ability of learned preferences to generalize, decompose, and be handled under conflicts is still challenging for current policies."
+      "description": "Mixed training achieves better no-preference retention than sequential adaptation, though it can weaken motion-preference learning."
     }
   ],
   "relationships": [
     {
       "source": "LIBERO-PeRM",
-      "relation": "is a benchmark for",
-      "target": "Personalized Robotic Manipulation (PeRM)"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "studies",
-      "target": "Zero-shot personalization"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "studies",
-      "target": "Single preference learning"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "studies",
-      "target": "Learning efficiency"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "studies",
-      "target": "Preference generalization"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "studies",
-      "target": "Preference composition and conflict handling"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "introduces",
-      "target": "Observable preferences in simulation"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "uses",
-      "target": "Procedural pipeline"
-    },
-    {
-      "source": "LIBERO-PeRM",
-      "relation": "comprises",
+      "relation": "contains",
       "target": "LIBERO-SinglePref"
     },
     {
       "source": "LIBERO-PeRM",
-      "relation": "comprises",
+      "relation": "contains",
       "target": "LIBERO-PrefScale"
     },
     {
       "source": "LIBERO-PeRM",
-      "relation": "comprises",
+      "relation": "contains",
       "target": "LIBERO-PrefConflict"
     },
     {
       "source": "LIBERO-PeRM",
-      "relation": "comprises",
+      "relation": "contains",
       "target": "LIBERO-PrefCompose"
     },
     {
       "source": "LIBERO-PeRM",
-      "relation": "comprises",
+      "relation": "contains",
       "target": "LIBERO-ComprePref"
     },
     {
-      "source": "Procedural pipeline",
-      "relation": "generates",
-      "target": "LIBERO-PeRM"
+      "source": "LIBERO-PeRM",
+      "relation": "covers",
+      "target": "Motion Preference"
     },
     {
-      "source": "Procedural pipeline",
-      "relation": "generates",
-      "target": "Preference-satisfaction metrics"
+      "source": "LIBERO-PeRM",
+      "relation": "covers",
+      "target": "Skill Preference"
     },
     {
-      "source": "VLA policies",
-      "relation": "struggle with",
-      "target": "Zero-shot personalization"
-    },
-    {
-      "source": "SFT",
-      "relation": "makes learnable",
-      "target": "Preferences"
-    },
-    {
-      "source": "Mixed training",
-      "relation": "achieves better no-preference retention than",
-      "target": "Sequential adaptation"
-    },
-    {
-      "source": "Mixed training",
-      "relation": "improves performance with",
-      "target": "Contextual prompts"
-    },
-    {
-      "source": "Mixed training",
-      "relation": "improves performance compared with",
-      "target": "Preference-only LoRA"
-    },
-    {
-      "source": "Mixed training",
-      "relation": "can weaken",
-      "target": "Motion Preference learning"
-    },
-    {
-      "source": "Motion Preference",
-      "relation": "is a type of",
-      "target": "Preferences"
-    },
-    {
-      "source": "Skill Preference",
-      "relation": "is a type of",
-      "target": "Preferences"
-    },
-    {
-      "source": "User Profile",
-      "relation": "is a type of",
-      "target": "Preferences"
-    },
-    {
-      "source": "LIBERO",
-      "relation": "is a framework for",
-      "target": "LIBERO-PeRM"
-    },
-    {
-      "source": "OMPL planner",
-      "relation": "generates",
-      "target": "trajectories"
-    },
-    {
-      "source": "VLM planner",
-      "relation": "performs",
-      "target": "Preference-conditioned task planning"
-    },
-    {
-      "source": "VLM checker",
-      "relation": "checks",
-      "target": "Skill Preference satisfaction"
+      "source": "LIBERO-PeRM",
+      "relation": "covers",
+      "target": "User Profile"
     }
   ]
 }

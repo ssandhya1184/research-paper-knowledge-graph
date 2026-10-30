@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "#222222"}, "group": "Paper", "id": "paper::2112.03763v2", "label": "Creating Multimodal Interactive Agents with Imitation and Self-Supervised Learning", "shape": "dot", "title": "Paper: Creating Multimodal Interactive Agents with Imitation and Self-Supervised Learning\n"}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::imitation_learning", "label": "Imitation Learning", "shape": "dot", "title": "Method: Imitation Learning\nLearning from human demonstrations to instill intelligent behavioural priors in agents."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::self_supervised_learning", "label": "Self-Supervised Learning", "shape": "dot", "title": "Method: Self-Supervised Learning\nAuxiliary training objective used in conjunction with imitation learning to improve performance."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::behavioural_cloning_bc", "label": "Behavioural Cloning (BC)", "shape": "dot", "title": "Method: Behavioural Cloning (BC)\nSequence learning technique used for imitation learning from trajectories of human behaviour."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::hierarchical_action_selection", "label": "Hierarchical Action Selection", "shape": "dot", "title": "Method: Hierarchical Action Selection\nArchitectural technique that improves agent performance, implemented via a hierarchical movement policy."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::playhouse_dataset", "label": "Playhouse Dataset", "shape": "dot", "title": "Dataset: Playhouse Dataset\nDataset collected in the Playhouse environment comprising 275,676 train episodes and 34,399 test episodes."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::mia_multimodal_interactive_agent", "label": "MIA (Multimodal Interactive Agent)", "shape": "dot", "title": "Concept: MIA (Multimodal Interactive Agent)\nA multimodal interactive agent that interacts naturally with humans in a simulated world."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::playhouse", "label": "Playhouse", "shape": "dot", "title": "Concept: Playhouse\nA 3D virtual multi-room environment based on the Unity game engine for studying natural interactions."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::language_games", "label": "Language Games", "shape": "dot", "title": "Concept: Language Games\nA collection of prompted interaction-types and free-form instructions centering Playhouse interactions."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::agent_success_rate", "label": "Agent Success Rate", "shape": "dot", "title": "Finding: Agent Success Rate\nMIA successfully interacts with non-adversarial humans 75% of the time."}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "method::imitation_learning"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "method::self_supervised_learning"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "method::behavioural_cloning_bc"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "method::hierarchical_action_selection"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "dataset::playhouse_dataset"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "concept::mia_multimodal_interactive_agent"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "concept::playhouse"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "concept::language_games"}, {"arrows": "to", "from": "paper::2112.03763v2", "label": "contains", "title": "contains", "to": "finding::agent_success_rate"}, {"arrows": "to", "from": "method::self_supervised_learning", "label": "applied to", "title": "applied to", "to": "concept::mia_multimodal_interactive_agent"}, {"arrows": "to", "from": "dataset::playhouse_dataset", "label": "collected in", "title": "collected in", "to": "concept::playhouse"}, {"arrows": "to", "from": "concept::mia_multimodal_interactive_agent", "label": "interacts with", "title": "interacts with", "to": "concept::playhouse"}, {"arrows": "to", "from": "concept::mia_multimodal_interactive_agent", "label": "trained using", "title": "trained using", "to": "method::behavioural_cloning_bc"}, {"arrows": "to", "from": "concept::mia_multimodal_interactive_agent", "label": "uses", "title": "uses", "to": "method::hierarchical_action_selection"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

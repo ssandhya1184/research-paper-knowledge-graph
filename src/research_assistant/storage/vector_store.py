@@ -54,7 +54,9 @@ class VectorStore:
         top_k: int = 3,
         paper_id: str | None = None,
     ) -> dict:
+        print(f"[SEARCH] Searching for: '{query}' (top_k={top_k}, paper_id={paper_id})")
         query_embedding = self.embedder.embed_texts([query])[0]
+        print(f"[SEARCH] Query embedding generated for: '{query}'")
 
         query_args = {
             "query_embeddings": [query_embedding],

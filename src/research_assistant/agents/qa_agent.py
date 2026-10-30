@@ -102,11 +102,13 @@ def answer(
 ) -> dict:
     """Answer using only sufficiently similar chunks from the selected paper."""
 
+    print(f"[QA] Answering question: '{question}' (top_k={top_k}, paper_id={paper_id})")
     results = self.vector_store.search(
         question,
         top_k=top_k,
         paper_id=paper_id,
     )
+    print(f"[QA] Retrieved {len(results.get('documents', [[]])[0])} chunks from vector store.")
 
     documents = results.get("documents", [[]])[0]
     metadatas = results.get("metadatas", [[]])[0]
@@ -175,8 +177,9 @@ def answer(
     QUESTION:
     {question}
     """
-
+    print("[QA] Sending prompt to Gemini...")
     response = self.llm.invoke(prompt)
+    print("[QA] Gemini response received.")
 
     return {
         "question": question,

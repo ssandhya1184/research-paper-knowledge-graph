@@ -141,7 +141,7 @@ def ingest_paper_ui(paper_id: str, search_results: list):
             f"Chunks indexed: {result['chunks']}",
             gr.update(
                 choices=get_paper_choices(),
-                value=paper_id,
+                value="",
             ),
         )
 
@@ -187,7 +187,7 @@ def get_paper_choices():
         title = title or paper_id
         choices.append((f"{title} ({paper_id})", paper_id))
 
-    return choices
+    return [("-- Select a paper --", "")] + choices
 
 
 # ---------------------------------------------------------
@@ -346,36 +346,44 @@ def evaluate_graph_quality(paper_id):
 
 
 def update_selected_paper(paper_id):
-    """Refresh graph and evaluation outputs when the paper changes."""
+    """Refresh selected paper and clear stale outputs."""
 
-    if not paper_id:
-        return (
-            "<p>Select a research paper to view its knowledge graph.</p>",
-            None,
-            "Select a paper to view graph evaluation metrics.",
-            "Select a paper to view entity extraction metrics.",
+    if paper_id:
+        graph_html, graph_file_path = get_graph_html(paper_id)
+        graph_eval = evaluate_graph_quality(paper_id)
+        entity_eval = evaluate_entity_extraction_quality(paper_id)
+    else:
+        graph_html = (
+            "<p>Select a paper to view its knowledge graph.</p>"
         )
-
-    graph_html, graph_file_path = get_graph_html(paper_id)
-    graph_eval = evaluate_graph_quality(paper_id)
-    entity_eval = evaluate_entity_extraction_quality(paper_id)
-
+        graph_file_path = None
+        graph_eval = "Select a paper to view graph metrics."
+        entity_eval = "Select a paper to view entity metrics."
 
     return (
         graph_html,
         graph_file_path,
         graph_eval,
         entity_eval,
+        "",                         # answer_output
+        "",                         # answer_evaluation_output
+        "",                         # sources_output
+        "Select a paper and run a question to view retrieval metrics.",
+        [], [], [], [], [], [],     # extraction tables
+        gr.update(visible=False),   # extraction_results
+        gr.update(visible=False),   # extraction_section
+        gr.update(visible=False),   # qa_results_row
+        "",                         # summary_output
+        gr.update(visible=False),   # summary_results_section
+        "",                         # progress_status
     )
 
 
 def evaluate_entity_extraction_quality(paper_id):
-    """Evaluate graph entities against the paper's ground truth."""
+    """Evaluate graph entities against the selected paper's ground truth."""
 
     graph_path = GRAPH_DIR / f"{paper_id}_graph.json"
-    ground_truth_path = (
-        PROCESSED_DIR / "evaluation_ground_truth.json"
-    )
+    ground_truth_path = PROCESSED_DIR / "evaluation_ground_truth.json"
 
     if not graph_path.exists():
         return "Entity evaluation unavailable: graph file not found."
@@ -384,21 +392,34 @@ def evaluate_entity_extraction_quality(paper_id):
         return "Entity evaluation unavailable: ground-truth file not found."
 
     try:
-        ground_truth = json.loads(
+        ground_truth_data = json.loads(
             ground_truth_path.read_text(encoding="utf-8")
         )
 
-        if ground_truth.get("paper_id") != paper_id:
-            return (
-                f"No entity ground truth configured for `{paper_id}`."
+        # Support the new multi-paper format and the legacy format.
+        if "papers" in ground_truth_data:
+            paper_ground_truth = next(
+                (
+                    item
+                    for item in ground_truth_data["papers"]
+                    if item.get("paper_id") == paper_id
+                ),
+                None,
             )
+        else:
+            paper_ground_truth = (
+                ground_truth_data
+                if ground_truth_data.get("paper_id") == paper_id
+                else None
+            )
+
+        if paper_ground_truth is None:
+            return f"No entity ground truth configured for `{paper_id}`."
 
         with open(graph_path, "r", encoding="utf-8") as file:
             graph_data = json.load(file)
 
-        edge_key = (
-            "edges" if "edges" in graph_data else "links"
-        )
+        edge_key = "edges" if "edges" in graph_data else "links"
 
         graph = nx.node_link_graph(
             graph_data,
@@ -407,7 +428,7 @@ def evaluate_entity_extraction_quality(paper_id):
             edges=edge_key,
         )
 
-        expected_entities = ground_truth.get("entities", [])
+        expected_entities = paper_ground_truth.get("entities", [])
 
         extracted_entities = [
             str(data.get("name", node_id))
@@ -436,7 +457,7 @@ def evaluate_entity_extraction_quality(paper_id):
             "*Metrics use exact normalized entity-name matching.*",
         ])
 
-    except (ValueError, TypeError, KeyError) as exc:
+    except (ValueError, TypeError, KeyError, OSError) as exc:
         return f"Entity evaluation failed: {exc}"
 
 
@@ -444,12 +465,11 @@ def evaluate_entity_extraction_quality(paper_id):
 # RAG retrieval evaluation
 # ---------------------------------------------------------
 
-def evaluate_retrieved_sources(paper_id, question, sources, k=3):
-    """Evaluate retrieval using labelled ground-truth queries."""
 
-    ground_truth_path = (
-        PROCESSED_DIR / "retrieval_ground_truth.json"
-    )
+def evaluate_retrieved_sources(paper_id, question, sources, k=3):
+    """Evaluate retrieval using the selected paper's labelled queries."""
+
+    ground_truth_path = PROCESSED_DIR / "retrieval_ground_truth.json"
 
     if not ground_truth_path.exists():
         return (
@@ -458,83 +478,105 @@ def evaluate_retrieved_sources(paper_id, question, sources, k=3):
             "cannot be calculated."
         )
 
-    ground_truth = json.loads(
-        ground_truth_path.read_text(encoding="utf-8")
-    )
-
-    if ground_truth.get("paper_id") != paper_id:
-        return (
-            "### Retrieval Evaluation\n"
-            f"No ground truth configured for `{paper_id}`."
+    try:
+        ground_truth_data = json.loads(
+            ground_truth_path.read_text(encoding="utf-8")
         )
 
-    matched_item = next(
-        (
-            item
-            for item in ground_truth.get("queries", [])
-            if item.get("query", "").strip().casefold()
-            == question.strip().casefold()
-        ),
-        None,
-    )
+        # Support the new multi-paper format and the legacy format.
+        if "papers" in ground_truth_data:
+            paper_ground_truth = next(
+                (
+                    item
+                    for item in ground_truth_data["papers"]
+                    if item.get("paper_id") == paper_id
+                ),
+                None,
+            )
+        else:
+            paper_ground_truth = (
+                ground_truth_data
+                if ground_truth_data.get("paper_id") == paper_id
+                else None
+            )
 
-    if matched_item is None:
-        return (
-            "### Retrieval Evaluation\n"
-            "No ground-truth labels found for this exact question. "
-            "Add verified labels to evaluate this query."
+        if paper_ground_truth is None:
+            return (
+                "### Retrieval Evaluation\n"
+                f"No ground truth configured for `{paper_id}`."
+            )
+
+        matched_item = next(
+            (
+                item
+                for item in paper_ground_truth.get("queries", [])
+                if item.get("query", "").strip().casefold()
+                == (question or "").strip().casefold()
+            ),
+            None,
         )
 
-    relevant_ids = matched_item.get("relevant_chunk_ids", [])
+        if matched_item is None:
+            return (
+                "### Retrieval Evaluation\n"
+                "No ground-truth labels found for this exact question. "
+                "Add verified labels to evaluate this query."
+            )
 
-    if not relevant_ids or any(
-        "REPLACE_WITH" in str(label)
-        for label in relevant_ids
-    ):
-        return (
-            "### Retrieval Evaluation\n"
-            "Ground-truth chunk labels are missing or unverified. "
-            "Precision@K and Recall@K are unavailable."
+        relevant_ids = matched_item.get("relevant_chunk_ids", [])
+
+        if not relevant_ids or any(
+            "REPLACE_WITH" in str(label)
+            for label in relevant_ids
+        ):
+            return (
+                "### Retrieval Evaluation\n"
+                "Ground-truth chunk labels are missing or unverified. "
+                "Precision@K and Recall@K are unavailable."
+            )
+
+        retrieved_ids = [
+            f"{source.get('paper_id')}_chunk_{source.get('chunk_index')}"
+            for source in sources
+        ]
+
+        metrics = evaluate_retrieval_relevance(
+            retrieved_ids=retrieved_ids,
+            relevant_ids=relevant_ids,
+            k=k,
         )
 
-    retrieved_ids = [
-        f"{source.get('paper_id')}_chunk_{source.get('chunk_index')}"
-        for source in sources
-    ]
+        distances = [
+            source["distance"]
+            for source in sources
+            if isinstance(source.get("distance"), (int, float))
+        ]
 
-    metrics = evaluate_retrieval_relevance(
-        retrieved_ids=retrieved_ids,
-        relevant_ids=relevant_ids,
-        k=k,
-    )
+        lines = [
+            "### Retrieval Evaluation",
+            f"- Precision@{k}: {metrics['precision_at_k']:.4f}",
+            f"- Recall@{k}: {metrics['recall_at_k']:.4f}",
+            f"- Relevant chunks retrieved: "
+            f"{metrics['relevant_retrieved']}/{metrics['relevant_count']}",
+        ]
 
-    distances = [
-        source["distance"]
-        for source in sources
-        if isinstance(source.get("distance"), (int, float))
-    ]
+        if distances:
+            lines.append(
+                f"- Mean cosine distance: "
+                f"{sum(distances) / len(distances):.4f}"
+            )
+        else:
+            lines.append("- Mean cosine distance: unavailable")
 
-    lines = [
-        "### Retrieval Evaluation",
-        f"- Precision@{k}: {metrics['precision_at_k']:.4f}",
-        f"- Recall@{k}: {metrics['recall_at_k']:.4f}",
-        f"- Relevant chunks retrieved: "
-        f"{metrics['relevant_retrieved']}/{metrics['relevant_count']}",
-    ]
-
-    if distances:
         lines.append(
-            f"- Mean cosine distance: "
-            f"{sum(distances) / len(distances):.4f}"
+            "\n*Scores depend on the quality of the labelled ground truth.*"
         )
-    else:
-        lines.append("- Mean cosine distance: unavailable")
 
-    lines.append(
-        "\n*Scores depend on the quality of the labelled ground truth.*"
-    )
+        return "\n".join(lines)
 
-    return "\n".join(lines)
+    except (ValueError, TypeError, KeyError, OSError) as exc:
+        return f"Retrieval evaluation failed: {exc}"
+
 
 
 # ---------------------------------------------------------
@@ -615,6 +657,18 @@ def _run_task_sync(paper_id, task, question, progress=gr.Progress()):
         raise
 
     answer = result.get("answer", "No result returned.")
+
+    # Normalize Gemini response content for Gradio Markdown.
+    if isinstance(answer, list):
+        answer = "\n".join(
+            item["text"]
+            for item in answer
+            if isinstance(item, dict) and item.get("type") == "text"
+        )
+
+    elif not isinstance(answer, str):
+        answer = str(answer)
+
     summary_text = answer if task == "Summarize paper" else ""
     sources = []
     rag_evaluation_text = (
@@ -716,6 +770,7 @@ def _run_task_sync(paper_id, task, question, progress=gr.Progress()):
     )
 
 
+
 def run_task(paper_id, task, question, progress=gr.Progress()):
     """Run the task in a background thread and update elapsed time."""
 
@@ -730,6 +785,26 @@ def run_task(paper_id, task, question, progress=gr.Progress()):
         except Exception as exc:
             outcome["error"] = exc
 
+    # Clear previous outputs immediately when Run is clicked.
+    cleared_outputs = (
+        "",                         # answer_output
+        "",                         # answer_evaluation_output
+        "",                         # sources_output
+        "Retrieval evaluation pending...",
+        "Graph evaluation pending...",
+        "",                         # graph_output
+        [], [], [], [], [], [],     # six extraction tables
+        gr.update(visible=False),   # extraction_results
+        gr.update(visible=(task == "Ask a question")),
+        "",                         # summary_output
+        gr.update(visible=False),   # summary_results_section
+    )
+
+    yield (
+        *cleared_outputs,
+        f"⏳ Processing: **{task}** — starting...",
+    )
+
     thread = threading.Thread(target=worker, daemon=True)
     thread.start()
 
@@ -738,7 +813,7 @@ def run_task(paper_id, task, question, progress=gr.Progress()):
 
         yield (
             *[gr.update() for _ in range(16)],
-            f"⏳ Processing:  **{task}** — {elapsed} seconds elapsed",
+            f"⏳ Processing: **{task}** — {elapsed} seconds elapsed",
         )
 
         thread.join(timeout=1)
@@ -752,7 +827,6 @@ def run_task(paper_id, task, question, progress=gr.Progress()):
         *outcome["result"],
         f"✅ Completed in {elapsed}s",
     )
-
 
 
 
@@ -850,24 +924,18 @@ with gr.Blocks(title="Research Paper Assistant",
             gr.Markdown("---")
             gr.Markdown("## Ingested Papers")
 
-
-
-                
-            
             paper_dropdown = gr.Dropdown(
                 label="Select research paper",
                 choices=get_paper_choices(),
-                value=None,
+                value="",
                 interactive=True,
                 filterable=True,
                 allow_custom_value=False,
             )
 
-
             gr.Markdown(
                 "The selected paper is shared across all three tabs."
             )
-
         gr.HTML(
             "<div style='height:100%; min-height:600px; "
             "border-left:1px solid #d1d5db; margin:0 12px;'></div>"
@@ -1073,12 +1141,28 @@ with gr.Blocks(title="Research Paper Assistant",
         fn=update_selected_paper,
         inputs=paper_dropdown,
         outputs=[
-            graph_output,
-            graph_download,
-            graph_evaluation_output,
-            entity_evaluation_output,
-        ],
-    )
+                graph_output,
+                graph_download,
+                graph_evaluation_output,
+                entity_evaluation_output,
+                answer_output,
+                answer_evaluation_output,
+                sources_output,
+                rag_evaluation_output,
+                methods_output,
+                datasets_output,
+                metrics_output,
+                concepts_output,
+                findings_output,
+                relationships_output,
+                extraction_results,
+                extraction_section,
+                qa_results_row,
+                summary_output,
+                summary_results_section,
+                progress_status,
+            ],
+        )
 
     # Run task and update all related outputs.
     

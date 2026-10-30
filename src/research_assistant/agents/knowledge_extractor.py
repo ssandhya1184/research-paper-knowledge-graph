@@ -13,11 +13,14 @@ def create_llm() -> ChatGoogleGenerativeAI:
     """Create a Gemini client."""
 
     api_key = os.getenv("GOOGLE_API_KEY")
+    #model=os.getenv("GEMINI_MODEL", os.getenv("GEMINI_MODEL", "gemini-3.8-flash"))
+    model = "gemini-3.5-flash-lite"
+    
     if not api_key:
         raise ValueError("GOOGLE_API_KEY is missing from .env")
 
     return ChatGoogleGenerativeAI(
-        model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+        model=model,
         google_api_key=api_key,
         temperature=0,
     )

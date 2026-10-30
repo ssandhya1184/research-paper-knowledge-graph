@@ -1,0 +1,109 @@
+{
+  "methods": [
+    {
+      "name": "Ontology Alignment",
+      "entity_type": "Method",
+      "description": "Studies how systems with different formal representations of their knowledge can communicate successfully by suggesting concept or instance alignments."
+    },
+    {
+      "name": "Language Games",
+      "entity_type": "Method",
+      "description": "An approach to establish successful communication in an open multi-agent system only via grounded communication."
+    },
+    {
+      "name": "Interactive Reinforcement Learning",
+      "entity_type": "Method",
+      "description": "Studies problems where the reward signal is sparse and incorporates human input to make convergence faster."
+    }
+  ],
+  "datasets": [
+    {
+      "name": "Ontology Alignment benchmark",
+      "entity_type": "Dataset",
+      "description": "An established ontology alignment benchmark modified for designing experiments for cooperative query answering."
+    }
+  ],
+  "metrics": [
+    {
+      "name": "precision",
+      "entity_type": "Metric",
+      "description": "Used as a trade-off measure alongside efficiency for task achievement."
+    },
+    {
+      "name": "recall",
+      "entity_type": "Metric",
+      "description": "Used as a trade-off measure alongside efficiency for task achievement."
+    },
+    {
+      "name": "number of interactions",
+      "entity_type": "Metric",
+      "description": "Principal efficiency metric measured in terms of number of interactions or examples that agents exchange."
+    },
+    {
+      "name": "cognitive load",
+      "entity_type": "Metric",
+      "description": "Example case-specific metric to evaluate shared understanding using the proposed framework."
+    },
+    {
+      "name": "memory demands",
+      "entity_type": "Metric",
+      "description": "Measured in episodic memory and working memory sizes in number of memorized episodes and variables used respectively."
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Open Multi-Agent Systems",
+      "entity_type": "Concept",
+      "description": "A field where agents from a diverse population, that do not have an established communication protocol, need to learn how to communicate only via grounded interaction."
+    },
+    {
+      "name": "Cooperative Query Answering",
+      "entity_type": "Concept",
+      "description": "A task where two agents need to collectively answer a query while representing different databases defined in their own ontologies."
+    },
+    {
+      "name": "Grounded Interaction",
+      "entity_type": "Concept",
+      "description": "Communication via examples that consist of common instances for which agents are expected to have similar knowledge."
+    }
+  ],
+  "findings": [
+    {
+      "name": "Successful communication establishment",
+      "entity_type": "Finding",
+      "description": "Experiments demonstrate successful communication establishment under the required restrictions using only a very limited number of interactions."
+    },
+    {
+      "name": "Robust query understanding performance",
+      "entity_type": "Finding",
+      "description": "A robust query understanding method can be expected to perform better in a scenario where the agents have incomplete knowledge of their environment."
+    },
+    {
+      "name": "Informative examples interpretation",
+      "entity_type": "Finding",
+      "description": "Examples that seem to be more informative are more probable to be interpreted differently by the two agents."
+    }
+  ],
+  "relationships": [
+    {
+      "source": "Ontology Alignment",
+      "relation": "studies",
+      "target": "Ontology Alignment benchmark"
+    },
+    {
+      "source": "Cooperative Query Answering",
+      "relation": "uses",
+      "target": "Ontology Alignment benchmark"
+    },
+    {
+      "source": "Cooperative Query Answering",
+      "relation": "measured by",
+      "target": "precision"
+    },
+    {
+      "source": "Cooperative Query Answering",
+      "relation": "measured by",
+      "target": "recall"
+    }
+  ]
+}

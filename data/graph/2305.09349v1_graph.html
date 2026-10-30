@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "#222222"}, "group": "Paper", "id": "paper::2305.09349v1", "label": "Establishing Shared Query Understanding in an Open Multi-Agent System", "shape": "dot", "title": "Paper: Establishing Shared Query Understanding in an Open Multi-Agent System\n"}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::ontology_alignment", "label": "Ontology Alignment", "shape": "dot", "title": "Method: Ontology Alignment\nStudies how systems with different formal representations of their knowledge can communicate successfully by suggesting concept or instance alignments."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::language_games", "label": "Language Games", "shape": "dot", "title": "Method: Language Games\nAn approach to establish successful communication in an open multi-agent system only via grounded communication."}, {"font": {"color": "#222222"}, "group": "Method", "id": "method::interactive_reinforcement_learning", "label": "Interactive Reinforcement Learning", "shape": "dot", "title": "Method: Interactive Reinforcement Learning\nStudies problems where the reward signal is sparse and incorporates human input to make convergence faster."}, {"font": {"color": "#222222"}, "group": "Dataset", "id": "dataset::ontology_alignment_benchmark", "label": "Ontology Alignment benchmark", "shape": "dot", "title": "Dataset: Ontology Alignment benchmark\nAn established ontology alignment benchmark modified for designing experiments for cooperative query answering."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::precision", "label": "precision", "shape": "dot", "title": "Metric: precision\nUsed as a trade-off measure alongside efficiency for task achievement."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::recall", "label": "recall", "shape": "dot", "title": "Metric: recall\nUsed as a trade-off measure alongside efficiency for task achievement."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::number_of_interactions", "label": "number of interactions", "shape": "dot", "title": "Metric: number of interactions\nPrincipal efficiency metric measured in terms of number of interactions or examples that agents exchange."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::cognitive_load", "label": "cognitive load", "shape": "dot", "title": "Metric: cognitive load\nExample case-specific metric to evaluate shared understanding using the proposed framework."}, {"font": {"color": "#222222"}, "group": "Metric", "id": "metric::memory_demands", "label": "memory demands", "shape": "dot", "title": "Metric: memory demands\nMeasured in episodic memory and working memory sizes in number of memorized episodes and variables used respectively."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::open_multi_agent_systems", "label": "Open Multi-Agent Systems", "shape": "dot", "title": "Concept: Open Multi-Agent Systems\nA field where agents from a diverse population, that do not have an established communication protocol, need to learn how to communicate only via grounded interaction."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::cooperative_query_answering", "label": "Cooperative Query Answering", "shape": "dot", "title": "Concept: Cooperative Query Answering\nA task where two agents need to collectively answer a query while representing different databases defined in their own ontologies."}, {"font": {"color": "#222222"}, "group": "Concept", "id": "concept::grounded_interaction", "label": "Grounded Interaction", "shape": "dot", "title": "Concept: Grounded Interaction\nCommunication via examples that consist of common instances for which agents are expected to have similar knowledge."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::successful_communication_establishment", "label": "Successful communication establishment", "shape": "dot", "title": "Finding: Successful communication establishment\nExperiments demonstrate successful communication establishment under the required restrictions using only a very limited number of interactions."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::robust_query_understanding_performance", "label": "Robust query understanding performance", "shape": "dot", "title": "Finding: Robust query understanding performance\nA robust query understanding method can be expected to perform better in a scenario where the agents have incomplete knowledge of their environment."}, {"font": {"color": "#222222"}, "group": "Finding", "id": "finding::informative_examples_interpretation", "label": "Informative examples interpretation", "shape": "dot", "title": "Finding: Informative examples interpretation\nExamples that seem to be more informative are more probable to be interpreted differently by the two agents."}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "method::ontology_alignment"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "method::language_games"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "method::interactive_reinforcement_learning"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "dataset::ontology_alignment_benchmark"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "metric::precision"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "metric::recall"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "metric::number_of_interactions"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "metric::cognitive_load"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "metric::memory_demands"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "concept::open_multi_agent_systems"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "concept::cooperative_query_answering"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "concept::grounded_interaction"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "finding::successful_communication_establishment"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "finding::robust_query_understanding_performance"}, {"arrows": "to", "from": "paper::2305.09349v1", "label": "contains", "title": "contains", "to": "finding::informative_examples_interpretation"}, {"arrows": "to", "from": "method::ontology_alignment", "label": "studies", "title": "studies", "to": "dataset::ontology_alignment_benchmark"}, {"arrows": "to", "from": "concept::cooperative_query_answering", "label": "uses", "title": "uses", "to": "dataset::ontology_alignment_benchmark"}, {"arrows": "to", "from": "concept::cooperative_query_answering", "label": "measured by", "title": "measured by", "to": "metric::precision"}, {"arrows": "to", "from": "concept::cooperative_query_answering", "label": "measured by", "title": "measured by", "to": "metric::recall"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

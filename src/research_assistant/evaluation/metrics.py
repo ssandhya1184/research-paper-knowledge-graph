@@ -113,3 +113,44 @@ def evaluate_retrieval_relevance(
         "precision_at_k": round(precision_at_k, 4),
         "recall_at_k": round(recall_at_k, 4),
     }
+
+
+def aggregate_entity_metrics(paper_reports: dict) -> dict:
+    """Calculate micro-averaged entity metrics across all papers."""
+
+    total_tp = sum(
+        report["entity_extraction"]["true_positives"]
+        for report in paper_reports.values()
+    )
+    total_fp = sum(
+        report["entity_extraction"]["false_positives"]
+        for report in paper_reports.values()
+    )
+    total_fn = sum(
+        report["entity_extraction"]["false_negatives"]
+        for report in paper_reports.values()
+    )
+
+    precision = (
+        total_tp / (total_tp + total_fp)
+        if total_tp + total_fp else 0.0
+    )
+
+    recall = (
+        total_tp / (total_tp + total_fn)
+        if total_tp + total_fn else 0.0
+    )
+
+    f1_score = (
+        2 * precision * recall / (precision + recall)
+        if precision + recall else 0.0
+    )
+
+    return {
+        "true_positives": total_tp,
+        "false_positives": total_fp,
+        "false_negatives": total_fn,
+        "precision": round(precision, 4),
+        "recall": round(recall, 4),
+        "f1_score": round(f1_score, 4),
+    }

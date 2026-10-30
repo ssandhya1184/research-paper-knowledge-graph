@@ -110,6 +110,7 @@ def vector_retrieval_node(state: ResearchState) -> dict:
 
 
 def graph_retrieval_node(state: ResearchState) -> dict:
+    print("[GRAPH] Starting graph retrieval")
     paper_id = state["paper_id"]
     graph_path = Path("data/graph") / f"{paper_id}_graph.json"
 
@@ -162,8 +163,20 @@ def answer_generation_node(state: ResearchState) -> dict:
         {state["question"]}
         """
 
+    print("[QA] Sending prompt to Gemini...", flush=True)
     response = qa_agent.llm.invoke(prompt)
-    return {"answer": response.content}
+    print("[QA] Gemini response received.", flush=True)
+    answer_text = response.content
+    print(f"[QA] Answer generated: {answer_text}", flush=True)
+
+    if isinstance(answer_text, list):
+        answer_text = "\n".join(
+            item["text"]
+            for item in answer_text
+            if isinstance(item, dict) and item.get("type") == "text"
+        )
+
+    return {"answer": answer_text}
 
 
 def summarize_node(state: ResearchState) -> dict:
@@ -203,7 +216,9 @@ def extract_node(state: ResearchState) -> dict:
         paper_path.read_text(encoding="utf-8")
     )
 
+    print(f"Extracting knowledge from paper: {paper_id}")
     extraction = extract_knowledge(paper["full_text"])
+    print(f"Extraction completed for paper: {paper_id}")
 
     # Convert the Pydantic model into a JSON-compatible dictionary.
     extraction_data = extraction.model_dump()

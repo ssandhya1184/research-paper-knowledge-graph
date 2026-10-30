@@ -1,0 +1,416 @@
+[
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_0",
+    "chunk_index": 0,
+    "text": "Establishing Shared Query Understanding in an Open\nMulti-Agent System\nNikolaos Kondylidis\nVrije Universiteit Amsterdam\nAmsterdam, The Netherlands\nnikos.kondylidis@vu.nl\nIlaria Tiddi\nVrije Universiteit Amsterdam\nAmsterdam, The Netherlands\ni.tiddi@vu.nl\nAnnette ten Teije\nVrije Universiteit Amsterdam\nAmsterdam, The Netherlands\nannette.ten.teije@vu.nl\nABSTRACT\nWe propose a method that allows to develop shared understanding\nbetween two agents for the purpose of performing a task that re-\nquires cooperation. Our method focuses on efficiently establishing\nsuccessful task-oriented communication in an open multi-agent\nsystem, where the agents do not know anything about each other\nand can only communicate via grounded interaction. The method\naims to assist researchers that work on human-machine interaction\nor scenarios that require a human-in-the-loop, by defining inter-\naction restrictions and efficiency metrics. To that end, we point"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_1",
+    "chunk_index": 1,
+    "text": "aims to assist researchers that work on human-machine interaction\nor scenarios that require a human-in-the-loop, by defining inter-\naction restrictions and efficiency metrics. To that end, we point\nout the challenges and limitations of such a (diverse) setup, while\nalso restrictions and requirements which aim to ensure that high\ntask performance truthfully reflects the extent to which the agents\ncorrectly understand each other. Furthermore, we demonstrate a\nuse-case where our method can be applied for the task of cooper-\native query answering. We design the experiments by modifying\nan established ontology alignment benchmark. In this example,\nthe agents want to query each other, while representing different\ndatabases, defined in their own ontologies that contain different and\nincomplete knowledge. Grounded interaction here has the form of\nexamples that consists of common instances, for which the agents\nare expected to have similar knowledge. Our experiments demon-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_2",
+    "chunk_index": 2,
+    "text": "incomplete knowledge. Grounded interaction here has the form of\nexamples that consists of common instances, for which the agents\nare expected to have similar knowledge. Our experiments demon-\nstrate successful communication establishment under the required\nrestrictions, and compare different agent policies that aim to solve\nthe task in an efficient manner.\nKEYWORDS\nOpen Multi-Agent Systems; Task-oriented Communication Estab-\nlishment; Collaborative Query Answering\nACM Reference Format:\nNikolaos Kondylidis, Ilaria Tiddi, and Annette ten Teije. 2023. Establishing\nShared Query Understanding in an Open Multi-Agent System. In Proc. of\nthe 22nd International Conference on Autonomous Agents and Multiagent\nSystems (AAMAS 2023), London, United Kingdom, May 29 – June 2, 2023,\nIFAAMAS, 9 pages.\n1\nINTRODUCTION\nEstablishing successful communication between a human and a\nmachine is challenging. It requires an a priori definition of all the"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_3",
+    "chunk_index": 3,
+    "text": "IFAAMAS, 9 pages.\n1\nINTRODUCTION\nEstablishing successful communication between a human and a\nmachine is challenging. It requires an a priori definition of all the\npotential scenarios under which these agents will have to com-\nmunicate. This is not always possible, especially when designing\nautonomous systems. Another solution would be for the human to\nunderstand the system’s operation and communicate accordingly.\nProc. of the 22nd International Conference on Autonomous Agents and Multiagent Sys-\ntems (AAMAS 2023), A. Ricci, W. Yeoh, N. Agmon, B. An (eds.), May 29 – June 2, 2023,\nLondon, United Kingdom. © 2023 International Foundation for Autonomous Agents\nand Multiagent Systems (www.ifaamas.org). All rights reserved.\nThis is also non trivial, as it is very challenging “to understand,\ncomprehend, and work with very large conceptual schemas” [19].\nThe adaptive ability of a system to establishing successful com-\nmunication with humans in non-foreseen cases can substantially"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_4",
+    "chunk_index": 4,
+    "text": "comprehend, and work with very large conceptual schemas” [19].\nThe adaptive ability of a system to establishing successful com-\nmunication with humans in non-foreseen cases can substantially\nextend its (re-)usability. This would allow for the system to learn\nnew concepts or tasks with ad-hoc user interaction. This is possible\nwhile not requiring the user to be familiar with the particular sys-\ntem, or even be a domain expert. Communicating that via natural\nlanguage is not always possible, as it would require high levels of\nnatural language understanding and preferably in several languages.\nInstead, we suggest that such an understanding can be approxi-\nmated using only a few examples of correct and wrong query results,\nprovided by the user. Such an ability would be particularly useful in\nthe case where a person needs to query multiple databases, without\nhaving to familiarize with their respective schemas. For example,\na new Ph.D. student wants to reach out to senior researchers, i.e."
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_5",
+    "chunk_index": 5,
+    "text": "the case where a person needs to query multiple databases, without\nhaving to familiarize with their respective schemas. For example,\na new Ph.D. student wants to reach out to senior researchers, i.e.\npeople that have been members of a Program Committee of a con-\nference. The student knows which of the people in her group have\nbeen members of such a committee and can use them to form exam-\nples to query conference organisation databases, without having to\nfamiliarise with the schema of each database. This study aims to put\ntogether a framework with guidelines for designing communication\nexperiments with a human-hybrid application focus.\nDifferent fields have studied how successful communication can\nbe established between agents. Studies from Ontology Alignment\n(OA) [9], attempt to establish translations between ontologies, al-\nlowing for the systems to communicate their own concepts with\neach other. These approaches require both systems to operate under"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_6",
+    "chunk_index": 6,
+    "text": "(OA) [9], attempt to establish translations between ontologies, al-\nlowing for the systems to communicate their own concepts with\neach other. These approaches require both systems to operate under\nformally defined ontologies and are too inefficient to be applied\nin real time [4]. The problem has also an overlap with the Open\nMulti-Agent Systems (OMAS) field, where agents from a diverse\npopulation, that do not have an established communication proto-\ncol, need to learn how to communicate, only via grounded interac-\ntion. Similarly, language games [18] also study the establishment\nof correct communication. Nevertheless, in these fields, the agents\ndo not actively attempt to communicate or explain a particular\nconcept in an efficient manner, but instead the context of each\ninteraction is randomly provided by the environment. Therefore,\napplications of such methods are not able to represent restrictions\nthat humans bring in the problem, i.e. not having a formal ontology"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_7",
+    "chunk_index": 7,
+    "text": "interaction is randomly provided by the environment. Therefore,\napplications of such methods are not able to represent restrictions\nthat humans bring in the problem, i.e. not having a formal ontology\nfor each agent, nor aim to educate or be educated by a human about\na particular topic in an efficient manner.\nOur research question is whether we can put together such\nrestrictions and efficiency aspects in a framework. This would allow\nthe development and evaluation of intelligent systems that can learn\nto communicate with humans in an ad-hoc setting. Furthermore,\nto minimize hardly acquired human input, this framework should\narXiv:2305.09349v1  [cs.AI]  16 May 2023"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_8",
+    "chunk_index": 8,
+    "text": "allow researchers to indirectly estimate their method’s efficiency,\naccording to application-specific metrics that they can define, before\nrunning experiments with humans.\nThe framework describes how two agents and an environment\ninteract in a cycle. The agents need to cooperate in order to per-\nform a task on the environment. Since at least one of the agents\ndoes not operate under a formally defined ontology, we cannot\nsimply compare its interpretation with the intended interpretation\nand evaluate communication, but can only indirectly evaluate it\nbased on the performance of a downstream task. Neither agent\ncan perform the task alone, so that cooperation is required and\ntask performance reliably reflects correct understanding among the\nagents. In more detail, one agent called “Teacher” can understand\nthe task that needs to be performed but cannot act towards it. In-\nstead, it can only provide grounded examples to the other agent,"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_9",
+    "chunk_index": 9,
+    "text": "agents. In more detail, one agent called “Teacher” can understand\nthe task that needs to be performed but cannot act towards it. In-\nstead, it can only provide grounded examples to the other agent,\nthe “Student”, who needs to understand the task and perform it.\nThe environment is able to evaluate the Student’s action, which\nindirectly evaluates the Student’s understanding of the Teacher. It\nis nevertheless important that the environment’s evaluation is only\npresented to the Teacher, so that the Student alone cannot figure\nout the task over time without the Teacher’s input. This framework\nallows to test and compare different Teacher and Student policies,\nnamely how they should teach or learn a new concept in terms of\nboth task performance and efficiency (e.g. number of interaction\ncycles, cognitive load, or memory demands).\nWe applied this framework on the scenario where the two agents\nneed to collectively answer a query. Specifically, we utilize an"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_10",
+    "chunk_index": 10,
+    "text": "cycles, cognitive load, or memory demands).\nWe applied this framework on the scenario where the two agents\nneed to collectively answer a query. Specifically, we utilize an\nOA dataset that provides common instances that can be used for\ngrounded communication and concept alignments that allow the\nEnvironment to evaluate whether the two agents are talking about\nthe same thing and correctly understand each other. Additionally,\nthe different ontologies contain overlapping and incomplete data,\nso neither agent can alone correctly answer the query success-\nfully, and task performance is measured in terms of traditional\ninformation retrieval. Efficiency is principally measured in terms\nof number of interactions or examples that the agents exchange.\nFurthermore, we consider cognitive limitations and ask the Teacher\nto only provide one relevant and one irrelevant instance within\neach example. Last but not least, we also attempt to represent the"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_11",
+    "chunk_index": 11,
+    "text": "Furthermore, we consider cognitive limitations and ask the Teacher\nto only provide one relevant and one irrelevant instance within\neach example. Last but not least, we also attempt to represent the\nmemory demands of the agent policies that we put forward, by\ndefining episodic memory and working memory sizes in number\nof memorized episodes and variables used respectively. Please note\nthat the cognitive load metrics used are only intended as an example\nof how one could define its own case-specific metrics to evaluate\nshared understanding using our framework and are not meant as a\nmain reference to measure cognitive load. Our experiments display\na use-case application of our framework that allows us to evaluate\nteaching and learning policies that can be applied in an OMAS. The\napplied communication restrictions and efficiency metrics aim to\nrepresent that these policies can also be applied when the other\nagent is a human, while taking into account their estimated cogni-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_12",
+    "chunk_index": 12,
+    "text": "applied communication restrictions and efficiency metrics aim to\nrepresent that these policies can also be applied when the other\nagent is a human, while taking into account their estimated cogni-\ntive demand. The experiments show that it is possible for the agents\nto be well understood in the described setting, using only a very\nlimited number of interactions. In addition, the results suggest that\na robust query understanding method can be expected to perform\nbetter in a scenario where the agents have incomplete knowledge of\ntheir environment. Finally, the experiments on the applied use-case\nsuggest that the examples which seem to be more informative are\nmore probable to be interpreted differently by the two agents.\nIn this work, and specifically in Section 3, we put together i) the\nchallenges that need to be considered when developing human-\nmachine communication and ii) suggest guidelines on how to com-\nputationally evaluate understanding performance but also efficiency"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_13",
+    "chunk_index": 13,
+    "text": "challenges that need to be considered when developing human-\nmachine communication and ii) suggest guidelines on how to com-\nputationally evaluate understanding performance but also efficiency\nmetrics into a framework that can foster research around on-the-fly\nhuman-machine communication. Additionally, Section 4 presents\na use-case of applying this framework on the task of cooperative\nquery answering, where we suggest and evaluate policy agents that\naim to either teach or learn query-concepts to each other in an\nefficient manner. The queries are about roles of conference partic-\nipants, i.e. authors, reviewers, program committee members, etc.\nOur experiments indicate that successful communication in such a\nsetting is possible using only a small number of interactions.\n2\nRELATED WORK\nSeveral research fields are dealing with different aspects of commu-\nnication establishment among agents.\n2.1\nOntology Alignment\nThe field of Ontology Alignment studies how systems with differ-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_14",
+    "chunk_index": 14,
+    "text": "Several research fields are dealing with different aspects of commu-\nnication establishment among agents.\n2.1\nOntology Alignment\nThe field of Ontology Alignment studies how systems with differ-\nent formal representations of their knowledge can communicate\nsuccessfully. An OA method traditionally takes as input a pair of on-\ntologies and suggests concept or instance alignments [8, 9] among\nthem. These alignments are used as a basis for the two systems to\ntranslate knowledge between them, allowing for successful com-\nmunication. Most OA studies are very hard to be applied in our\nscenario. Firstly, most OA methods require complete access to both\nontologies, which might not be possible to extract from humans.\nSecondly, the evaluation of suggested OA methods is usually per-\nformed by comparing the produced alignments with a set of gold\nreference alignments, which can be very expensive to get. Instead,\nwe suggest the evaluation to be indirectly reflected on the perfor-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_15",
+    "chunk_index": 15,
+    "text": "formed by comparing the produced alignments with a set of gold\nreference alignments, which can be very expensive to get. Instead,\nwe suggest the evaluation to be indirectly reflected on the perfor-\nmance of a task that requires agent collaboration. Last but not least,\nthe complexity of existing methods makes their real time applica-\ntion almost impossible [3, 4, 12]. The hybrid aim of our framework\nrequires the communication establishment methods to be evaluated\nin the form of trade-off between efficiency and task achievement,\ni.e. precision and recall), instead of only focusing on the latter.\nIncremental OA Through Interaction. Other studies do not take\na holistic approach that suggests all possible alignments in one\ngo. Instead, the ontologies are used by agents that aim to estab-\nlish or to refine existing alignments through agent interaction\n[1, 2, 4, 6, 7, 11, 15]. In some studies, the agents engage in formal\nnegotiation procedures, the content of which is concept alignments"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_16",
+    "chunk_index": 16,
+    "text": "[1, 2, 4, 6, 7, 11, 15]. In some studies, the agents engage in formal\nnegotiation procedures, the content of which is concept alignments\n[11, 15]. The agents have (limited) access to each other’s ontologies\nas to subjectively propose, reject or rebut about them, until they\nconverge to a set of commonly agreed alignments. Contrary to\nour framework, the agents do not strategically decide their interac-\ntions as to efficiently achieve a concrete communication outcome,\nwhile also they evaluate communication according to reference\nalignments instead of some downstream task performance. In other\nstudies [6, 7] the agents use properties from their ontology to de-\nscribe objects to one another. Eventually, they form several property"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_17",
+    "chunk_index": 17,
+    "text": "alignments. In contrast, in our study, the same agent keeps on pro-\nviding examples to efficiently explain one particular property to\nanother agent. Furthermore, the examples consist of both relevant\nand non-relevant objects to narrow down the possible property\ninterpretation more efficiently. In [1], a population of agents that\nare grouped to represent databases in different ontologies are asked\nto collectively answer queries. The agents spread the queries and\ntheir answers around the rest of the population using provided\nconcept alignments in a gossip-like way. When an agent receives\nagain a query that it had forwarded in the past, it evaluates its trans-\nlations or even replaces them, based on the translations or answers\nof agents that have meanwhile propagated that query. Such an ap-\nproach evaluates communication according to provided alignments\nand not using a task, while requiring very large communication vol-\numes that humans could not support. In [2], a population of agents"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_18",
+    "chunk_index": 18,
+    "text": "proach evaluates communication according to provided alignments\nand not using a task, while requiring very large communication vol-\numes that humans could not support. In [2], a population of agents\nthat exist in a shared environment need to exchange information\nregarding environmental observations. Similar to our study, their\nevaluation is taking place with respect to a downstream task, while\nthey also measure communication efficiency in terms of commu-\nnicated data volume. However, their work focuses on performing\ninstance matching provided a shared schema and therefore cannot\nbe applied when some agents are humans, as they are not expected\nto use the same schema. Last but not least, research has also been\nperformed on agents that focus on aligning only what is necessary\nfor the current interaction, aiming to allow an efficient real time\napplication [4]. Additionally, the agents store “interaction contexts”,\nin order to reduce the interpretation space of future interactions"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_19",
+    "chunk_index": 19,
+    "text": "application [4]. Additionally, the agents store “interaction contexts”,\nin order to reduce the interpretation space of future interactions\nbased on its context. In contrast to us, the authors do not account\nfor minimizing communication volume restrictions when some\nagents are humans. Alignments are generated following traditional\nstructural/lexical OA metrics by comparing parts of the ontologies.\n2.2\nAgent Communication Establishment\nHere, we present studies on communication establishment that can\nbe applied on different agents, regardless of the (in-)formal system\neach agent operates under.\nCommunication Establishment in Open Multi-Agent Systems. O-\nMAS focuses on agent interaction in dynamic populations of agents.\nComputationally this means that neither the agents’ system, nor\nthe task that they will need to perform, can be decided a priori.\nTherefore, the agents need to learn how to communicate while mak-\ning the least amount of assumptions regarding other agents. To that"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_20",
+    "chunk_index": 20,
+    "text": "the task that they will need to perform, can be decided a priori.\nTherefore, the agents need to learn how to communicate while mak-\ning the least amount of assumptions regarding other agents. To that\nend, communication or symbol alignments is established according\nto environment observations, that is grounded communication.\nIn [3], the agents engage in a conversation, which both interpret\naccording to their own automaton. Some of the communication\nlanguage is shared, and the rest of the symbols are aligned after\nenough interactions. The communication is considered to be suc-\ncessful if the agents end the conversation at the same time, which\nis an observable act and inline with our approach, but ignores the\nactual outcome. Our framework requires the agents to perform\nan action, i.e. answer a query, to better estimate the levels of cor-\nrect communication. Experiments of that study were performed on\nsynthetically generated automata."
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_21",
+    "chunk_index": 21,
+    "text": "an action, i.e. answer a query, to better estimate the levels of cor-\nrect communication. Experiments of that study were performed on\nsynthetically generated automata.\nIn [16], a set of agents learn how to interact with each other\nin order to achieve potentially conflicting goals. The communi-\ncated symbols are interpreted in terms of the agent’s observable\nactions that follow. Agents decide what to communicate aiming to\ndecrease interpretation entropy, but can also misuse a word as an\nattempt to take advantage of other agents. In this approach, agent\ncommunication is not explicitly interpreted, but indirectly affects\nthe agent behavior, via training a Markov Decision Process that\ntranslates communication events into actions, based on environ-\nmental rewards. While this study does not focus on communication\nestablishment, it follows our framework idea that agent learning\nshould be based on indirect environmental rewards.\nLanguage Games. Language games [18] are an approach to es-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_22",
+    "chunk_index": 22,
+    "text": "establishment, it follows our framework idea that agent learning\nshould be based on indirect environmental rewards.\nLanguage Games. Language games [18] are an approach to es-\ntablish successful communication in an OMAS only via grounded\ncommunication. In this setup, a population of agents engage in pairs\nto play grounded referential games. In these games, the agents de-\nvelop their own vocabulary, that is interpreted in terms of object\ncharacteristics and is used to refer to a particular object in a context.\nAfter enough games, the population of agents converges to having\nshared symbol interpretations, allowing them to always communi-\ncate successfully. This work has been extended to scenarios where\none agent teaches the other one how to interpret natural language\nquestions regarding a commonly perceived scene of objects [13].\nAdditionally, there has also been a demonstration on how a human\ncan engage with a computer to teach it a concept, by constructing"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_23",
+    "chunk_index": 23,
+    "text": "questions regarding a commonly perceived scene of objects [13].\nAdditionally, there has also been a demonstration on how a human\ncan engage with a computer to teach it a concept, by constructing\nexamples using physical world objects [14]. These studies have a\ndifferent focus compared to our work. They aim to replicate the\nhumane ability of developing a language through de-centralized\npeer-to-peer interactions. The main aim of these studies is to study\nthe evolution of natural languages, by replicating the process. In\nmore detail, the agents interact in multiple random scenarios of hav-\ning to refer to an object in their surrounding using invented words.\nEventually they converge to a commonly interpreted vocabulary\nthat allows them to successfully communicate in any scenario. On\nthe other hand, our framework is designed for learning to commu-\nnicate one specific concept, as efficiently as possible, by designing\ninteraction contexts, i.e. the teaching examples, accordingly."
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_24",
+    "chunk_index": 24,
+    "text": "the other hand, our framework is designed for learning to commu-\nnicate one specific concept, as efficiently as possible, by designing\ninteraction contexts, i.e. the teaching examples, accordingly.\nInteractive Reinforcement Learning. There have also been some\nstudies that do not aim to establish human-computer communica-\ntion, but use a human in the loop to create more efficient Reinforce-\nment Learning (RL) methods. RL studies categories of problems\nwhere the reward signal is sparse and is only provided to the agent\nafter multiple decisions. Such algorithms are very computationally\nexpensive as they usually require a lot of action-reward exploration.\nInteractive RL aims to incorporate human input in that process, in\norder to make the convergence of such approaches faster [5]. This\nway, interactive RL studies focus on the downstream task, and use\nhuman input as a way to improve their performance.\n3\nA FRAMEWORK FOR DEVELOPING AND\nEVALUATING HUMAN-HYBRID\nUNDERSTANDING"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_25",
+    "chunk_index": 25,
+    "text": "way, interactive RL studies focus on the downstream task, and use\nhuman input as a way to improve their performance.\n3\nA FRAMEWORK FOR DEVELOPING AND\nEVALUATING HUMAN-HYBRID\nUNDERSTANDING\nThis section presents our framework which provides guidelines on\ndesigning and evaluating communication establishment policies in\nan OMAS setting, including human-computer scenarios. Guidelines"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_26",
+    "chunk_index": 26,
+    "text": "Figure 1:\nThe task-oriented information flow cycle for\nshared understanding. One agent, i.e. the Teacher, under-\nstands the task that has to be performed, while the other\nagent i.e. the Student, does not, while the latter is the only\none who can perform the task. The agents engage in an itera-\ntive loop: 1. Grounded Example: the Teacher attempts to ex-\nplain the task at hand to the Student providing an example;\n2. Action: the Student follows by attempting to perform the\ntask; 3. Understanding Evaluation: the Teacher is informed\nby the Environment regarding the Student’s performance on\nthe task, which reflects its understanding of the task.\nare either in the form of restrictions, or by defining efficiency goals\nthat should be optimized. Our framework is designed in an abstract\nand modular way, allowing the experiment designer to easily define\ndifferent humane aspects that best fit their scenario. We define\nunderstanding as the product of the interpretation process. For"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_27",
+    "chunk_index": 27,
+    "text": "and modular way, allowing the experiment designer to easily define\ndifferent humane aspects that best fit their scenario. We define\nunderstanding as the product of the interpretation process. For\nexample, two agents have a shared understanding of a query when\nthey interpret it using equivalent classes in their own ontologies.\nThe Process of Defining the Problem Computationally. Our frame-\nwork proposes a way of establishing successful understanding be-\ntween two agents that is indirectly evaluated with respect to a\ndownstream task. The application of our framework follows a pro-\ncess of three steps so that it can be computationally studied.\nFirst, one needs to define what consists a grounded interaction\nin their scenario. These are objects that both agents know and\ncan refer to during an interaction, while each of them has their\nown way of perceiving them. Therefore, a set of common objects\nmust be identified among the agents. In our example, these are the"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_28",
+    "chunk_index": 28,
+    "text": "can refer to during an interaction, while each of them has their\nown way of perceiving them. Therefore, a set of common objects\nmust be identified among the agents. In our example, these are the\nresearchers of the student’s group.\nSecond, it is important that the downstream task cannot be\nsolved by either agent independently and that there is no conflict\nof interests. To that end, the agents cannot have complete infor-\nmation about the environment, requiring input from both of them\nto successfully solve the downstream task. As a consequence, the\nagents can either be designed to not be aware of all the objects of\nthe environment or at least not to know all their properties. In our\nexample, while the student can find all researchers, she does not\nknow who are senior researchers. At the same time, the database\nagent does not know what the student is looking for.\nThird, the cognitive load of the involved agents should be some-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_29",
+    "chunk_index": 29,
+    "text": "know who are senior researchers. At the same time, the database\nagent does not know what the student is looking for.\nThird, the cognitive load of the involved agents should be some-\nhow computationally approximated so that it can then be minimized.\nThis should be defined by the researcher, having in mind the target\ngroup of the end user that will use their application. It can be in the\nform of number of interactions, or additionally Episodic or Working\nmemory demands, depending on how we assume the human to\nbehave when interacting with the computer.\nOnce we have these, we suggest that the agents interact in a\ntask-oriented loop that allows for incremental shared understand-\ning development and its evaluation. Figure 1 illustrates the abstract\nshare understanding establishment cycle as described by our frame-\nwork, while Figure 2 instantiates it for our specific example use-case,\nas described in Section 4. Initially, one agent, i.e. the Ph.D. student,"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_30",
+    "chunk_index": 30,
+    "text": "work, while Figure 2 instantiates it for our specific example use-case,\nas described in Section 4. Initially, one agent, i.e. the Ph.D. student,\nis provided with a task from the environment, i.e. find senior re-\nsearchers. The task can also come from the Teacher, but only the\nenvironment can fully evaluate its completion. Then, the agents\nengage in a 3-step cycle. In the first step, the Teacher, i.e. the Ph.D.\nstudent, provides some objects as examples using people from her\ngroup. In the second step, the Student, i.e. agent database, provides\nwhat it currently interprets as relevant objects from its complete set\nof objects, i.e. researchers. In the third step, the Teacher observes\nthe Student’s object selection, i.e. list of assumed senior researchers,\nand the Environment, i.e. the supervisors, acts as an object selec-\ntion evaluation. By repeating this cycle, the evaluation, i.e. query\nperformance, should improve over time.\n3.1\nThe Process of Defining the Problem\nComputationally"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_31",
+    "chunk_index": 31,
+    "text": "tion evaluation. By repeating this cycle, the evaluation, i.e. query\nperformance, should improve over time.\n3.1\nThe Process of Defining the Problem\nComputationally\nEstablishing successful communication between agents can be chal-\nlenging because they are designed to have different goals or beliefs.\nThese aspects shape how the agent perceives the world and give\nthem a potentially unique perspective. A simple way to computa-\ntionally define different perspectives is by assuming that the agents\nare operating using different ontologies. Provided that these agents\nexist in a similar or the same environment, we expect their ontolo-\ngies to have some overlap both in terms of concepts and knowledge,\nwhile also their ontologies are expected to be incomplete. Follow-\ning, we will present how we apply the three steps of defining our\nproblem computationally for a scenario that agents operate under\ndifferent ontologies.\nStep 1: Defining Communication Restrictions. Following tradi-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_32",
+    "chunk_index": 32,
+    "text": "problem computationally for a scenario that agents operate under\ndifferent ontologies.\nStep 1: Defining Communication Restrictions. Following tradi-\ntional OMAS restrictions, the agents share limited to none common\nlanguage and can only communicate via grounded interaction,\nwhich for example can have the form of referring to common world\nobjects of their shared surrounding. Besides being a good fit for\nan OMAS setting, it is inspired by the Language Games studies\n[18], which are an attempt to mimic how a population of humans\nlearn to interpret a vocabulary similarly. Nevertheless, they have\nin mind the task that needs to be performed and are aware of pos-\nsible communication action interpretations. Additionally, given the\nparticipation of human agents, the communicated examples should\nbe concise so that their comprehension is not very laborsome.\nStep 2: Defining Cooperation Restrictions. It is very challenging\nto evaluate communication in an OMAS setup when some of the"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_33",
+    "chunk_index": 33,
+    "text": "be concise so that their comprehension is not very laborsome.\nStep 2: Defining Cooperation Restrictions. It is very challenging\nto evaluate communication in an OMAS setup when some of the\nagents are humans. One cannot simply compare the interpretation\nof the receiver and the intended interpretation of the sender, since\nthere is no agent that understands both system representations.\nTherefore, we suggest that the agents need to perform a task on the\nobservable environment, that requires their cooperation. This\nway the environment can act as a communication evaluator, since"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_34",
+    "chunk_index": 34,
+    "text": "task performance depends on cooperation which requires successful\ncommunication. In order to make sure that this is the case, it is\nimportant that neither agent can perform the task by independently\ninteracting with the environment. Finally, we assume that there\nis no conflict of interest among the agents, so that they have no\nreason to misuse communication signals for their own interest.\nStep 3: Defining Efficiency Aspects. Since some involved agents\nare humans, it is important to have efficient interactions. To that\nend, efficiency must be somehow defined, so that its evaluation\ncan at least be approximated. While these definitions depend on\nthe specific application, we suggest two type of efficiency evalu-\nations to be taken into account. First, it is important to minimize\ninteraction time, which can be approximated by the number of\ninteractions needed. Second, the agents’ effort during the com-\nplete sequence of interactions should also be taken into account,"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_35",
+    "chunk_index": 35,
+    "text": "interaction time, which can be approximated by the number of\ninteractions needed. Second, the agents’ effort during the com-\nplete sequence of interactions should also be taken into account,\nuntil they quit or perform the task successfully. This can for ex-\nample be represented roughly in terms of episodic and working\nmemory demands, as this can be approximated by the number of\nexamples that the agents had to memorize or by the number of\nvariables that they need to keep track of, respectively.\n4\nAN APPLIED USE CASE ON ARTIFICIAL\nAGENTS\nIn this section, we present an example application of our Frame-\nwork in a scenario where two agents query each other about confer-\nence participants and their roles. Although we apply it on artificial\nagents, they behave as if they interact with humans, respecting all\ncommunication and efficiency restrictions.\nAn Example Use-Case. We consider a human and an artificial\nagent (representing a database) querying each other. Whether the"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_36",
+    "chunk_index": 36,
+    "text": "communication and efficiency restrictions.\nAn Example Use-Case. We consider a human and an artificial\nagent (representing a database) querying each other. Whether the\nhuman wants to query the database, or the database agent aims\nto extend its knowledge, the aim is to allow knowledge exchange\nwithout the human having to learn the schema of the database.\nLet us assume a new Ph.D. student who want to reach out to a\nbroader circle of senior researchers. She knows some researchers\nfrom her group, and is able to distinguish who is senior and who\nis not. While there are several conference organisation databases\nshe can query, it is hard for her to define what a senior researcher\nis, let alone to form such a concept under the different schemas of\nall the databases. Instead, she can use the people of her group to\nform examples of senior and junior researchers. She provides such\nexamples to the artificial agent, who tries to understand the query"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_37",
+    "chunk_index": 37,
+    "text": "form examples of senior and junior researchers. She provides such\nexamples to the artificial agent, who tries to understand the query\nand returns results based on its knowledge. Since the student does\nnot know who are the senior researchers, she is unable to evaluate\nthe results herself. She can still ask her supervisors to evaluate the\nresults, as this takes less of their time compared to coming up with\nthe list themselves. In this case, the student acts as a Teacher, the\ndatabase agent as a Student and the supervisors as the Environment.\n4.1\nApplying Our Framework\nIn this section, we will go through the three steps of defining our\nframework computationally, as described in Section 3.1.\nStep 1: Defining Communication Restrictions. Communicating\nover common objects is achieved by referring to researchers that\nFigure 2:\nThe shared understanding cycle instantiated\nfor our example. Step (1) Provide example: the Ph.D.\nstudent (acting as Teacher) wants to query the agent"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_38",
+    "chunk_index": 38,
+    "text": "Figure 2:\nThe shared understanding cycle instantiated\nfor our example. Step (1) Provide example: the Ph.D.\nstudent (acting as Teacher) wants to query the agent\ndatabase (acting as Student) about senior researchers\n(“cmt:ProgramCommitteeMember”). Examples (URIs for se-\nnior and junior researcher) both the Ph.D. student and the\ndatabase agent are aware of those common objects. Step (2)\nForward Query: the agent database needs to interpret the ex-\nample and apply its Student policy to update its current esti-\nmated query representation, and forward the query results\nfrom its database to the supervisors (Environment). Step (3)\nReturn Query Performance: evaluation in terms of Precision\nand Recall, and inform their student how well the agent\ndatabase understands her query.\nboth agents, i.e. the Ph.D. student and the database agent, are aware\nof. Furthermore, concise interaction is achieved by asking the\nPh.D. student to only provide examples that consist of one junior"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_39",
+    "chunk_index": 39,
+    "text": "both agents, i.e. the Ph.D. student and the database agent, are aware\nof. Furthermore, concise interaction is achieved by asking the\nPh.D. student to only provide examples that consist of one junior\nand one senior researcher at a time.\nStep 2: Defining Cooperation Restrictions. Successful commu-\nnication and cooperation is required in our example. The stu-\ndent cannot find senior researchers alone, as she would have to\nwaste a lot of her supervisors’ time. At the same time, the database\nagent alone cannot automatically be updated about new roles of\nresearchers in conferences. It is also clear why there is no conflict\nof interest, as neither agent has any incentive to mislead the other.\nStep 3: Defining Efficiency Aspects. Interaction time is measured\nby the number of examples exchanged between the agents and\ncognitive load is measured based on the estimated memory volume\nneeds of the participating agents (cf. Section 5.2 for details).\n4.2\nTask Definition"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_40",
+    "chunk_index": 40,
+    "text": "cognitive load is measured based on the estimated memory volume\nneeds of the participating agents (cf. Section 5.2 for details).\n4.2\nTask Definition\nThe agent interaction and the task they need to solve are presented\nin Figure 2. The Teacher needs to explain the query to the Student\nwho can then answer it. The Teacher’s knowledge is artificially rep-\nresented by another database, i.e. the cmt ontology in our example.\nThe Student’s database includes knowledge of the confOf ontology.\nCommunication has the form of examples of world objects, i.e. re-\nsearchers, that both ontologies are aware of. The queries are always\nabout world objects that share some properties. Furthermore, the\nagents are not aware of all the objects, nor of all the properties of\nthe objects that they know. Thus, only the Environment, i.e. the"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_41",
+    "chunk_index": 41,
+    "text": "Figure 3: Example of how two agents can perceive the same\ngrounded example (URIs) differently according to their on-\ntologies. The URIs are grounded: both ontologies refer to the\nsame “entities”.\nsupervisors, is up to date and knows the complete answer set of the\nquery. Our task focuses on evaluating the answers of the Student.\nThe evaluation of the Student’s answers is not provided to the Stu-\ndent, as this could allow the Student to understand the query alone\nand make the agent communication dispensable.\nSubjective Example Interpretation. While the examples consist\nof objects that both agents are aware of and the identity of the\nrelevant object is known, the examples are perceived differently\nby each agent, as presented in Figure 3. The agents independently\nuse their own databases to perceive the objects, i.e. retrieve their\nproperties. Then, they interpret the examples by forming three\nproperty sets. The Positive and Negative property sets (𝑃𝑒𝑥and"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_42",
+    "chunk_index": 42,
+    "text": "use their own databases to perceive the objects, i.e. retrieve their\nproperties. Then, they interpret the examples by forming three\nproperty sets. The Positive and Negative property sets (𝑃𝑒𝑥and\n𝑁𝑒𝑥) of an example (𝑒𝑥) are the ones that consist of properties only\nowned by the relevant and irrelevant object respectively. Addition-\nally, the agents can also calculate the set of Common properties\n(𝐶𝑒𝑥) of the two objects. The Teacher, i.e. Ph.D. student, commu-\nnicates examples that contain the property it wants to explain in\ntheir Positive property set. In case they example interpretation of\nthe Student, i.e. database agent, has an empty Positive property\nset, then this example is unclear for the Student. A clear example,\naccording to the Student, does not necessarily mean that it was\nunderstood as the Teacher intended. This would be the case if the\nsame communicated example presented in Figure 3 was used to\nexplain the concept “cmt:Chairman”, or “cmt:Reviewer”. Therefore,"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_43",
+    "chunk_index": 43,
+    "text": "understood as the Teacher intended. This would be the case if the\nsame communicated example presented in Figure 3 was used to\nexplain the concept “cmt:Chairman”, or “cmt:Reviewer”. Therefore,\ndue to different databases, the Teacher might need to provide sev-\neral examples until the Student can fairly approximate the query at\nhand.\n4.3\nTeacher Policies\nProvided the property of the query, the Teacher creates an example\npool, with all examples i.e. object pairs, where the query property\nis contained in their Positive property set. The Teacher has to\ndecide which example to provide next. This is performed by the\nTeacher’s policy which scores the examples in that pool, based on\nthe history of examples and the Student’s feedback. The Student’s\nfeedback is used to communicate when an example was unclear, i.e.\nhas an empty Positive property set according to the Student. The\nTeacher cannot foresee these cases, but can instead memorize these"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_44",
+    "chunk_index": 44,
+    "text": "feedback is used to communicate when an example was unclear, i.e.\nhas an empty Positive property set according to the Student. The\nTeacher cannot foresee these cases, but can instead memorize these\nexamples and not present them again by removing them from the\nexample pool.\nRandom Teacher Policy ([6]). One option is for the agent to follow\na random teaching policy, where examples are randomly sampled\nfrom the pool, with replacement. This agent policy is an adaptation\nof the proposed method in [6], for our task, where the objects that\nthe agents describe is chosen randomly.\nProperty-Based Teacher Policy. This policy increases the score\nof an example according to the properties that it aims to exclude\nfrom query interpretation candidates. We define the weight (𝑤𝑝)\nof each property 𝑝as the number of objects that have this prop-\nerty, compared to the total number of objects in the database (its\nnormalized frequency). Then, we define the score of each example\n(𝑠𝑐𝑜𝑟𝑒𝑒𝑥) as:\n𝑠𝑐𝑜𝑟𝑒𝑒𝑥="
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_45",
+    "chunk_index": 45,
+    "text": "erty, compared to the total number of objects in the database (its\nnormalized frequency). Then, we define the score of each example\n(𝑠𝑐𝑜𝑟𝑒𝑒𝑥) as:\n𝑠𝑐𝑜𝑟𝑒𝑒𝑥=\n∀𝑝∈(𝑁𝑒𝑥∪𝐶𝑒𝑥)\n∑︁\n𝑤𝑝−\n∀𝑝∈𝑃𝑒𝑥\n∑︁\n𝑤𝑝\n4.4\nStudent Policies\nThe Student’s policy provides instructions on how to translate the\nincoming stream of examples to an estimated query represen-\ntation, which is then used to provide results to the Environment.\nIt is common knowledge that the query is about a set of objects\nthat share some property. Thus, the estimated query representation\nconsists of a set of property-score pairs. The Student policies only\nmake use of the Positive and Common property sets of an example.\nWe will now present the two policies that we are comparing.\nLogic-Based Student Policy. This policy requires the Student to\nmemorize the provided examples, and then apply Formal Concept\nAnalysis (FCA) [10] to deduce which properties are implied by the\nquery. FCA can be used to derive property relations, provided a set"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_46",
+    "chunk_index": 46,
+    "text": "memorize the provided examples, and then apply Formal Concept\nAnalysis (FCA) [10] to deduce which properties are implied by the\nquery. FCA can be used to derive property relations, provided a set\nof objects and their relations. Therefore, we treat each example as\nan individual object, and the Positive property set of that episode\n(𝑃𝑒𝑥), as the properties of this object. The Student memorizes a set\nof unique Positive property sets of examples. The query is also\nrepresented as a pseudo property of these example objects. This\nway, FCA provides us with relations between the query and the\nproperties of the agent’s ontology. Only the properties that can be\ninduced from the query pseudo property are found on the estimated\nquery representation set, and they all have the same score, so that\nthey affect the produced results in the same way.\nFrequency-Based Student Policy. The Frequency-based policy does\nnot require the student to memorize any example, but only to main-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_47",
+    "chunk_index": 47,
+    "text": "they affect the produced results in the same way.\nFrequency-Based Student Policy. The Frequency-based policy does\nnot require the student to memorize any example, but only to main-\ntain and update scores per observed property. Specifically, the agent\nstarts with an empty set of property-score pairs, as its estimated\nquery representation. For every new example, the Student makes\nuse of its Positive and Common property sets. In case any of these\nproperties is not in the estimated query representation, they are\nadded with an initial score of 0. Then, the score of each property on\nthe Positive or Common property sets of the example is increased\nor decreased by 1, respectively."
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_48",
+    "chunk_index": 48,
+    "text": "Providing Query Results. When asked, the Student uses its es-\ntimated query representation to rank all objects in its database\nand provides them to the Environment. The score of each object is\nequal to the summation of the scores of its properties, as they are\ncalculated in the estimated query representation. The agent only\nreturns objects with positive scores.\n5\nEXPERIMENTS\nIn this section, we present the experiments that we performed. Our\ncode is publicly available1, ensuring reproducibility of our work.\n5.1\nDataset\nFor our experiments, we used the dataset of the Ontology Alignment\nfor Query Answering (OA4QA) track [17]. The dataset contains 7\npopulated ontologies, that have on average 817 instances belonging\nto 17 classes. The ontologies describe an overlapping set of con-\nference venues, with information such as people’s role, types of\nsubmitted papers, etc. About 259 class alignments are present over\nthe 21 ontology pairs. This dataset is a populated version of the"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_49",
+    "chunk_index": 49,
+    "text": "ference venues, with information such as people’s role, types of\nsubmitted papers, etc. About 259 class alignments are present over\nthe 21 ontology pairs. This dataset is a populated version of the\npopular dataset used on the Conference track of the well established\nOntology Alignment Evaluation Initiative2, although we only use\nthe instances and their classes.\nUtilizing the Dataset. We only focus on the instances and their\nclasses from each ontology, that we use as world objects and their\nproperties respectively. This dataset is a very good fit for our sce-\nnario, as it contains several class alignments. These can be used as\nequivalent object properties across agent databases, over which we\ncan perform query understanding experiments. Furthermore, since\nthe ontologies describe a set of overlapping venues, they contain\ndifferent and incomplete knowledge about their environment. This\nway, we ensure that cooperation is required, since no agent can"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_50",
+    "chunk_index": 50,
+    "text": "the ontologies describe a set of overlapping venues, they contain\ndifferent and incomplete knowledge about their environment. This\nway, we ensure that cooperation is required, since no agent can\nalone provide all answers in any query understanding experiments,\nas the complete answer set is always distributed among both agents.\nCrafting Query Understanding Experiments. Every provided class\nalignment between two ontologies can be turned into a query un-\nderstanding experiment. Specifically, each alignment can generate\ntwo experiments, since the agent that represents one of the two\nontologies can either participate as a Teacher or as a Student. In\norder for the alignment to be put to use, both ontologies need to\nhave at least one instance of their corresponding aligned class in\nthe set of common instances between the two ontologies.\nThe Simple Dataset. As previously described, the number of com-\nmon instances across ontology pairs has a direct effect of how"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_51",
+    "chunk_index": 51,
+    "text": "the set of common instances between the two ontologies.\nThe Simple Dataset. As previously described, the number of com-\nmon instances across ontology pairs has a direct effect of how\nmany of the provided class alignments can be used as query un-\nderstanding experiments. Instance alignment across ontologies is\nnot a problem that we aim to address in this paper. Instead, we\naim to identify common instances across ontologies, and create\ntwo different datasets accordingly. In the first dataset, denoted as\nSimple, two instances are the same only if they have exactly the\nsame Unique Resource Identifier (URI). This dataset has on average\n303 common instances across pairs of ontologies, and can be used\nfor running 126 experiments.\n1https://github.com/kondilidisn/shared_query_understanding\n2http://oaei.ontologymatching.org/2022/conference/index.html\nThe Extended Dataset. The second dataset, denoted as Extended,\nextends the first dataset by making three more assumptions on"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_52",
+    "chunk_index": 52,
+    "text": "2http://oaei.ontologymatching.org/2022/conference/index.html\nThe Extended Dataset. The second dataset, denoted as Extended,\nextends the first dataset by making three more assumptions on\nwhether two instances are the same across ontologies. The first\nextra assumption suggests that two instances with the same name\nbut different namespace are the same. The second extra assumption\nsuggests that two instances are the same, if the are related in the\nsame way, i.e. equivalent relation, to another instance that is known\nto be the same. This would be formalized as o1:x == o2:y if (com-\nmon_entity, common_relation, o1:x) AND (common_entity, com-\nmon_relation, o2:y). Last but not least, we also mined some instance\nalignments by executing complex queries. For example, in one on-\ntology, the relation o1:writes can connect a o1:Person with either a\no1:Paper, or with a o1:Review. In the other ontology, o2:has_written\nonly relates o2:Person with o2:Paper. In this case, we first retrieved"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_53",
+    "chunk_index": 53,
+    "text": "o1:Paper, or with a o1:Review. In the other ontology, o2:has_written\nonly relates o2:Person with o2:Paper. In this case, we first retrieved\nall o1:Person that were related with instance o1:X, with the relation\no1:writes. Then, we filtered out all o1:X that were not o1:Paper, and\nfinally applied our second assumption as described before. This\ndataset has 482 common instances across ontology pairs on average,\nand allowed the execution of 226 different experiments.\nAggregating Evaluations Over Multiple Queries and Experiments.\nEach experiment represents the behavior of the combination of\nTeacher’s and Student’s policy for a specific dataset. This is calcu-\nlated by averaging the recorded evaluation metric values over all\nthe query understanding experiments that can be performed on that\ndataset. Additionally, some agent policies are non-deterministic,\nwhich can be the case because scoring ties are resolved randomly.\nFor this reason, we repeat every experiment of a specific query 10"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_54",
+    "chunk_index": 54,
+    "text": "dataset. Additionally, some agent policies are non-deterministic,\nwhich can be the case because scoring ties are resolved randomly.\nFor this reason, we repeat every experiment of a specific query 10\ntimes, and report average values of the evaluation metrics.\n5.2\nEvaluation Metrics\nOur evaluation focuses both on how well the agents understand\neach other, i.e. reflected by the task performance, while also the\nefficiency costs of each approach.\nTask Performance. The task that the agents are trying to collec-\ntively solve is query answering. Therefore, their performance is\nmeasured in terms of traditional information retrieval terms, i.e.\nPrecision and Recall.\nEfficiency Costs. The interaction time is measured as the num-\nber of examples that were communicated between the agents, i.e.\n#examples. Furthermore, we use the notions of Episodic Memory,\nand Working Memory, to approximate the agents’ cognitive effort\nthroughout the complete sequence of interactions. The Episodic"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_55",
+    "chunk_index": 55,
+    "text": "#examples. Furthermore, we use the notions of Episodic Memory,\nand Working Memory, to approximate the agents’ cognitive effort\nthroughout the complete sequence of interactions. The Episodic\nmemory is defined as the number of episodes that the agent has\nmemorized. These are the unclear examples for the Teacher and the\nclear examples for the Logic-based Student. The Working memory\nis equal to the number of variables that the agent policy is using\nin order to operate, i.e. the property scores. The terms Episodic\nand Working memory here are used as an example of how one can\nmeasure cognitive effort.\n5.3\nExperiment Results and Discussion\nFigure 4 depicts how the suggested agent policies behave in terms\nof task performance, with respect to the number of examples ex-\nchanged. Recall that the evaluation takes place on the query results\nof the Student to the environment, as a way of indirectly measuring"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_56",
+    "chunk_index": 56,
+    "text": "Figure 4:\nPerformance evaluation of the proposed agent\npolicies on the two datasets. The legends denote the Teacher\nand Student applied policy respectively, separated by ‘-’.\nhow well the Student understands the Teacher’s query. An impor-\ntant takeaway is that in any combination of selected policies, the\nagents achieve more than 80% Precision and around 90% Recall,\nwithin only a handful of provided examples. Nevertheless, it is in-\nteresting to note that when the Student is following the Logic-based\npolicy, Recall starts to decline after only a few examples. This sug-\ngests that the Logic-based policy is not robust enough for scenarios\nwith ontologies that contain incomplete and partial knowledge.\nSimilar behavior is also observed on the Precision of the Logic-\nbased Student policies, but only on the small dataset. Furthermore,\nwhen comparing the applications of Frequency-based Student poli-\ncies, we can see that a Teacher that applies the Property-based"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_57",
+    "chunk_index": 57,
+    "text": "based Student policies, but only on the small dataset. Furthermore,\nwhen comparing the applications of Frequency-based Student poli-\ncies, we can see that a Teacher that applies the Property-based\npolicy helps achieving a good agent understanding in fewer exam-\nples. Moreover, it is also interesting to note that only in the large\ndataset, a Student following a Frequency-based policy and taught\nby a Teacher with Random policy, is under-performing in terms\nof Precision compared to all other policy combinations. Besides,\nall policy combinations achieve higher Precision on the extended\ndataset. Additionally, the Frequency-based Student policies show a\ndrop of Recall on the Extended dataset.\nEfficiency Metrics Performance. When the Student applies the\nFrequency-based policy, its working memory is around 5,5 and 4,6\non the small and the extended dataset respectively, and equal to 0\nfor the Logic-based policy. This number reflects the average num-"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_58",
+    "chunk_index": 58,
+    "text": "Frequency-based policy, its working memory is around 5,5 and 4,6\non the small and the extended dataset respectively, and equal to 0\nfor the Logic-based policy. This number reflects the average num-\nber of properties on the estimated query representation. It seems\nthat on average, there are less potential candidate properties over\nwhich the examples are interpreted on the Extended dataset, which\nalso explains the higher average performance of all experiments\nthere. Complementary, the Student only uses its Episodic memory\nwhen following the Logic-based policy, in which case the agent\nmemorizes around 1.6% examples on average in all experiments.\nThis suggests that there are equally few distinct useful examples to\nmemorize their properties, across all experiments. Last but not least,\nthe Episodic memory of the Teacher, which reflects the number of\nunclear examples found, is much smaller on the extended dataset,\nranging from 2% to 4%, compared to the Simple dataset where it"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_59",
+    "chunk_index": 59,
+    "text": "the Episodic memory of the Teacher, which reflects the number of\nunclear examples found, is much smaller on the extended dataset,\nranging from 2% to 4%, compared to the Simple dataset where it\nranges from 9% to 12%. This suggests that maybe the knowledge\noverlap across the ontologies is bigger on the extended dataset\non average. Moreover, this shows that the examples which are ex-\npected to be more informative are more probable to be perceived\ndifferently by the two agents in our use-case. Additionally, when\nthe Teacher is following the Property-based policy, it ends up mem-\norizing on average around 2% to 3% more unclear examples. One\ncan therefore say that the Teacher is more likely to select an ex-\nample that contains instances with different information across\nontologies, when attempting to find more informative examples.\nDiscussion. The experiments exhibit that our framework can\nbe applied for incrementally establishing a shared understanding"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_60",
+    "chunk_index": 60,
+    "text": "ontologies, when attempting to find more informative examples.\nDiscussion. The experiments exhibit that our framework can\nbe applied for incrementally establishing a shared understanding\nbetween the agents. In more detail, it is shown that a few concise\nexamples are enough for the agents to develop a sufficiently good\nenough understanding of each other. Moreover, it seems that the\ncognitive load, i.e. Episodic and Working memory demands, were\nnot too high, according to our example estimations.\n6\nCONCLUSION AND FUTURE WORK\nWe have described a framework that can assist researchers in devel-\noping agent policies that establish successful communication in an\nOMAS setting, like in a human-hybrid scenario. Additionally, we\nprovide an application example the framework on a collaborative\nquery answering task. Our experiments display satisfactory levels\nof communication for the task at hand, while doing so in a very\nsmall number of interactions."
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_61",
+    "chunk_index": 61,
+    "text": "query answering task. Our experiments display satisfactory levels\nof communication for the task at hand, while doing so in a very\nsmall number of interactions.\nThere are several ways to extend the presented study. First, we\nare already working on demonstrating the generalizability of the\nframework by applying it in different studies of communication\nestablishment including most studies presented in our related work.\nSecond, we will apply the framework on more challenging tasks,\nwhich will require improving the presented agent policies with\nparticular focus on using both the Student’s feedback signal and its\ncurrent level of understanding. Such tasks can either be done by\nfocusing on collaborative query answering using larger ontologies\nwith complex alignments, or use tasks that include actual inter-\naction with an environment besides information exchange. Third,\nwe aim to focus on the human participant aspect of our frame-\nwork. We can for example use relevant literature to apply more"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_62",
+    "chunk_index": 62,
+    "text": "action with an environment besides information exchange. Third,\nwe aim to focus on the human participant aspect of our frame-\nwork. We can for example use relevant literature to apply more\nsophisticated methods to estimate cognitive load, or involve human\nparticipants and ask them to self-report the overall effort required\nfor one interaction or the complete experiment. Besides improving\nthe estimation of human participants’ effort, we plan designing arti-\nficial agents that take into account the behavior of a target group of\nend-users, requiring for example the design of robust agent policies\nthat can interact with irrational human input.\nAcknowledgments\nThis work was supported by “MUHAI - Meaning and\nUnderstanding in Human-centric Artificial Intelligence”\nproject, funded by the European Union’s Horizon 2020\nresearch and innovation program under grant agreement No 951846.\nWe also want to heartily thank prof. Frank van Harmelen for his"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_63",
+    "chunk_index": 63,
+    "text": "project, funded by the European Union’s Horizon 2020\nresearch and innovation program under grant agreement No 951846.\nWe also want to heartily thank prof. Frank van Harmelen for his\nsupport, guidance and for being a continuous source of inspiration."
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_64",
+    "chunk_index": 64,
+    "text": "REFERENCES\n[1] Karl Aberer, Philippe Cudré-Mauroux, and Manfred Hauswirth. 2003. Start\nmaking sense: The Chatty Web approach for global semantic agreements. Journal\nof Web Semantics 1, 1 (Dec. 2003), 89–114. https://doi.org/10.1016/j.websem.2003.\n09.001\n[2] Michael Anslow and Michael Rovatsos. 2015. Aligning Experientially Grounded\nOntologies Using Language Games. 15–31. https://doi.org/10.1007/978-3-319-\n28702-7_2\n[3] Manuel Atencia and Marco Schorlemmer. 2012. An interaction-based approach\nto semantic alignment. Journal of Web Semantics 12-13 (April 2012), 131–147.\nhttps://doi.org/10.1016/j.websem.2011.12.001\n[4] Paolo Besana, Dave Robertson, and Michael Rovatsos. 2005. Exploiting interaction\ncontexts in P2P ontology mapping.. In P2PKM.\n[5] Christian Arzate Cruz and Takeo Igarashi. 2021.\nA Survey on Interactive\nReinforcement Learning: Design Principles and Open Challenges.\nCoRR\nabs/2105.12949 (2021). arXiv:2105.12949 https://arxiv.org/abs/2105.12949"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_65",
+    "chunk_index": 65,
+    "text": "A Survey on Interactive\nReinforcement Learning: Design Principles and Open Challenges.\nCoRR\nabs/2105.12949 (2021). arXiv:2105.12949 https://arxiv.org/abs/2105.12949\n[6] Jérôme Euzenat. 2017. Crafting Ontology Alignments from Scratch Through\nAgent Communication. In PRIMA 2017: Principles and Practice of Multi-Agent\nSystems, Bo An, Ana Bazzan, João Leite, Serena Villata, and Leendert van der\nTorre (Eds.). Vol. 10621. Springer International Publishing, 245–262. Series Title:\nLecture Notes in Computer Science.\n[7] Jérôme Euzenat. 2017. Interaction-based ontology alignment repair with ex-\npansion and relaxation. In Proceedings of the Twenty-Sixth International Joint\nConference on Artificial Intelligence. International Joint Conferences on Artificial\nIntelligence Organization, 185–191.\n[8] Jérôme Euzenat, Christian Meilicke, Heiner Stuckenschmidt, Pavel Shvaiko, and\nCássia Trojahn. 2011. Ontology alignment evaluation initiative: six years of"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_66",
+    "chunk_index": 66,
+    "text": "Intelligence Organization, 185–191.\n[8] Jérôme Euzenat, Christian Meilicke, Heiner Stuckenschmidt, Pavel Shvaiko, and\nCássia Trojahn. 2011. Ontology alignment evaluation initiative: six years of\nexperience. In Journal on data semantics XV. Springer, 158–192.\n[9] Jérôme Euzenat, Pavel Shvaiko, et al. 2007. Ontology matching. Vol. 18. Springer.\n[10] Bernhard Ganter and Rudolf Wille. 2012. Formal concept analysis: mathematical\nfoundations. Springer Science & Business Media.\n[11] Loredana Laera, Ian Blacoe, Valentina Tamma, Terry Payne, Jerôme Euzenat,\nand Trevor Bench-Capon. 2007. Argumentation over ontology correspondences\nin MAS. In Proceedings of the 6th international joint conference on Autonomous\nagents and multiagent systems - AAMAS ’07. ACM Press, Honolulu, Hawaii, 1.\n[12] Fiona Mcneill and Alan Bundy. 2007. Dynamic, Automatic, First-Order Ontology\nrepair by Diagnosis of Failed Plan Execution. Int. J. Semantic Web Inf. Syst. 3"
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_67",
+    "chunk_index": 67,
+    "text": "[12] Fiona Mcneill and Alan Bundy. 2007. Dynamic, Automatic, First-Order Ontology\nrepair by Diagnosis of Failed Plan Execution. Int. J. Semantic Web Inf. Syst. 3\n(July 2007), 1–35. https://doi.org/10.4018/jswis.2007070101\n[13] Jens Nevens, Jonas Doumen, Paul Van Eecke, and Katrien Beuls. 2022. Language\nAcquisition through Intention Reading and Pattern Finding. In Proceedings of\nthe 29th International Conference on Computational Linguistics. International\nCommittee on Computational Linguistics, Gyeongju, Republic of Korea, 15–25.\n[14] Jens Nevens, Paul Van Eecke, and Katrien Beuls. 2019. Interactive Learning of\nGrounded Concepts.. In BNAIC/BENELEARN.\n[15] Terry R. Payne and Valentina Tamma. 2015. Using Preferences in Negotiations\nover Ontological Correspondences. In PRIMA 2015: Principles and Practice of\nMulti-Agent Systems, Qingliang Chen, Paolo Torroni, Serena Villata, Jane Hsu,\nand Andrea Omicini (Eds.). Vol. 9387. Springer International Publishing, 319–334."
+  },
+  {
+    "paper_id": "2305.09349v1",
+    "chunk_id": "2305.09349v1_chunk_68",
+    "chunk_index": 68,
+    "text": "Multi-Agent Systems, Qingliang Chen, Paolo Torroni, Serena Villata, Jane Hsu,\nand Andrea Omicini (Eds.). Vol. 9387. Springer International Publishing, 319–334.\n[16] Michael Rovatsos, Matthias Nickles, and Gerhard Weiss. 2003. Interaction is\nMeaning: A New Model for Communication in Open Systems. Proceedings\nof the Interantional Conference on Autonomous Agents 2 (July 2003).\nhttps:\n//doi.org/10.1145/860575.860661\n[17] Alessandro Solimando, Ernesto Jiménez-Ruiz, and Christoph Pinkel. 2014. Evalu-\nating Ontology Alignment Systems in Query Answering Tasks.. In ISWC (Posters\n& Demos). 301–304.\n[18] L. Steels. 2001. Language games for autonomous robots. IEEE Intelligent Systems\n16, 5 (Sept. 2001), 16–22. https://doi.org/10.1109/MIS.2001.956077 Conference\nName: IEEE Intelligent Systems.\n[19] Antonio Villegas Niño. 2013. A filtering engine for large conceptual schemas.\n(2013)."
+  }
+]

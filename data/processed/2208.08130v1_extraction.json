@@ -1,884 +1,409 @@
 {
   "methods": [
     {
-      "name": "Knowledge Graph Curation Framework",
-      "entity_type": "Method",
-      "description": "A practical framework proposed for improving the quality of KGs, involving assessment, cleaning, and enrichment."
-    },
-    {
-      "name": "Knowledge Assessment",
-      "entity_type": "Method",
-      "description": "The first step in KG curation, involving assessing the status of KGs based on quality dimensions and metrics."
-    },
-    {
-      "name": "Knowledge Cleaning",
-      "entity_type": "Method",
-      "description": "A task in KG curation that aims to improve the correctness of KGs by detecting and correcting errors, distinguishing between verification and validation."
-    },
-    {
-      "name": "Knowledge Enrichment",
-      "entity_type": "Method",
-      "description": "A task in KG curation that aims to improve the completeness of KGs by adding new statements, involving duplicate detection and knowledge fusion."
-    },
-    {
-      "name": "Verification of KGs",
-      "entity_type": "Method",
-      "description": "The process of evaluating KGs with formal specifications of integrity constraints."
-    },
-    {
-      "name": "Validation of KGs",
-      "entity_type": "Method",
-      "description": "A critical task to provide accurate, correct, and reliable knowledge by evaluating whether an assertion is semantically correct and corresponds to the 'real' world."
-    },
-    {
-      "name": "Duplicate Detection",
-      "entity_type": "Method",
-      "description": "Identifying where two or more records in a single or various KGs are referring to the same entity."
-    },
-    {
-      "name": "Knowledge Fusion",
-      "entity_type": "Method",
-      "description": "Resolving conflicting property value assertions, also referred to as data fusion."
-    },
-    {
-      "name": "Instance Matching",
-      "entity_type": "Method",
-      "description": "A process run by the enrichment component to detect duplicates."
-    },
-    {
-      "name": "Configuration Learning",
-      "entity_type": "Method",
-      "description": "A module that tries to find a tuned configuration for instance matching."
-    },
-    {
-      "name": "Entity Fusion",
-      "entity_type": "Method",
-      "description": "A process supported by fusion strategies based on the assessment report of KGs, triggered by a duplicates report."
-    },
-    {
-      "name": "Query-based approaches for Verification",
-      "entity_type": "Method",
-      "description": "A category of methods for KG verification that apply query languages like SPARQL."
-    },
-    {
-      "name": "Inference-based approaches for Verification",
-      "entity_type": "Method",
-      "description": "A category of methods for KG verification that use inference rules."
-    },
-    {
-      "name": "Structural languages for Verification",
-      "entity_type": "Method",
-      "description": "A category of methods for KG verification that define property and class constraints."
-    },
-    {
-      "name": "Internal approaches for Validation",
-      "entity_type": "Method",
-      "description": "A category of methods for KG validation that rely on statements or triples existing within a KG."
-    },
-    {
-      "name": "External approaches for Validation",
-      "entity_type": "Method",
-      "description": "A category of methods for KG validation that use external sources like websites or Linked Open Data datasets."
-    },
-    {
-      "name": "Outlier Detection Techniques",
-      "entity_type": "Method",
-      "description": "Techniques used in internal validation to evaluate whether a property value is out of the assumed distribution."
-    },
-    {
-      "name": "Embedding Models",
-      "entity_type": "Method",
-      "description": "Models used in internal validation approaches."
-    },
-    {
-      "name": "Topic Coherence",
-      "entity_type": "Method",
-      "description": "A technique used in external validation approaches."
-    },
-    {
-      "name": "Information Extraction",
-      "entity_type": "Method",
-      "description": "A technique used in external validation approaches."
-    },
-    {
-      "name": "Genetic Algorithm",
-      "entity_type": "Method",
-      "description": "An algorithm that can automatically tune a configuration for duplicate detection."
-    },
-    {
       "name": "Schemarama",
       "entity_type": "Method",
-      "description": "A query-based approach for KG verification that applies the XPath method and uses SquisQL language."
+      "description": "Applies the XPath method and uses SquisQL language for verifying KGs."
     },
     {
       "name": "SPARQL Query Language",
       "entity_type": "Method",
-      "description": "A query language used in query-based approaches for KG verification."
+      "description": "Query language used for RDF data validation and constraint verification using ASK and CONSTRUCT."
     },
     {
       "name": "Simple Application-Specific Constraints",
       "entity_type": "Method",
-      "description": "A query-based approach for KG verification."
+      "description": "Constraint method for verifying KGs."
     },
     {
-      "name": "SPARQL Inferencing Notation (SPIN)",
+      "name": "SPARQL Inferencing Notation",
       "entity_type": "Method",
-      "description": "A query-based approach for KG verification."
+      "description": "SPIN notation used for verifying KGs."
     },
     {
-      "name": "RDFUnit",
+      "name": "RDFunit",
       "entity_type": "Method",
-      "description": "A query-based approach for KG verification."
+      "description": "Framework utilizing SPARQL queries for KG verification."
     },
     {
-      "name": "Shape Expressions (ShEx)",
+      "name": "Shape Expressions",
       "entity_type": "Method",
-      "description": "A query-based approach for KG verification."
+      "description": "ShEx language that uses SPARQL queries for KG verification."
     },
     {
-      "name": "Shapes Constraint Language (SHACL)",
+      "name": "Shapes Constraint Language",
       "entity_type": "Method",
-      "description": "A query-based approach for KG verification."
+      "description": "SHACL language that uses SPARQL queries like ASK and CONSTRUCT for KG verification."
     },
     {
       "name": "TreeHugger",
       "entity_type": "Method",
-      "description": "An inference-based approach for KG verification that uses XPath."
+      "description": "Inference-based approach using XPath for KG verification."
     },
     {
       "name": "Schematron rules",
       "entity_type": "Method",
-      "description": "An inference-based approach for KG verification that uses XPath."
+      "description": "Rules using XPath for inference-based verification."
     },
     {
       "name": "Stardog ICV",
       "entity_type": "Method",
-      "description": "An inference-based approach for KG verification that implements subsumption, domain-range, participation, cardinality, and property constraints."
+      "description": "Implements subsumption, domain-range, participation, cardinality, and property constraints for verification."
     },
     {
       "name": "OSLC Resource Shape",
       "entity_type": "Method",
-      "description": "A structural language for KG verification that defines property constraints."
+      "description": "Structural language that defines property constraints."
     },
     {
       "name": "Dublin Core Application Profiles",
       "entity_type": "Method",
-      "description": "A structural language for KG verification that defines constraints of values and cardinality of properties."
+      "description": "Defines constraints of values and cardinality of properties."
     },
     {
-      "name": "RDF Data Description (RDD)",
+      "name": "RDF Data Description",
       "entity_type": "Method",
-      "description": "A structural language for KG verification that defines property and class constraints."
+      "description": "RDD defines property and class constraints."
     },
     {
       "name": "COPAAL",
       "entity_type": "Method",
-      "description": "A tool for internal validation that evaluates possible interesting relationships between entity pairs within a KG."
+      "description": "Internal approach tool that evaluates possible interesting relationships between entity pairs within a KG."
     },
     {
       "name": "KGTtm",
       "entity_type": "Method",
-      "description": "A tool for internal validation that evaluates possible interesting relationships between entity pairs within a KG."
+      "description": "Internal approach tool that evaluates possible interesting relationships between entity pairs within a KG."
     },
     {
-      "name": "De-Facto",
+      "name": "DeFacto",
       "entity_type": "Method",
-      "description": "A tool for external validation that relies on the Web and/or external knowledge sources like Wikipedia."
+      "description": "External approach tool that relies on the Web and external knowledge sources like Wikipedia."
     },
     {
       "name": "ExFaKT",
       "entity_type": "Method",
-      "description": "A tool for external validation that relies on the Web and/or external knowledge sources."
+      "description": "External approach tool relying on the Web and external knowledge sources."
     },
     {
       "name": "Leopard",
       "entity_type": "Method",
-      "description": "A tool for external validation that relies on the Web and/or external knowledge sources."
+      "description": "External approach tool relying on the Web and external knowledge sources."
     },
     {
       "name": "FactCheck",
       "entity_type": "Method",
-      "description": "A tool for external validation that relies on the Web and/or external knowledge sources."
+      "description": "External approach tool relying on the Web and external knowledge sources."
     },
     {
       "name": "FacTify",
       "entity_type": "Method",
-      "description": "A tool for external validation that relies on the Web and/or external knowledge sources like Wikipedia."
+      "description": "External approach tool relying on the Web and external knowledge sources like Wikipedia."
     },
     {
       "name": "ADEL",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "DDaaS",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "Dedupe",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "DuDe",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "Duke",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "Legato",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "LIMES",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "SERIMI",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool."
     },
     {
       "name": "Silk",
       "entity_type": "Method",
-      "description": "A tool for identifying and resolving duplicates in KGs."
+      "description": "Duplicate detection tool requiring previous configuration."
     },
     {
       "name": "FAGI",
       "entity_type": "Method",
-      "description": "A tool for resolving conflicting property value assertions."
+      "description": "Data fusion tool focusing on geospatial data."
     },
     {
       "name": "Sieve",
       "entity_type": "Method",
-      "description": "A tool for resolving conflicting property value assertions."
+      "description": "Data fusion tool requiring previous configuration."
     },
     {
       "name": "SLIPO Toolkit",
       "entity_type": "Method",
-      "description": "A tool for resolving conflicting property value assertions."
+      "description": "Data fusion tool for resolving conflicting property value assertions."
     }
   ],
   "datasets": [
     {
       "name": "Amazon Product Knowledge Graph",
       "entity_type": "Dataset",
-      "description": "An example of a large proprietary Knowledge Graph."
+      "description": "A proprietary knowledge graph."
     },
     {
       "name": "Bing Knowledge Graph",
       "entity_type": "Dataset",
-      "description": "An example of a large proprietary Knowledge Graph."
+      "description": "A knowledge graph providing structured data."
     },
     {
       "name": "eBay’s Product Knowledge Graph",
       "entity_type": "Dataset",
-      "description": "An example of a large proprietary Knowledge Graph."
+      "description": "A knowledge graph providing structured data."
     },
     {
       "name": "Google’s Knowledge Graph",
       "entity_type": "Dataset",
-      "description": "An example of a large proprietary Knowledge Graph."
+      "description": "A large knowledge graph."
     },
     {
       "name": "DBpedia",
       "entity_type": "Dataset",
-      "description": "An example of an open Knowledge Graph, used as an external source for validation."
+      "description": "An open knowledge base and dataset."
     },
     {
       "name": "Wikidata",
       "entity_type": "Dataset",
-      "description": "An example of an open Knowledge Graph."
+      "description": "An open knowledge base and dataset."
     },
     {
       "name": "Freebase",
       "entity_type": "Dataset",
-      "description": "An example of a Knowledge Graph used as an external source for validation."
+      "description": "A data source used for comparisons and external validation."
     },
     {
       "name": "OpenCyc",
       "entity_type": "Dataset",
-      "description": "An example of a Knowledge Graph."
+      "description": "A data source compared in literature."
     },
     {
       "name": "YAGO",
       "entity_type": "Dataset",
-      "description": "An example of a Knowledge Graph."
-    },
-    {
-      "name": "Linked Open Data datasets",
-      "entity_type": "Dataset",
-      "description": "External sources used by validation approaches."
-    },
-    {
-      "name": "Wikipedia pages",
-      "entity_type": "Dataset",
-      "description": "External sources frequently used by validation approaches."
-    },
-    {
-      "name": "Web",
-      "entity_type": "Dataset",
-      "description": "A source of information used by external validation approaches."
-    },
-    {
-      "name": "Open Corpora",
-      "entity_type": "Dataset",
-      "description": "General term for open data sources, e.g., Wikipedia, used in validation frameworks."
+      "description": "A data source compared in literature."
     }
   ],
   "metrics": [
     {
       "name": "Accessibility",
       "entity_type": "Metric",
-      "description": "Evaluates if a KG is available, provides a public SPARQL endpoint, is retrievable in RDF, supports content negotiation, and describes a license."
+      "description": "Quality dimension implying that the KG is available, provides a public SPARQL endpoint, is retrievable in RDF format, supports content negotiation, and describes a licence."
     },
     {
       "name": "Accuracy",
       "entity_type": "Metric",
-      "description": "Defines the syntactic and semantic validity of assertions contained in the KG."
+      "description": "Quality dimension defining the syntactic and semantic validity of assertions contained in the KG."
     },
     {
       "name": "Appropriate amount",
       "entity_type": "Metric",
-      "description": "Evaluates whether the KG contains knowledge for specific use case scenarios."
+      "description": "Quality dimension evaluating whether the KG contains knowledge for specific use case scenarios."
     },
     {
-      "name": "Believability",
+      "name": "Believability or trustworthiness",
       "entity_type": "Metric",
-      "description": "Measures whether the KG provides provenance information and is verifiable."
+      "description": "Quality dimension measuring whether the KG provides provenance information and is verifiable."
     },
     {
       "name": "Completeness",
       "entity_type": "Metric",
-      "description": "Evaluates completeness in terms of schema and instance level for a specific use case."
+      "description": "Quality dimension in terms of schema and instance level for a specific use case."
     },
     {
       "name": "Concise representation",
       "entity_type": "Metric",
-      "description": "Evaluates the use of blank nodes and reification."
+      "description": "Quality dimension evaluating the use of blank nodes and reification."
     },
     {
       "name": "Consistent representation",
       "entity_type": "Metric",
-      "description": "Detects the existence of disjoint inconsistencies of classes and schema restrictions in the KG."
+      "description": "Quality dimension detecting the existence of disjoint inconsistencies of classes and schema restrictions in the KG."
     },
     {
       "name": "Cost-effectiveness",
       "entity_type": "Metric",
-      "description": "Measures the degree to which accurate data is necessary."
+      "description": "Quality dimension measuring the degree to which accurate data is necessary."
     },
     {
       "name": "Ease of manipulation",
       "entity_type": "Metric",
-      "description": "Evaluates the existence of documentation for manipulating the knowledge contained in the KG."
+      "description": "Quality dimension evaluating the existence of documentation for manipulating the knowledge contained in the KG."
     },
     {
       "name": "Ease of operation",
       "entity_type": "Metric",
-      "description": "Refers to the possibility of updating, downloading, and integrating the KG."
+      "description": "Quality dimension referring to the possibility of updating, downloading, and integrating the KG."
     },
     {
       "name": "Ease of understanding",
       "entity_type": "Metric",
-      "description": "Evaluates whether self-descriptive URIs are used and knowledge is presented in more than one language."
+      "description": "Quality dimension evaluating whether self-descriptive URIs are used and knowledge is presented in more than one language."
     },
     {
       "name": "Free-of-error",
       "entity_type": "Metric",
-      "description": "Refers to the total number of wrong and missing assertions contained in the KG."
+      "description": "Quality dimension referring to the total number of wrong and missing assertions contained in the KG."
     },
     {
       "name": "Interoperability",
       "entity_type": "Metric",
-      "description": "Evaluates whether the KG re-uses standard vocabularies and complies with Linked Open Data 5 Star."
+      "description": "Quality dimension evaluating whether the KG re-uses standard vocabularies and complies with Linked Open Data 5 Star."
     },
     {
       "name": "Objectivity",
       "entity_type": "Metric",
-      "description": "Defines the degree to which the KG is unbiased and impartial."
+      "description": "Quality dimension defining the degree to which the KG is unbiased and impartial."
     },
     {
       "name": "Relevancy",
       "entity_type": "Metric",
-      "description": "Evaluates the level of applicability, in terms of domain coverage, of the KG to a specific use case."
+      "description": "Quality dimension evaluating the level of applicability, in terms of domain coverage, of the KG to a specific use case."
     },
     {
       "name": "Reputation",
       "entity_type": "Metric",
-      "description": "Measures whether explicit trust ratings exist for the KG or qualifiers exist on KG’s statements."
+      "description": "Quality dimension measuring whether explicit trust ratings exist to the KG or there exist qualifiers on KG’s statements."
     },
     {
       "name": "Security",
       "entity_type": "Metric",
-      "description": "Evaluates the degree to which the KG uses a digital signature and verifies the identity of the publisher."
+      "description": "Quality dimension evaluating the degree to which the KG uses a digital signature and verifies the identity of the publisher."
     },
     {
       "name": "Timeliness",
       "entity_type": "Metric",
-      "description": "Measures the frequency of updates occurring in the KG and the validity period of its statements."
+      "description": "Quality dimension measuring the frequency of updates occurring in the KG and the validity period of its statements."
     },
     {
       "name": "Traceability",
       "entity_type": "Metric",
-      "description": "Evaluates the degree to which the KG provides provenance information and keeps a log of edits and changes."
+      "description": "Quality dimension evaluating the degree to which the KG provides provenance information and keeps a log of edits and changes."
     },
     {
       "name": "Variety",
       "entity_type": "Metric",
-      "description": "Refers to the degree to which the KG contains knowledge from different sources and various domains."
+      "description": "Quality dimension referring to the degree to which the KG contains knowledge from different sources and various domains."
     }
   ],
   "concepts": [
     {
       "name": "Knowledge Graph Curation",
       "entity_type": "Concept",
-      "description": "The process of improving the quality of knowledge graphs, also known as knowledge graph refinement."
+      "description": "The process of improving the quality of knowledge graphs."
     },
     {
-      "name": "Knowledge Graph Refinement",
+      "name": "Knowledge Graph Assessment",
       "entity_type": "Concept",
-      "description": "An alternative term for knowledge graph curation."
+      "description": "Evaluating the status and quality dimensions of knowledge graphs."
     },
     {
-      "name": "Knowledge Graph",
+      "name": "Knowledge Graph Cleaning",
       "entity_type": "Concept",
-      "description": "Very large semantic nets that integrate various and heterogeneous information sources to represent knowledge about certain domains of discourse."
+      "description": "Tasks related to verification and validation of knowledge graphs."
     },
     {
-      "name": "Quality of KGs",
+      "name": "Knowledge Graph Enrichment",
       "entity_type": "Concept",
-      "description": "The overall status of a Knowledge Graph, which the curation framework aims to improve."
-    },
-    {
-      "name": "Knowledge Assessment (Concept)",
-      "entity_type": "Concept",
-      "description": "A critical task in KG curation to provide reliable, correct, and complete knowledge."
-    },
-    {
-      "name": "Knowledge Cleaning (Concept)",
-      "entity_type": "Concept",
-      "description": "A critical task in KG curation to provide reliable, correct, and complete knowledge, dealing with verification and validation."
-    },
-    {
-      "name": "Knowledge Enrichment (Concept)",
-      "entity_type": "Concept",
-      "description": "A critical task in KG curation to provide reliable, correct, and complete knowledge, dealing with duplicate detection and knowledge fusion."
-    },
-    {
-      "name": "Quality Dimensions",
-      "entity_type": "Concept",
-      "description": "A set of criteria for assessing the status of Knowledge Graphs."
-    },
-    {
-      "name": "Weights of Importance",
-      "entity_type": "Concept",
-      "description": "User-defined degrees of importance for quality dimensions when curating KGs."
-    },
-    {
-      "name": "Correctness",
-      "entity_type": "Concept",
-      "description": "An aspect of KG quality, improved by knowledge cleaning."
-    },
-    {
-      "name": "Completeness",
-      "entity_type": "Concept",
-      "description": "An aspect of KG quality, improved by knowledge enrichment."
+      "description": "Tasks related to detecting duplicates and knowledge fusion to improve completeness."
     },
     {
       "name": "Verification",
       "entity_type": "Concept",
-      "description": "A knowledge cleaning task that evaluates schema conformance and integrity constraints of KGs."
+      "description": "Evaluating KGs with formal specifications of integrity constraints."
     },
     {
       "name": "Validation",
       "entity_type": "Concept",
-      "description": "A knowledge cleaning task that checks whether KGs accurately describe or represent the 'real' world."
-    },
-    {
-      "name": "Duplicates",
-      "entity_type": "Concept",
-      "description": "Inconsistencies in KGs where two or more records refer to the same entity."
-    },
-    {
-      "name": "Conflicting Property Value Assertions",
-      "entity_type": "Concept",
-      "description": "Situations where duplicated entities have a different value for the same property."
+      "description": "Evaluating whether an assertion from a KG is semantically correct and corresponds with the real world."
     },
     {
       "name": "Data Fusion",
       "entity_type": "Concept",
-      "description": "The task of handling conflicting property value assertions."
-    },
-    {
-      "name": "Inconsistencies",
-      "entity_type": "Concept",
-      "description": "General issues in KGs such as duplicates, wrong assertions, and missing values."
-    },
-    {
-      "name": "Wrong Assertions",
-      "entity_type": "Concept",
-      "description": "Errors in KGs where statements are incorrect."
-    },
-    {
-      "name": "Missing Values",
-      "entity_type": "Concept",
-      "description": "Errors in KGs where information is absent."
-    },
-    {
-      "name": "Syntactic Errors",
-      "entity_type": "Concept",
-      "description": "Errors related to the syntax of data in KGs."
-    },
-    {
-      "name": "Semantic Errors",
-      "entity_type": "Concept",
-      "description": "Errors related to the meaning or validity of data in KGs."
-    },
-    {
-      "name": "Schema Alignment",
-      "entity_type": "Concept",
-      "description": "A semi-automatic mapping between a user's KG and another KG."
-    },
-    {
-      "name": "Dynamic Data",
-      "entity_type": "Concept",
-      "description": "Fast-changing data, which adds complexity to KG curation."
-    },
-    {
-      "name": "Trade-off between completeness and correctness",
-      "entity_type": "Concept",
-      "description": "A challenge in KG curation where improving one aspect may negatively impact the other."
-    },
-    {
-      "name": "Assessment Report",
-      "entity_type": "Concept",
-      "description": "The outcome of the assessment process, stored for use in other components like entity fusion."
-    },
-    {
-      "name": "Integrity Constraints",
-      "entity_type": "Concept",
-      "description": "Formal specifications used to verify KGs."
-    },
-    {
-      "name": "Expressivity of constraint languages",
-      "entity_type": "Concept",
-      "description": "The capability of constraint languages, directly related to SPARQL expressivity."
-    },
-    {
-      "name": "Expressivity of SPARQL",
-      "entity_type": "Concept",
-      "description": "The capability of the SPARQL query language."
-    },
-    {
-      "name": "Knowledge Assessment Frameworks",
-      "entity_type": "Concept",
-      "description": "Frameworks that help to identify reliable and trustworthy KGs."
-    },
-    {
-      "name": "Duplicate Detection Frameworks",
-      "entity_type": "Concept",
-      "description": "Frameworks that offer similarity metrics for duplicate detection."
-    },
-    {
-      "name": "reliable KGs",
-      "entity_type": "Concept",
-      "description": "Knowledge Graphs identified as trustworthy and suitable for interlinking entities."
-    },
-    {
-      "name": "interlinking entities",
-      "entity_type": "Concept",
-      "description": "The process of connecting entities between different Knowledge Graphs."
+      "description": "Resolving conflicting property value assertions from multiple records or KGs."
     }
   ],
   "findings": [
     {
-      "name": "Automation of quality dimensions is difficult",
+      "name": "Focus on specific tasks",
+      "entity_type": "Finding",
+      "description": "Most existing approaches and tools focus on one specific task, either assessing quality, detecting wrong assertions, or correcting them."
+    },
+    {
+      "name": "Trade-off between completeness and correctness",
+      "entity_type": "Finding",
+      "description": "Curation of KGs usually implies a trade-off between correctness and completeness, and most approaches only detect errors or missing values leaving correction to users."
+    },
+    {
+      "name": "Automation limits",
       "entity_type": "Finding",
       "description": "Various quality dimensions can hardly be fully automated for technical or operational reasons."
     },
     {
-      "name": "High cost of KG validation",
+      "name": "Scalability limitations",
       "entity_type": "Finding",
-      "description": "Validating KGs may lead to a high cost of deployment, due to its dependency on proprietary services."
-    },
-    {
-      "name": "Performance reduction with open corpora",
-      "entity_type": "Finding",
-      "description": "If a validation framework uses open corpora (e.g. Wikipedia), its performance lows down."
-    },
-    {
-      "name": "Complexity of dynamic data",
-      "entity_type": "Finding",
-      "description": "The complexity of dynamic data (i.e., fast-changing data) should be considered in KG curation."
-    },
-    {
-      "name": "Prevention of errors during KG creation",
-      "entity_type": "Finding",
-      "description": "Fixing syntactic and semantic errors can be caught during the creation and hosting of KGs."
-    },
-    {
-      "name": "Usability and maintenance issues of tools",
-      "entity_type": "Finding",
-      "description": "Many KG curation tools have usability issues, are complex to apply in different domains, and are often abandoned or no longer maintained."
-    },
-    {
-      "name": "Knowledge assessment aids KG interlinking",
-      "entity_type": "Finding",
-      "description": "Knowledge assessment frameworks may help to identify reliable and trustworthy KGs, to which user’s KG can be interlinked."
-    },
-    {
-      "name": "Simple similarity metrics in duplicate detection",
-      "entity_type": "Finding",
-      "description": "Most of the duplicate detection frameworks offer only simple similarity metrics, but complex cases need complex metrics."
-    },
-    {
-      "name": "User-defined importance for quality dimensions",
-      "entity_type": "Finding",
-      "description": "Users can define the degree of importance of a quality dimension (i.e. weights) for assessing a KG."
-    },
-    {
-      "name": "Lack of scalability in existing frameworks",
-      "entity_type": "Finding",
-      "description": "Existing frameworks are still lacking scalability to large KGs."
-    },
-    {
-      "name": "Correction left to users",
-      "entity_type": "Finding",
-      "description": "Most approaches only detect errors or missing values but leave the correction part completely to users."
-    },
-    {
-      "name": "Constraint language expressivity related to SPARQL",
-      "entity_type": "Finding",
-      "description": "The expressivity of constraint languages is directly related with the expressivity of SPARQL."
+      "description": "Existing frameworks still lack scalability to large knowledge graphs."
     }
   ],
   "relationships": [
     {
-      "source": "Knowledge Graph Curation Framework",
-      "relation": "proposes",
-      "target": "Knowledge Assessment"
+      "source": "Schemarama",
+      "relation": "is a",
+      "target": "Query-based approaches"
     },
     {
-      "source": "Knowledge Graph Curation Framework",
-      "relation": "proposes",
-      "target": "Knowledge Cleaning"
+      "source": "TreeHugger",
+      "relation": "is a",
+      "target": "Inference-based approaches"
     },
     {
-      "source": "Knowledge Graph Curation Framework",
-      "relation": "proposes",
-      "target": "Knowledge Enrichment"
+      "source": "OSLC Resource Shape",
+      "relation": "is a",
+      "target": "Structural languages"
     },
     {
-      "source": "Knowledge Assessment",
-      "relation": "uses",
-      "target": "Quality Dimensions"
+      "source": "COPAAL",
+      "relation": "is a",
+      "target": "Internal approaches"
     },
     {
-      "source": "Knowledge Assessment",
-      "relation": "uses",
-      "target": "Weights of Importance"
+      "source": "DeFacto",
+      "relation": "is a",
+      "target": "External approaches"
     },
     {
-      "source": "Knowledge Cleaning",
-      "relation": "improves",
-      "target": "Correctness"
+      "source": "ADEL",
+      "relation": "is used for",
+      "target": "Identifying and resolving duplicates"
     },
     {
-      "source": "Knowledge Cleaning",
-      "relation": "involves",
-      "target": "Verification of KGs"
-    },
-    {
-      "source": "Knowledge Cleaning",
-      "relation": "involves",
-      "target": "Validation of KGs"
-    },
-    {
-      "source": "Knowledge Enrichment",
-      "relation": "improves",
-      "target": "Completeness"
-    },
-    {
-      "source": "Knowledge Enrichment",
-      "relation": "involves",
-      "target": "Duplicate Detection"
-    },
-    {
-      "source": "Knowledge Enrichment",
-      "relation": "involves",
-      "target": "Knowledge Fusion"
-    },
-    {
-      "source": "Verification of KGs",
-      "relation": "uses",
-      "target": "Query-based approaches for Verification"
-    },
-    {
-      "source": "Verification of KGs",
-      "relation": "uses",
-      "target": "Inference-based approaches for Verification"
-    },
-    {
-      "source": "Verification of KGs",
-      "relation": "uses",
-      "target": "Structural languages for Verification"
-    },
-    {
-      "source": "Validation of KGs",
-      "relation": "uses",
-      "target": "Internal approaches for Validation"
-    },
-    {
-      "source": "Validation of KGs",
-      "relation": "uses",
-      "target": "External approaches for Validation"
-    },
-    {
-      "source": "External approaches for Validation",
-      "relation": "use",
-      "target": "Freebase"
-    },
-    {
-      "source": "External approaches for Validation",
-      "relation": "use",
-      "target": "Linked Open Data datasets"
-    },
-    {
-      "source": "External approaches for Validation",
-      "relation": "use",
-      "target": "Wikipedia pages"
-    },
-    {
-      "source": "External approaches for Validation",
-      "relation": "use",
-      "target": "DBpedia"
-    },
-    {
-      "source": "External approaches for Validation",
-      "relation": "use",
-      "target": "Web"
-    },
-    {
-      "source": "Duplicate Detection",
-      "relation": "uses",
-      "target": "Instance Matching"
-    },
-    {
-      "source": "Instance Matching",
-      "relation": "uses",
-      "target": "Configuration Learning"
-    },
-    {
-      "source": "Knowledge Fusion",
-      "relation": "resolves",
-      "target": "Conflicting Property Value Assertions"
-    },
-    {
-      "source": "Knowledge Fusion",
-      "relation": "uses",
-      "target": "Entity Fusion"
-    },
-    {
-      "source": "Entity Fusion",
-      "relation": "uses",
-      "target": "Assessment Report"
-    },
-    {
-      "source": "Quality Dimensions",
-      "relation": "can have",
-      "target": "Weights of Importance"
-    },
-    {
-      "source": "Knowledge Graph Curation",
-      "relation": "tackles",
-      "target": "Trade-off between completeness and correctness"
-    },
-    {
-      "source": "High cost of KG validation",
-      "relation": "is related to",
-      "target": "Cost-effectiveness"
-    },
-    {
-      "source": "High cost of KG validation",
-      "relation": "can be overcome by",
-      "target": "Open Corpora"
-    },
-    {
-      "source": "Open Corpora",
-      "relation": "reduces",
-      "target": "Performance reduction with open corpora"
-    },
-    {
-      "source": "Genetic Algorithm",
-      "relation": "can tune",
-      "target": "Configuration Learning"
-    },
-    {
-      "source": "Knowledge Assessment Frameworks",
-      "relation": "help identify",
-      "target": "reliable KGs"
-    },
-    {
-      "source": "reliable KGs",
-      "relation": "can be used for",
-      "target": "interlinking entities"
-    },
-    {
-      "source": "Duplicate Detection Frameworks",
-      "relation": "offer",
-      "target": "Simple similarity metrics in duplicate detection"
-    },
-    {
-      "source": "Syntactic Errors",
-      "relation": "can be caught during",
-      "target": "Prevention of errors during KG creation"
-    },
-    {
-      "source": "Semantic Errors",
-      "relation": "can be caught during",
-      "target": "Prevention of errors during KG creation"
-    },
-    {
-      "source": "Expressivity of constraint languages",
-      "relation": "is related to",
-      "target": "Expressivity of SPARQL"
-    },
-    {
-      "source": "Knowledge Graph",
-      "relation": "contains",
-      "target": "Inconsistencies"
-    },
-    {
-      "source": "Inconsistencies",
-      "relation": "include",
-      "target": "Duplicates"
-    },
-    {
-      "source": "Inconsistencies",
-      "relation": "include",
-      "target": "Wrong Assertions"
-    },
-    {
-      "source": "Inconsistencies",
-      "relation": "include",
-      "target": "Missing Values"
-    },
-    {
-      "source": "Knowledge Graph Curation",
-      "relation": "is also known as",
-      "target": "Knowledge Graph Refinement"
-    },
-    {
-      "source": "Knowledge Graph Curation Framework",
-      "relation": "aims to improve",
-      "target": "Quality of KGs"
+      "source": "FAGI",
+      "relation": "is used for",
+      "target": "Resolving conflicting property value assertions or data fusion"
     }
   ]
 }

@@ -9,7 +9,9 @@ class EmbeddingGenerator:
         self,
         model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
     ):
+        print(f"[EmbeddingGenerator] Loading model: {model_name}")
         self.model = SentenceTransformer(model_name)
+        print("[EmbeddingGenerator] Model loaded successfully.")
 
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
         """Convert text chunks into embedding vectors."""

@@ -1,0 +1,153 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {},
+  "nodes": [
+    {
+      "name": "Creating Multimodal Interactive Agents with Imitation and Self-Supervised Learning",
+      "node_type": "Paper",
+      "paper_id": "2112.03763v2",
+      "id": "paper::2112.03763v2"
+    },
+    {
+      "name": "Imitation Learning",
+      "node_type": "Method",
+      "description": "Learning from human demonstrations to instill intelligent behavioural priors in agents.",
+      "id": "method::imitation_learning"
+    },
+    {
+      "name": "Self-Supervised Learning",
+      "node_type": "Method",
+      "description": "Auxiliary training objective used in conjunction with imitation learning to improve performance.",
+      "id": "method::self_supervised_learning"
+    },
+    {
+      "name": "Behavioural Cloning (BC)",
+      "node_type": "Method",
+      "description": "Sequence learning technique used for imitation learning from trajectories of human behaviour.",
+      "id": "method::behavioural_cloning_bc"
+    },
+    {
+      "name": "Hierarchical Action Selection",
+      "node_type": "Method",
+      "description": "Architectural technique that improves agent performance, implemented via a hierarchical movement policy.",
+      "id": "method::hierarchical_action_selection"
+    },
+    {
+      "name": "Playhouse Dataset",
+      "node_type": "Dataset",
+      "description": "Dataset collected in the Playhouse environment comprising 275,676 train episodes and 34,399 test episodes.",
+      "id": "dataset::playhouse_dataset"
+    },
+    {
+      "name": "MIA (Multimodal Interactive Agent)",
+      "node_type": "Concept",
+      "description": "A multimodal interactive agent that interacts naturally with humans in a simulated world.",
+      "id": "concept::mia_multimodal_interactive_agent"
+    },
+    {
+      "name": "Playhouse",
+      "node_type": "Concept",
+      "description": "A 3D virtual multi-room environment based on the Unity game engine for studying natural interactions.",
+      "id": "concept::playhouse"
+    },
+    {
+      "name": "Language Games",
+      "node_type": "Concept",
+      "description": "A collection of prompted interaction-types and free-form instructions centering Playhouse interactions.",
+      "id": "concept::language_games"
+    },
+    {
+      "name": "Agent Success Rate",
+      "node_type": "Finding",
+      "description": "MIA successfully interacts with non-adversarial humans 75% of the time.",
+      "id": "finding::agent_success_rate"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "method::imitation_learning",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "method::self_supervised_learning",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "method::behavioural_cloning_bc",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "method::hierarchical_action_selection",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "dataset::playhouse_dataset",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "concept::mia_multimodal_interactive_agent",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "concept::playhouse",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "concept::language_games",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2112.03763v2",
+      "target": "finding::agent_success_rate",
+      "key": 0
+    },
+    {
+      "relation": "applied to",
+      "source": "method::self_supervised_learning",
+      "target": "concept::mia_multimodal_interactive_agent",
+      "key": 0
+    },
+    {
+      "relation": "collected in",
+      "source": "dataset::playhouse_dataset",
+      "target": "concept::playhouse",
+      "key": 0
+    },
+    {
+      "relation": "interacts with",
+      "source": "concept::mia_multimodal_interactive_agent",
+      "target": "concept::playhouse",
+      "key": 0
+    },
+    {
+      "relation": "trained using",
+      "source": "concept::mia_multimodal_interactive_agent",
+      "target": "method::behavioural_cloning_bc",
+      "key": 0
+    },
+    {
+      "relation": "uses",
+      "source": "concept::mia_multimodal_interactive_agent",
+      "target": "method::hierarchical_action_selection",
+      "key": 0
+    }
+  ]
+}
