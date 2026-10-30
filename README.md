@@ -154,10 +154,15 @@ research-paper-knowledge-graph/
 │       │   ├── __init__.py
 │       │   ├── research_graph.py
 │       │   └── ingestion_graph.py
-│       └── ui/
+│       ├── ui/
 │           ├── __init__.py
 │           ├── app.py
-│           └── graph_visualizer.py
+│           │   └── graph_visualizer.py
+│           └── evaluation/
+│               ├── __init__.py
+│               ├── metrics.py
+│               ├── evaluator.py
+│               └── summary_evaluator.py
 ├── data/
 │   ├── papers/
 │   ├── processed/
@@ -183,6 +188,7 @@ research-paper-knowledge-graph/
 | `agents/` | Implement summarization, knowledge extraction, and Q&A |
 | `workflows/` | Orchestrate ingestion and research tasks using LangGraph |
 | `ui/` | Provide the Gradio interface and graph visualization |
+| `evaluation/` | Implement retrieval, entity extraction, graph quality, and standalone summary evaluation metrics |
 | `scripts/` | Test individual modules and complete workflows |
 | `data/papers/` | Store downloaded PDFs |
 | `data/processed/` | Store extracted text, metadata, summaries, and extracted knowledge |
@@ -838,12 +844,12 @@ The vector database is persistent. Re-running ingestion should use the same chun
 | Dynamic arXiv search and result preview in the UI | Implemented |
 | Ingestion of a selected search result from the UI | Implemented |
 | Live elapsed-time status for research tasks | Implemented |
-| Retrieval evaluation using labelled chunk IDs | Implemented for configured queries |
+| Retrieval evaluation using labelled chunk IDs | Implemented for configured queries across multiple papers |
 | Graph-structure evaluation | Implemented |
-| Entity-extraction evaluation against ground truth | Implemented for one configured paper per current ground-truth file |
-| Summary token-overlap evaluator | Implemented as a function; not connected to the dashboard |
-| Q&A faithfulness, relevance, and correctness evaluation | Not yet implemented in the dashboard |
-| Multi-paper ground-truth aggregation | Planned |
+| Entity-extraction evaluation against ground truth | Implemented for configured papers |
+| Offline multi-paper entity evaluation and aggregation | Implemented |
+| Summary token-overlap evaluator | Implemented as a standalone function; not connected to the dashboard |
+| Q&A faithfulness, relevance, and correctness evaluation | Not implemented in the dashboard |
 
 ## 13. Known Limitations
 - The request router uses keyword rules and may need improvement when users phrase requests differently.
@@ -854,53 +860,108 @@ The vector database is persistent. Re-running ingestion should use the same chun
 
 - The quality of answers depends on retrieval quality and the evidence contained in the selected paper.
 
-- Retrieval and entity-extraction metrics depend on manually reviewed ground-truth labels. The current evaluation loaders support one configured paper ID per ground-truth file; multi-paper aggregation remains to be implemented.
-- Entity extraction uses exact normalized-name matching, so valid synonyms or alternate naming conventions may be counted as mismatches.
+- Retrieval and entity-extraction metrics depend on manually curated ground-truth labels. Their reliability depends on the completeness and accuracy of these labels.
+- Retrieval evaluation is available only for questions configured in the retrieval ground-truth file.
+- Entity extraction uses exact normalized-name matching, so valid synonyms and alternate naming conventions may be counted as mismatches.
+- Entity ground-truth lists are representative rather than necessarily exhaustive. Some unmatched extracted entities may still be valid.
 - Graph-structure metrics describe topology and do not establish factual accuracy or completeness.
-- Summary token-overlap evaluation exists as a standalone function but is not connected to the dashboard. Token overlap does not fully measure factual correctness or semantic quality.
-- Q&A faithfulness, answer relevance, and correctness are not yet integrated into the evaluation dashboard.
+- Summary token-overlap evaluation exists as a standalone function but is not connected to the dashboard.
+- Q&A faithfulness, answer relevance, and correctness are not currently integrated into the evaluation dashboard.
 - The current workflow uses the configured Gemini model for generation and requires an external API connection.
 - Paper titles may fall back to paper IDs when metadata is unavailable.
 - Graphs can become crowded as the number of extracted entities and relationships increases.
 
 ## 14. Future Enhancements
+
 Potential next steps include:
 
-1. Extend independently reviewed entity and retrieval ground-truth datasets to cover 5–10 papers.
-2. Update evaluation loaders and the dashboard to aggregate metrics across multiple papers and queries.
-3. Connect summary evaluation to the UI and consider stronger semantic and factual evaluation methods after mentor feedback.
-4. Add Q&A evaluation for faithfulness, answer relevance, and correctness.
-5. Improve request classification and workflow error handling.
-6. Improve graph retrieval using entity relevance and relationship filtering.
-7. Improve entity resolution and relationship validation.
-8. Add automated tests for workflow branches, invalid inputs, and failure scenarios.
-9. Improve graph layouts, filtering, and search within the UI.
-10. Improve summary citations and provenance tracking, and continue refining logging and execution-status reporting.
+1. Improve request classification and workflow error handling.
+2. Improve graph retrieval using entity relevance and relationship filtering.
+3. Improve entity resolution and relationship validation.
+4. Add automated tests for workflow branches, invalid inputs, and failure scenarios.
+5. Improve graph layouts, filtering, and search within the UI.
+6. Improve summary citations and provenance tracking, and continue refining logging and execution-status reporting.
 
-- **Evaluation Framework:** Evaluate the system across five dimensions:
+## 15. Evaluation Metrics and Ground Truth
 
-  - **Entity Extraction Accuracy:** Measure how accurately entities and relationships are extracted from research papers.
+The application includes a lightweight evaluation framework to assess retrieval relevance, entity extraction accuracy, and knowledge graph structure. The evaluation is intentionally limited to these three dimensions for the current project scope.
 
-  - **Graph Connectivity:** Assess the connectivity and completeness of the generated knowledge graph.
+### 15.1 Retrieval Evaluation
 
-  - **Retrieval Relevance:** Evaluate whether the retrieved paper chunks and graph relationships are relevant to the user's query.
+Retrieval evaluation measures whether the application retrieves relevant text chunks for a given research question.
 
-  - **Summary Quality:** Assess the accuracy, completeness, and relevance of generated paper summaries.
+Metrics:
+- **Precision@K:** Proportion of the retrieved top-K chunks that are relevant.
+- **Recall@K:** Proportion of all labelled relevant chunks that were successfully retrieved.
+- **Relevant chunks retrieved:** Number of relevant chunks found among the retrieved results.
+- **Mean cosine distance:** Average cosine distance of the retrieved chunks, indicating their semantic distance from the query.
 
-  - **Q&A Performance:** Evaluate answer correctness, relevance, and factual grounding against the source papers.
+Ground truth is maintained in `data/processed/retrieval_ground_truth.json`, organized by paper ID and containing questions with their corresponding relevant chunk IDs.
 
-## Evaluation Metrics and Ground Truth
+The Gradio interface displays retrieval metrics alongside Q&A results. Evaluation is performed only when a matching ground-truth question is available for the selected paper. Question matching is case-insensitive and ignores leading and trailing whitespace.
 
-The current evaluation framework includes the following measurements:
+### 15.2 Entity Extraction Evaluation
 
-- **Retrieval relevance:** Precision@K and Recall@K are calculated for questions with labelled relevant chunk IDs in `data/processed/retrieval_ground_truth.json`. The current UI matches the question text exactly (case-insensitively) and requires labels for the selected paper.
-- **Entity extraction:** Precision, recall, and F1 are calculated by comparing extracted entity names against `data/processed/evaluation_ground_truth.json` using case-folded, whitespace-normalized exact matching.
-- **Knowledge graph structure:** Node count, edge count, connected components, largest-component ratio, isolated nodes, and graph density describe graph structure; these measures do not establish factual accuracy.
-- **Summary lexical overlap:** `evaluation/summary_evaluator.py` provides token-overlap precision, recall, and F1 against a reference summary. This function is not currently connected to the dashboard.
+Entity extraction evaluation compares entities extracted into the knowledge graph against manually curated ground-truth entity lists.
 
-The current ground-truth loaders are configured for one paper ID per JSON file. Expanding ground truth to multiple independently reviewed papers and aggregating the results is planned work. Verify entity lists, relevant chunk IDs, and reference summaries against source papers independently; labels derived from system output can make evaluation misleading.
+Metrics:
+- **True Positives (TP):** Expected entities correctly extracted.
+- **False Positives (FP):** Extracted entities not found in the ground-truth list.
+- **False Negatives (FN):** Expected entities not found in the extracted results.
+- **Precision:** Proportion of extracted entities that match the ground truth.
+- **Recall:** Proportion of expected entities successfully extracted.
+- **F1 Score:** Harmonic mean of precision and recall.
 
-## 15. End-to-End Workflow Summary
+Ground truth is maintained in `data/processed/evaluation_ground_truth.json`, organized by paper ID. Entity evaluation uses case-folded, whitespace-normalized exact entity-name matching.
+
+The offline evaluator supports evaluation across configured papers and calculates overall micro-averaged entity metrics from aggregated TP, FP, and FN counts.
+
+### 15.3 Knowledge Graph Structural Evaluation
+
+Graph evaluation measures structural characteristics of the generated NetworkX knowledge graph.
+
+Metrics:
+- **Nodes:** Total number of graph nodes.
+- **Edges:** Total number of graph relationships.
+- **Connected Components:** Number of disconnected graph components.
+- **Largest Component Ratio:** Proportion of nodes belonging to the largest connected component.
+- **Isolated Nodes:** Number of nodes without connections.
+- **Graph Density:** Measure of graph connectivity relative to the possible number of edges.
+
+These metrics help assess graph connectivity and structure but do not establish factual correctness or semantic completeness.
+
+### 15.4 Evaluation Implementation
+
+The evaluation functionality is organized under `src/research_assistant/evaluation/`:
+
+| Module | Responsibility |
+|---|---|
+| `metrics.py` | Implements retrieval relevance, entity extraction, and graph connectivity metrics |
+| `evaluator.py` | Performs offline entity extraction and graph evaluation across configured papers, including overall micro-averaged entity metrics |
+| `summary_evaluator.py` | Provides standalone token-overlap evaluation against a reference summary; not connected to the dashboard |
+
+### 15.5 Evaluation Interface
+
+The Gradio application provides an Evaluation Dashboard with three sections:
+- RAG Retrieval Evaluation
+- Knowledge Graph Quality
+- Entity Extraction Quality
+
+Retrieval metrics are displayed alongside Q&A results. Graph and entity extraction metrics are refreshed when a paper is selected.
+
+### 15.6 Evaluation Scope and Limitations
+
+- Ground-truth labels are manually curated and should be independently verified against the source papers.
+- Retrieval evaluation is available only for questions configured in the retrieval ground-truth file.
+- Entity extraction uses normalized exact-name matching; synonyms and alternate entity names may be counted as mismatches.
+- Entity ground-truth lists are representative rather than necessarily exhaustive. Some unmatched extracted entities may still be valid.
+- Graph structural metrics measure connectivity, not factual correctness or completeness.
+- Summary token-overlap evaluation is available as a standalone function but is not integrated into the dashboard.
+- Q&A faithfulness, answer relevance, and correctness are not currently evaluated in the dashboard.
+
+Verify entity lists and relevant chunk IDs against source papers independently. Labels derived from system output can make evaluation misleading.
+
+## 16. End-to-End Workflow Summary
 The project transforms a scientific paper into multiple useful research artifacts:
 
 **Research paper → Extracted text → Text chunks → Embeddings and vector index → Structured knowledge → Entity resolution → Knowledge graph → Q&A, summarization, and visualization**
