@@ -619,7 +619,7 @@ Create a `.env` file in the project root:
 
 GOOGLE_API_KEY=your_google_api_key
 
-GEMINI_MODEL=gemini-3.8-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 
 ```
 
