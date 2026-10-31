@@ -1,0 +1,94 @@
+{
+  "methods": [
+    {
+      "name": "LLM-as-a-Judge",
+      "entity_type": "Method",
+      "description": "Using commercial LLMs as surrogates for human evaluators to perform pairwise evaluation on LLM alignment tasks."
+    },
+    {
+      "name": "stratified sampling strategy",
+      "entity_type": "Method",
+      "description": "Sampling strategy employed to ensure that the subset maintains the same proportion of different conditions as the original dataset."
+    }
+  ],
+  "datasets": [
+    {
+      "name": "TL;DR Summarization",
+      "entity_type": "Dataset",
+      "description": "A common alignment dataset used in experiments to evaluate LLM judges."
+    },
+    {
+      "name": "HH-RLHF-Helpfulness",
+      "entity_type": "Dataset",
+      "description": "A common alignment dataset used in experiments to evaluate LLM judges regarding helpfulness."
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Accboth",
+      "entity_type": "Metric",
+      "description": "Accuracy metric evaluated by considering both response orders."
+    },
+    {
+      "name": "Accrandom",
+      "entity_type": "Metric",
+      "description": "Accuracy metric evaluated by randomly choosing the response order with a probability of 0.5."
+    },
+    {
+      "name": "Position Bias (PB)",
+      "entity_type": "Metric",
+      "description": "Metric measuring LLM-judge's systematic preference for a specific response position."
+    },
+    {
+      "name": "Length Bias (LB)",
+      "entity_type": "Metric",
+      "description": "Metric measuring the relative length bias of LLM-judges compared with human evaluators."
+    }
+  ],
+  "concepts": [
+    {
+      "name": "LLM alignment",
+      "entity_type": "Concept",
+      "description": "Techniques and tasks like RLHF and DPO used to align LLMs with human preferences."
+    },
+    {
+      "name": "flipping noise",
+      "entity_type": "Concept",
+      "description": "Discrepancy between the LLM judge's actual decision and its original decision caused by self-inconsistency."
+    },
+    {
+      "name": "self-inconsistency",
+      "entity_type": "Concept",
+      "description": "Inconsistent judgments produced by LLM judges even when presented with identical prompts, also referred to as system noise."
+    }
+  ],
+  "findings": [
+    {
+      "name": "Significant impact of prompt templates",
+      "entity_type": "Finding",
+      "description": "Prompt templates have a significant impact on LLM judge performance."
+    },
+    {
+      "name": "Mediocre human alignment",
+      "entity_type": "Finding",
+      "description": "There is a mediocre alignment level between the tested LLM judges and human evaluators."
+    }
+  ],
+  "relationships": [
+    {
+      "source": "Position Bias (PB)",
+      "relation": "is intrinsically",
+      "target": "length bias-mitigated"
+    },
+    {
+      "source": "Length Bias (LB)",
+      "relation": "is entangled with",
+      "target": "Position Bias (PB)"
+    },
+    {
+      "source": "Accboth",
+      "relation": "helps mitigate",
+      "target": "positional bias"
+    }
+  ]
+}

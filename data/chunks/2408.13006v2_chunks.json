@@ -1,0 +1,608 @@
+[
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_0",
+    "chunk_index": 0,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nSYSTEMATIC EVALUATION OF LLM-AS-A-JUDGE IN\nLLM ALIGNMENT TASKS: EXPLAINABLE METRICS\nAND DIVERSE PROMPT TEMPLATES\nHui Wei*†1, Shenghua He*2, Tian Xia2, Fei Liu3, Andy Wong†4, Jingyang Lin†5, Mei Han2\n1UC Merced, 2PAII Inc., 3Emory University, 4Inflection AI, 5University of Rochester\n§ Code: https://github.com/shenghh2015/llm-judge-eval\nABSTRACT\nLLM-as-a-Judge has been widely applied to evaluate and compare different LLM\nalignmnet approaches (e.g., RLHF and DPO). However, concerns regarding its\nreliability have emerged, due to LLM judges’ biases and inconsistent decision-\nmaking. Previous research has developed evaluation frameworks to assess relia-\nbility of LLM judges and their alignment with human preferences. However, the\nemployed evaluation metrics often lack adequate explainability and fail to address\nLLM internal inconsistency. Additionally, existing studies inadequately explore"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_1",
+    "chunk_index": 1,
+    "text": "employed evaluation metrics often lack adequate explainability and fail to address\nLLM internal inconsistency. Additionally, existing studies inadequately explore\nthe impact of various prompt templates when applying LLM-as-a-Judge methods,\nleading to potentially inconsistent comparisons between different alignment algo-\nrithms. In this work, we systematically evaluate LLM-as-a-Judge on alignment\ntasks by defining more theoretically interpretable evaluation metrics and explic-\nitly mitigating LLM internal inconsistency from reliability metrics. We develop\nan open-source framework to evaluate, compare, and visualize the reliability and\nalignment of LLM judges, which facilitates practitioners to choose LLM judges\nfor alignment tasks. In the experiments, we examine effects of diverse prompt\ntemplates on LLM-judge reliability and also demonstrate our developed frame-\nwork by comparing various LLM judges on two common alignment datasets (i.e.,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_2",
+    "chunk_index": 2,
+    "text": "templates on LLM-judge reliability and also demonstrate our developed frame-\nwork by comparing various LLM judges on two common alignment datasets (i.e.,\nTL;DR Summarization and HH-RLHF-Helpfulness). Our results indicate a sig-\nnificant impact of prompt templates on LLM judge performance, as well as a\nmediocre alignment level between the tested LLM judges and human evaluators.\n1\nINTRODUCTION\nCommercial LLMs (e.g., GPT-4 (Achiam et al., 2023))have been widely used as the surrogates for\nhuman evaluators, referred to as LLM-as-a-Judge (Gu et al., 2024; Li et al., 2024a;b), to perform\npairwise evaluation on numerous LLM alignment tasks, such as summarization and multiturn con-\nversations. Since these commercial models have already been extensively trained with advanced\nalignment techniques (Achiam et al., 2023; Touvron et al., 2023), they are capable of approximating\nhuman preferences (Rafailov et al., 2024b; Zheng et al., 2024)."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_3",
+    "chunk_index": 3,
+    "text": "alignment techniques (Achiam et al., 2023; Touvron et al., 2023), they are capable of approximating\nhuman preferences (Rafailov et al., 2024b; Zheng et al., 2024).\nWhile it is plausible to utilize these models as surrogates for human judges, biases and inconsis-\ntencies are frequently observed in their judgment results, despite the application of various bias-\nmitigation techniques (Rafailov et al., 2024a;b). This necessitates a systematic investigation of LLM\njudge reliability and alignment with human preferences in the context of LLM alignment tasks.\nPrevious studies have evaluated LLM-as-a-Judge methods on various language generation tasks\n(Wang et al., 2023b; Saito et al., 2023; Dubois et al., 2024a; Panickssery et al., 2024; Shi et al.,\n2024; Thakur et al., 2024; Chiang & Lee, 2023; Liu et al., 2023; Wang et al., 2023a; Zhu et al.;\nWang et al., 2023c; Li et al., 2023; Zheng et al., 2024; Li et al., 2024c; Chiang et al., 2024; Dubois"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_4",
+    "chunk_index": 4,
+    "text": "2024; Thakur et al., 2024; Chiang & Lee, 2023; Liu et al., 2023; Wang et al., 2023a; Zhu et al.;\nWang et al., 2023c; Li et al., 2023; Zheng et al., 2024; Li et al., 2024c; Chiang et al., 2024; Dubois\net al., 2024b). However, these studies encounter three main limitations:\n*Equal contributions & Corresponding authors: B huiwei2@ucmerced.edu, B shenghh2015@gmail.com\n†Work was done when H. Wei, J. Lin, and A. Wong were at PAII Inc.\n1\narXiv:2408.13006v2  [cs.CL]  30 Mar 2025"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_5",
+    "chunk_index": 5,
+    "text": "Published at Building Trust Workshop at ICLR 2025\n• Lacking theoretical interpretability for bias definitions (e.g. position bias and length bias).\n• Not considering internal inconsistencies (i.e., system noise) by assuming LLM judges make\ndeterministic decisions across identical experiments.\n• Focusing on evaluating various LLMs, while the effects of prompt templates have been\ninsufficiently examined.\nIn this study, we aim to address these limitations and advance the systematic evaluation of LLM-as-\na-Judge on LLM alignment tasks. Our main contributions in this work are:\n• We improve the theoretical explainability of evaluation metrics for assessing LLM-judge\nposition and length bias, by (1) defining them within a unified accuracy-based framework,\n(2) explicitly defining the LLM internal self-inconsistency as flipping noise and mitigating\nits impact, as well as (3) formally analyzing the relationship between position and length\nbias after mitigation."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_6",
+    "chunk_index": 6,
+    "text": "its impact, as well as (3) formally analyzing the relationship between position and length\nbias after mitigation.\n• We develop a open-sourced framework to evaluate, compare, and visualize the alignment\nand reliability of LLM judges, allowing for a wide range of LLMs and user-defined prompt\ntemplates. In the experiments, we leverage the developed framework to test a wide range\nof prompt templates with diverse formats and investigate their impact on LLM judge per-\nformance.\n• Our results indicate a significant impact of prompt templates on LLM judge performance,\nunderscoring the need for a thorough and careful comparison of various LLMs and prompt\ntemplates before employing the LLM-as-a-Judge methodology.\n2\nBACKGROUND AND RELATED WORK\nIn this section, we define the pairwise evaluation task conducted by both human and LLM judges,\nand examine self-inconsistency and biases inherent in LLM judges. Additionally, we review relevant\nliterature on position bias and length bias."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_7",
+    "chunk_index": 7,
+    "text": "and examine self-inconsistency and biases inherent in LLM judges. Additionally, we review relevant\nliterature on position bias and length bias.\nHuman-based Pairwise Evaluation Given a set of N questions, each paired with responses gener-\nated by separate LLMs, the human judge is asked to select the better response based on predefined\ncriteria, such as coherence and helpfulness. Let N1 and N2 be the numbers that the first and sec-\nond answer are chosen. The win rate of the first and the second LLM is defined as w1,2 = N1\nN and\nw2,1 =1−w1,2 = N2\nN .\nLLM-based Pairwise Evaluation LLM judges are subjected to the same evaluation procedures as\nhuman judges. However, compared with humans, LLMs are more sensitive to instructions (i.e.,\nprompt templates) (Stureborg et al., 2024; Zhu et al.). Thus, in this study, we define an LLM-judge\nas the combination of a specific LLM and a particular prompt template."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_8",
+    "chunk_index": 8,
+    "text": "prompt templates) (Stureborg et al., 2024; Zhu et al.). Thus, in this study, we define an LLM-judge\nas the combination of a specific LLM and a particular prompt template.\nLLM-Judge Self-Inconsistency Previous studies have observed that LLM judges (Shi et al., 2024;\nStureborg et al., 2024) may produce inconsistent judgments even when presented with identical\nprompts. This is caused by non-greedy decoding strategies leveraged by LLMs, such as top-p and\ntop-k, which generate non-deterministic outputs. The non-deterministic level is controlled by the\ntemperature parameter. In this work, we refer to these inconsistencies as self-inconsistency or sys-\ntem noise in LLM judges and model and quantify them using the term flipping noise (Section 4).\nLLM-Judge Position and Length Bias Positioin bias refers to LLM-judge’s systematic preference\nfor a specific response position (the first or the second in the pairwise evaluation task). Wang et al."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_9",
+    "chunk_index": 9,
+    "text": "LLM-Judge Position and Length Bias Positioin bias refers to LLM-judge’s systematic preference\nfor a specific response position (the first or the second in the pairwise evaluation task). Wang et al.\n(2023b) and Lee et al. (2023) observed the position bias when using GPT-4 (Achiam et al., 2023) and\nPaLM 2 (Anil et al., 2023) as the judge for the pairwise comparison between candidate LLMs. They\nmeasured the position bias by the ratio of inconsistent decisions made by LLM judges after swapping\nresponse positions. Differently, Liusie et al. (2023) and Zheng et al. (2024) defined the position bias\nas the disparity of selection probabilities after reversing the response order. Length bias refers to\nLLM judge’s systematic preference for longer responses even when their qualities are similar to\nshorter versions. Saito et al. (2023) observed a discrepancy between LLMs and human preferences\nregarding response length. They employed accuracy parity—related to human preferences for longer"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_10",
+    "chunk_index": 10,
+    "text": "shorter versions. Saito et al. (2023) observed a discrepancy between LLMs and human preferences\nregarding response length. They employed accuracy parity—related to human preferences for longer\nresponses and shorter responses—to measure relative length bias.\n2"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_11",
+    "chunk_index": 11,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nIn contrast to above studies, our work theorectically examines the impact of LLM judge self-\ninconsistency on position bias and length bias metrics, and provides practical methods to mitigate\nthis effect. We also provide a theoretical analysis and validation of our defined metrics to enhance\ntheir interpretability. Additionally, we investigate the relationship between these biases and accu-\nracy, revealing significant insights. Finally, our study includes an extensive evaluation of position\nand length bias across a diverse set of LLM judges with various prompt templates.\n3\nNOTATION\nLet D = {hn|n = 1. . .N} be a human-preference dataset containing N data cases. An individual\ndata case hn =(x(n), y(n)\nc\n, y(n)\nr\n) represents a prompt-responses pair with a human preference label,\nwhere x(n) is a prompt (e.g., a post for summarization), y(n)\nc\nis the preferred LLM response and\ny(n)\nr"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_12",
+    "chunk_index": 12,
+    "text": "c\n, y(n)\nr\n) represents a prompt-responses pair with a human preference label,\nwhere x(n) is a prompt (e.g., a post for summarization), y(n)\nc\nis the preferred LLM response and\ny(n)\nr\nis the less preferred response, both by human evaluators. We assume each case is drawn from\nthe distribution hn ∼p(h|θ), where θ represents the underlying human preferences depending on\nhuman annotators helping construct the dataset. We drop the data case index n for brevity when the\ncontext is clear.\n4\nEXPLAINABLE EVALUATION METRICS AND FLIPPING NOISE\nAccuracy Accuracy measures the alignment level of LLM judges with human preferences. For-\nmally, we denote θl as the underlying preference by some LLM-judge l, and accuracy evaluates how\nclosely θl is to θ, where θ is the human preference defined in Section 3.\nThere are two versions of the accuracy metric: Accboth and Accrandom. We assume the LLM judge\ndecides on each data case by considering two response orders: h = (x, yc, yr) and h′ = (x, yr, yc)."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_13",
+    "chunk_index": 13,
+    "text": "There are two versions of the accuracy metric: Accboth and Accrandom. We assume the LLM judge\ndecides on each data case by considering two response orders: h = (x, yc, yr) and h′ = (x, yr, yc).\nThe LLM judge then selects the preferred response y and y′ from each order h and h′, where y, y′ ∈\n{yc, yr}. Broadly, we denote the set of LLM judging results as J = {sn|n = 1 . . . N}, where each\nresult sn = (y(n), y′(n)) represents the selection outcome from both response orders across all the\ndata cases in the dataset D. Then the accuracy metrics Accboth and Accrandom can be defined over the\njudging set J as follows:\nAccboth = 1\nN\nN\nX\nn=1\n1\n\u0010\ny(n) = y(n)\nc\n∧y′(n) = y(n)\nc\n\u0011\n,\nAccrandom = 1\nN\nN\nX\nn=1\n1\n\u0010\ny(n)\nrandom = y(n)\nc\n\u0011\nwhere yrandom is randomly chosen from {y, y′} with the probability of 0.5.\nFlipping Noise As mentioned in Section 2, LLM outputs are generally non-deterministic, which\ncan lead to inconsistent judgments even when the same LLM judge is presented with the identical"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_14",
+    "chunk_index": 14,
+    "text": "Flipping Noise As mentioned in Section 2, LLM outputs are generally non-deterministic, which\ncan lead to inconsistent judgments even when the same LLM judge is presented with the identical\ndata case h = (x, yc, yr). To better model this behavior, we first assume the LLM judge’s outputs\nare always deterministic (i.e., no self-inconsistency), representing its decision as a binary variable\nX ∈{0, 1}, where X = 1 indicates LLM judge’s selection of the human-preferred response yc and\nX =0 indicates otherwise. Under this assumption, re-evaluating the same case h would always yield\nthe same decision (e.g., selecting yc with X =1).\nHowever, if we consider self-inconsistency, the LLM judge may instead select the alternative re-\nsponse yr upon re-evaluation. We refer to this as “flipping” its original decision. We define the\ndiscrepancy between the LLM judge’s actual decision (considering self-inconsistency) and its"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_15",
+    "chunk_index": 15,
+    "text": "sponse yr upon re-evaluation. We refer to this as “flipping” its original decision. We define the\ndiscrepancy between the LLM judge’s actual decision (considering self-inconsistency) and its\noriginal decision (assuming no self-inconsistency) as flipping noise, which quantifies the im-\npact of self-inconsistency. We introduce another binary variable, Z ∈{0, 1}, to represent the LLM\njudge’s actual decision, which may differ from its original value X due to flipping noise. In real-\nworld scenarios where self-inconsistency is unavoidable, we can only observe the noisy decision Z,\nnot the idealized X.\nFormally, we can represent the relationship between LLM judge’s original decision and actual deci-\nsion as follows:\nZ =\n(\n1 −X,\np [1 −X|X] = q\nX,\np [X|X] = 1 −q\n(1)\n3"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_16",
+    "chunk_index": 16,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nwhere q is the probability that the LLM judge’s decision is flipped. For a completely deterministic\nLLM judge, q=0.\nPosition Bias (PB) As a reminder, we define accuracy based on two sets of responses with reversed\norders, namely (yc, yr) and (yr, yc), for the same prompt x. To assess accuracy, we require the LLM\njudge to be evaluated in both orders. Here, we employ the same setting to define position bias.\nFirst of all, we define p [X = 1|(yc, yr)] as the probability that the LLM-judge’s original result\naligns with the human selection for the response order (yc, yr), and p [X = 1|(yr, yc)] as the prob-\nability that the LLM-judge’s result aligns with the human selection when the order is reversed. It\nis important to note these two probabilities are essentially accuracy metrics for the two response\npositions.\nWe first consider a special case where the LLM judge makes a fully consistent decision (i.e. q = 0,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_17",
+    "chunk_index": 17,
+    "text": "positions.\nWe first consider a special case where the LLM judge makes a fully consistent decision (i.e. q = 0,\nZ = X), and is completely insensitive to the response position order (i.e. exhibits no position bias).\nThis implies that accuracy should be invariant regarding response positions: p [X = 1|(yc, yr)] −\np [X = 1|(yr, yc)] = 0.\nAdditionally, if the LLM-judge exhibits position bias favoring the first position over the second, it\nwill select yc more frequently in (yc, yr) and yr more frequently in (yr, yc), compared to the scenario\nwith no position bias. Thus, the accuracy p [X = 1|(yc, yr)] will increase and p [X =1|(yr, yc)] will\ndecrease, resulting in p [X =1|(yc, yr)] −p [X =1|(yr, yc)] > 0. The same rationale applies when the\nsecond position is preferred.\nBased on these intuitions, we define position bias as:\nPB = p [X = 1|(yc, yr)] −p [X = 1|(yr, yc)]\n(2)\nwhere the absolute value |PB| measures the degree of position bias, with positive and negative values"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_18",
+    "chunk_index": 18,
+    "text": "PB = p [X = 1|(yc, yr)] −p [X = 1|(yr, yc)]\n(2)\nwhere the absolute value |PB| measures the degree of position bias, with positive and negative values\nindicating preferences for the first and second positions, respectively.\nFinally, we address the general case in which the LLM-judge makes non-deterministic decisions and\nexhibits position bias. Here, only noisy observation Z defined in Eq. 1 is observable, instead of X.\nThus, to mitigate the impact of self-inconsistency and determine the original underlying position\nbias as defined by Eq. 2, we first compute the accuracy of both positions based on Z, and then\napply the de-noise process according to the following relationships between accuracy based on X\nand accuracy based on Z.\np [X = 1|(yc, yr)] = p [Z = 1|(yc, yr)] −qcr\n1 −2 · qcr\n, qcr = p [1 −X|X, (yc, yr)]\np [X = 1|(yr, yc)] = p [Z = 1|(yr, yc)] −qrc\n1 −2 · qrc\n, qrc = p [1 −X|X, (yr, yc)]"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_19",
+    "chunk_index": 19,
+    "text": "and accuracy based on Z.\np [X = 1|(yc, yr)] = p [Z = 1|(yc, yr)] −qcr\n1 −2 · qcr\n, qcr = p [1 −X|X, (yc, yr)]\np [X = 1|(yr, yc)] = p [Z = 1|(yr, yc)] −qrc\n1 −2 · qrc\n, qrc = p [1 −X|X, (yr, yc)]\nwhere qcr and qrc are the probabilities that the LLM judge’s decision is flipped for response order\n(yc, yr) and (yr, yc), respectively. In the appendix A.4, we derive the above relationships, validate\nthe position bias measurement based on de-noised accuracies, and provide a practical method for\ntheir computation.\nLength Bias (LB) Previous studies have indicated that human evaluators exhibit the length bias\nwhen assessing responses (Zheng et al., 2024; Saito et al., 2023). If LLM judges are employed as\nsurrogates for human judges, it is expected they have the same length bias in general. Thus, this\nstudy aims to measure the relative length bias of LLM-judges compared with human evaluators,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_20",
+    "chunk_index": 20,
+    "text": "surrogates for human judges, it is expected they have the same length bias in general. Thus, this\nstudy aims to measure the relative length bias of LLM-judges compared with human evaluators,\nrather than their absolute length bias. For brevity, we use “length bias” to refer to the relative length\nbias in the paper.\nFor each data case (x, yc, yr), we denote ∆l = lc−lr as the length difference between yc and yr,\nwhere lc and lr are the length of yc and yr, respectively. Additionally, we denote p [X =1|∆l> 0] as\nthe probability that the LLM-judge’s result aligns with the human selection when the human selected\nresponse yc is longer than yr, and p [X =1|∆l≤0] as the probability that the LLM-judge’s result\nalign when the length relationship is reversed. Moreover, these two probabilities are defined within\nthe same accuracy framework, analogous to the definition of position bias.\nFollowing the same rationale as in the position bias section, we define length bias as"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_21",
+    "chunk_index": 21,
+    "text": "the same accuracy framework, analogous to the definition of position bias.\nFollowing the same rationale as in the position bias section, we define length bias as\nLB= p [X =1|∆l> 0]−p [X =1|∆l≤0]\n(3)\n4"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_22",
+    "chunk_index": 22,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nwhere |LB| measures how significantly the LLM judge exhibits different length bias compared to hu-\nman judges and the sign of LB indicates it biases more towards longer response or shorter responses\nthan human judges, respectively.\nIn cases where flipping noise cannot be neglected, analogous to the approach for position bias, we\nfirst compute accuracies from noisy observations Z: p [Z =1|∆l> 0] and p [Z =1|∆l≤0]. We then\napply a de-noising process to mitigate the impact of self-inconsistency based on the relationships\nbetween accuracy derived from X and accuracy derived from Z as follows:\np [X = 1|∆l > 0] = p [Z = 1|∆l> 0] −q∆l>0\n1 −2 · q∆l>0\n, q∆l>0 = p [1 −X|X, ∆l> 0]\np [X = 1|∆l ≤0] = p [Z = 1|∆l≤0] −q∆l≤0\n1 −2 · q∆l≤0\n, q∆l≤0 = p [1 −X|X, ∆l≤0]\nwhere q∆l>0 and q∆l≤0 are the probabilities that the LLM judge’s decision is flipped for the con-"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_23",
+    "chunk_index": 23,
+    "text": "p [X = 1|∆l ≤0] = p [Z = 1|∆l≤0] −q∆l≤0\n1 −2 · q∆l≤0\n, q∆l≤0 = p [1 −X|X, ∆l≤0]\nwhere q∆l>0 and q∆l≤0 are the probabilities that the LLM judge’s decision is flipped for the con-\nditions ∆l > 0 and ∆l ≤0, respectively. In the appendix A.4, we derive the above relationships,\nvalidate the length bias measurement based on de-noised accuracies, and provide a practical method\nfor their computation.\nFurther Analysis To enhance the interpretability of the position and length bias metrics, we fur-\nther analyze their inter-relationship theoretically. Our findings are summarized below and formally\nproven in the appendix A.4.\nFinding 1 Position bias definition in Eq. 2 is intrinsically length bias-mitigated.\nFinding 2 Length bias measurement in Eq. 3 is entangled with position bias. Employing Aboth for\naccuracy helps mitigate the influence of positional bias in the assessment of length bias.\n5\nEVALUATION FRAMEWORK"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_24",
+    "chunk_index": 24,
+    "text": "accuracy helps mitigate the influence of positional bias in the assessment of length bias.\n5\nEVALUATION FRAMEWORK\nIn this study, we introduce an evaluation framework that integrates our proposed methods for com-\nputing metrics, including accuracy (Accboth, Accrandom), position bias and length bias. The frame-\nwork is developed and open-sourced to help researchers and practitioners select either prede-\nfined or user-customized LLM judges for alignment tasks based on aforementioned evaluation\nmetrics and their specific needs.\nThe pipeline of the framework, as depicted in Fig. 1, is structured into four modular components:\n1) Data Sampler, 2) LLM Judges, 3) Metrics Computation, and 4) Metrics Visualization. The func-\ntionality of each component is detailed as follows.\nData Sampler\nLLM Judges\nMetrics\nComputation\nMetrics\nVisualization\nHuman\npreference\nlabels\nPrompts and\nresponses\nAccuracy,\nposition bias,\nlength bias\nHuman\nPreference Data\nDistribution\nJudging \nresults"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_25",
+    "chunk_index": 25,
+    "text": "LLM Judges\nMetrics\nComputation\nMetrics\nVisualization\nHuman\npreference\nlabels\nPrompts and\nresponses\nAccuracy,\nposition bias,\nlength bias\nHuman\nPreference Data\nDistribution\nJudging \nresults\nFigure 1: LLM-as-a-Judge Evaluation Framework\nData Sampler: When dealing with a large human preference dataset and a limited budget for us-\ning commercial LLM models, it becomes necessary to sample a manageable-size subset from the\nfull dataset for LLM judge evaluation. Our framework employs a stratified sampling strategy to\nensure that the subset maintains the same proportion of different conditions (e.g. length difference\ndistribution) as the original dataset.\nLLM Judges: As defined in Section 2, an LLM judge refers to the combination of a particular LLM\nand a specific prompt template. Given an LLM judge, this module is responsible for generating\ntextual judging decisions for each sampled data case and subsequently converting them into a binary\n5"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_26",
+    "chunk_index": 26,
+    "text": "Published at Building Trust Workshop at ICLR 2025\noutcome for metrics computation. This module allows the flexible creation of varied LLM judges\nby configuring different LLMs and prompt templates for evaluation.\nMetrics Computation: This module computes alignment and reliability evaluation metrics (i.e.\naccuracy, position bias, and length bias) using the judging results from the LLM Judge module and\nthe human preference labels provided by the dataset, based on the computational methods described\nin the Method section.\nMetrics Visualization: This module visualizes both the individual computed metrics and their inter-\nrelationships, providing comprehensive insights for comparing LLM judges and aiding in the selec-\ntion of the most suitable LLM judge for specific LLM-alignment tasks.\n6\nEXPERIMENTS\nData Selection We demonstrate our evaluation framework using two datasets that are commonly\nused to evaluate LLM alignment algorithms: TL;DR summarization dataset (V¨olske et al., 2017;"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_27",
+    "chunk_index": 27,
+    "text": "6\nEXPERIMENTS\nData Selection We demonstrate our evaluation framework using two datasets that are commonly\nused to evaluate LLM alignment algorithms: TL;DR summarization dataset (V¨olske et al., 2017;\nStiennon et al., 2020) and HH-RLHF-Helpfulness dataset (Bai et al., 2022). Both datasets contain\na prompt (a post for the summarization dataset; a conversation history between humans and LLM\nassistants for HH-RLHF dataset) with two responses generated by distinct LLMs for each sample.\nAlso, human preference labels are available to indicate which response is more aligned with human\npreference. Both datasets have already been partitioned into train and test sets by the authors in the\noriginal studies.\nIn our experiments, it is highly time-consuming and expensive to evaluate LLM judges on all the\ndata cases of both datasets (143,356 for summarization and 124,243 for HH-RLHF-Helpfulness), so\nwe randomly sample a subset from each dataset to perform all the evaluation experiments. Com-"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_28",
+    "chunk_index": 28,
+    "text": "data cases of both datasets (143,356 for summarization and 124,243 for HH-RLHF-Helpfulness), so\nwe randomly sample a subset from each dataset to perform all the evaluation experiments. Com-\npared with the summarization dataset, the HH-RLHF-Helpfulness dataset has a much smaller test\nset (6,240 vs. 70,228), thus, we select a subset from the TL;DR summarization test set following the\nprevious study (Rafailov et al., 2024b) and a subset from the entire HH-RLHF-Helpfulness dataset.\nMoreover, multiple data cases may share the same prompt (post or conversation history) with dis-\ntinct response pairs. To make our collected datasets as diverse as possible, only one pair is kept for\nthis prompt and others are removed. After this step, each unique prompt corresponds to only one\nunique answer pair. Then we randomly sample the prompts and their associated responses five times\nwithout replacement, resulting in five non-overlapping splits. Since measuring length bias requires"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_29",
+    "chunk_index": 29,
+    "text": "unique answer pair. Then we randomly sample the prompts and their associated responses five times\nwithout replacement, resulting in five non-overlapping splits. Since measuring length bias requires\ndividing all the data cases into two conditions: whether longer responses are preferred by humans\nor not, we leverage the stratified sampling to preserve the same ratio of these two conditions as in\nthe entire dataset.\nOverall, both datasets used in our experiments contain 200 distinct samples for each split, which\nresults in 1000 samples in total. The summarization and HH-RLHF-Helpfulness datasets have a\nstratified ratio (# of humans prefer longer responses: # of humans prefer shorter responses) of 115:85\nand 111:89 respectively.\nLLM Judges Our LLM judges integrate a range of varied commercial large language models and\nprompt templates. Particularly, we assess GPT-4o, GPT-4o-mini and GPT-3.5-turbo with 8 tem-"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_30",
+    "chunk_index": 30,
+    "text": "LLM Judges Our LLM judges integrate a range of varied commercial large language models and\nprompt templates. Particularly, we assess GPT-4o, GPT-4o-mini and GPT-3.5-turbo with 8 tem-\nplates on the summarization dataset and 10 templates on the HH-RLHF-Helpfulness dataset. Thus,\nthere are 3×8=24 LLM judges for the summarization dataset and 3×10=30 LLM judges for the\nHH-RLHF-Helpfulness dataset.\nGPT-4o is one of the most advanced models which has the latest checkpoint on 08/06/2024, GPT-4o-\nmini is the most cost-efficient model, while GPT-3.5-turbo is from the last OpenAI model generation\nand serves as the baseline in our experiments. Our preliminary studies suggest that GPT-4o exhibits\ncomparable performance to GPT-4 in judging decision-making, but at a cost that is 4 to 6 times\nlower. Due to limited budget, we select GPT-4o for evaluation over GPT-4 from the list of commer-\ncial LLMs, despite GPT-4 being the most widely-used model in LLM alignment studies before the\nrelease of GPT-4o."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_31",
+    "chunk_index": 31,
+    "text": "cial LLMs, despite GPT-4 being the most widely-used model in LLM alignment studies before the\nrelease of GPT-4o.\nAll the considered templates were actually used in the pairwise comparison tasks to evaluate differ-\nent LLM alignment algorithms by papers of year 2023 and 2024, and we make sure they all have\ndissimilar prompt formats. Furthermore, since our evaluation datasets have no “tied” labels from\nhuman annotations, which indicate two responses are equally preferred, we remove sentences from\n6"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_32",
+    "chunk_index": 32,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nthe prompt templates which allow LLM judges to select “tied” labels. Please refer to the appendix\nA.1 for template examples of each dataset, as well as a complete list of the papers from which all\nthe templates in this study are derived.\nTemperature Parameter Selection Temperature parameter determines how deterministic LLM out-\nputs are, which might affect the performance of LLM-judges. However, few previous studies that\nuse LLMs as judges explicitly explain how and why they choose the temperature in their exper-\niments. In this study, we assess the impact of the temperature parameter on the self-consistency\n(i.e. 1-flipping probability q) and accuracies of the large language models, which helps to select the\ntemperature before evaluating LLM-judge performance using other metrics.\nIn detail, we investigate five temperature settings: 0.0, 0.1, 0.3, 0.5, and 0.7. For each temperature"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_33",
+    "chunk_index": 33,
+    "text": "temperature before evaluating LLM-judge performance using other metrics.\nIn detail, we investigate five temperature settings: 0.0, 0.1, 0.3, 0.5, and 0.7. For each temperature\nsetting, we concatenate data samples in all 5 splits (1000 samples in total) and repeatedly ask LLM\njudges to select the better response K = 5 times for each sample. We compute the self-consistency\nfor both response positions (yc, yr) and (yr, yc) separately, as well as Accboth across all the samples.\nThrough preliminary experiments, we found the impact of different temperatures is the same to\nthe same LLM with different prompt templates, so in the large-scale experiments, only the prompt\ntemplates from DPO paper (Rafailov et al., 2024b) are utilized for both datasets.\nMetrics Computation To compute the flipping probability, same as selecting the temperature\nparameter, we let LLM judges select their preferred response from each sample repeatedly for K ="
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_34",
+    "chunk_index": 34,
+    "text": "Metrics Computation To compute the flipping probability, same as selecting the temperature\nparameter, we let LLM judges select their preferred response from each sample repeatedly for K =\n5 times. However, since we need to compute this probability for every LLM judge (24 for the\nsummarization dataset and 30 for the HH-RLHF-Helpfulness dataset), we only leverage the first\nsplit of each dataset due to limited budget and assume they remain consistent on all five splits.\nFor each sample, the flipping probabilities qcr and qrc for both positions (yc, yr) and (yr, yc) are\ncomputed separately to estimate de-noised position bias, and the flipping probabilities q∆l>0 and\nq∆l≤0 are computed as well to calculate de-noised length bias. To compute accuracy, position\nbias, and length bias, we compute each metric on all the splits (S = 5). In the result, we report the\nmean and standard deviation of LLM judge performances across these five splits.\n7\nRESULTS"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_35",
+    "chunk_index": 35,
+    "text": "bias, and length bias, we compute each metric on all the splits (S = 5). In the result, we report the\nmean and standard deviation of LLM judge performances across these five splits.\n7\nRESULTS\nTemperature Table 1 contains the results of self-consistent rate (SCR) and accuracy with various\ntemperatures. The self-consistent rate, given by 1 −q as defined in Eq. 1, measures the probability\nthat the LLM’s judgments are consistent across identical inputs. Since different LLMs show the\nsame trend on both datasets, we only include GPT-4o here for the demonstration. Results regarding\nother LLMs are included in the appendix A.3.\nFrom the table, we observe that higher temperatures result in lower self-consistency for both posi-\ntions, while accuracy is not significantly affected by temperatures. Specifically, even when the tem-\nperature is set to 0.0, complete self-consistency (i.e. SCR=1.0) remains unachievable. Furthermore,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_36",
+    "chunk_index": 36,
+    "text": "perature is set to 0.0, complete self-consistency (i.e. SCR=1.0) remains unachievable. Furthermore,\nself-consistency varies with different positions, thereby necessitating the separate measurement of\nflipping probabilities related to flipping noise associated with each position.\nFinally, we aim to demonstrate the generalizability of our evaluation framework by employing a\nvalue that is not a special case, such as 0.0. Thus, we select 0.1 as the temperature in all of our\nexperiments, which has the highest level of self-consistency compared with higher temperatures.\nTL;DR Summarization\nHH-RLHF-Helpfulness\nTemperature\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\n0.0\n0.977\n0.971\n0.665 (0.003)\n0.974\n0.967\n0.573 (0.005)\n0.1\n0.973\n0.967\n0.666 (0.004)\n0.966\n0.957\n0.575 (0.005)\n0.3\n0.963\n0.956\n0.668 (0.003)\n0.950\n0.944\n0.574 (0.005)\n0.5\n0.953\n0.949\n0.663 (0.003)\n0.942\n0.926\n0.579 (0.009)\n0.7\n0.946\n0.927\n0.657 (0.000)\n0.934\n0.914\n0.577 (0.006)"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_37",
+    "chunk_index": 37,
+    "text": "0.966\n0.957\n0.575 (0.005)\n0.3\n0.963\n0.956\n0.668 (0.003)\n0.950\n0.944\n0.574 (0.005)\n0.5\n0.953\n0.949\n0.663 (0.003)\n0.942\n0.926\n0.579 (0.009)\n0.7\n0.946\n0.927\n0.657 (0.000)\n0.934\n0.914\n0.577 (0.006)\nTable 1: Self-consistent rate (SCR) and accuracy (Acc) of tested temperatures for the TL;DR\nsummarization and HH-RLHF-Helpfulness datasets. Results are demonstrated using GPT-4o and\nprompt templates from the DPO paper Rafailov et al. (2024b).\n7"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_38",
+    "chunk_index": 38,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nAccuracy Figure 2a and Figure 2b show accuracies (Accboth) of LLM judges on both datasets, where\nidentical colors represent the same prompt template within the same dataset (the same coloring rule\nis applied to all the result figures except for Figure 4). As we can see, different LLM judges have\ndistinct accuracy, which means they have varied alignment levels with human preferences. Also, it\ndemonstrates the performance of an LLM judge is highly sensitive to prompt templates.\nNotably, several LLM judges have very low accuracies (Accboth < 0.2). Thus, it is significantly\nimportant to carefully evaluate and compare different LLM judges before actually using them to\nevaluate LLM alignment algorithms. Moreover, we find that all the accuracies on both datasets are\nbelow 0.7, which shows the mediocre alignment level and demonstrates that human evaluation is\nnecessary to precisely compare different LLM alignment systems."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_39",
+    "chunk_index": 39,
+    "text": "below 0.7, which shows the mediocre alignment level and demonstrates that human evaluation is\nnecessary to precisely compare different LLM alignment systems.\nCompared with GPT-3.5-turbo, both GPT-4o and GPT-4o-mini have higher accuracies no matter\nwhich prompt template is used. It demonstrates that the superior internal capacities of recent LLMs,\ncompared to older versions, are independent of the prompt templates used.\nFigure 2c and Figure 2d show accuracy (Accrandom) of LLM judges on both datasets. Compared\nwith Figure 2a and 2b (i.e. Accboth), the gap between GPT-3.5-turbo and the others shrinks. This is\nbecause Accrandom involves randomly selecting a position when LLM judge selection is inconsistent\nacross two positions, thereby not reflecting the internal capabilities of LLM judges. Consequently,\nAccrandom is a less effective metric for assessing LLM judge performance compared to Accboth. Based"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_40",
+    "chunk_index": 40,
+    "text": "across two positions, thereby not reflecting the internal capabilities of LLM judges. Consequently,\nAccrandom is a less effective metric for assessing LLM judge performance compared to Accboth. Based\non this, only Accboth is used to demonstrate the relationship between accuracy and position bias as\nwell as length bias in the following sections.\n(a) TL;DR\n(b) HH-RLHF\n(c) TL;DR\n(d) HH-RLHF\nFigure 2: Accuracy Accboth (top two) and Accrandom (bottom two) for TL;DR summarization and HH-\nRLHF-Helpfulness dataset. Please refer to the appendix A.1 for details on the prompt templates used in\nall the result figures throughout this section.\nPosition Bias Position biases of all the LLM judges are shown in Figure 3a and 3b, where positive\nvalues mean judges prefer the first position while negative values mean judges prefer the second\nposition. We observe that varying prompt templates can cause the same large language model to"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_41",
+    "chunk_index": 41,
+    "text": "values mean judges prefer the first position while negative values mean judges prefer the second\nposition. We observe that varying prompt templates can cause the same large language model to\nexhibit preferential biases towards different positions. Also, different large language models can\nshow opposite position preferences using the same template. Thus, the position bias/preference\ndepends on both LLMs themselves and also prompt templates.\nAdditionally, we illustrate the relationship between accuracy and the absolute value of position bias\nin Figure 4a and Figure 4b. Here, an absolute value of position bias reflect the bias level without\nspecifying the preferred position. To enhance the clarity of the observation, we present the perfor-\nmance across all splits rather than as mean values and use color based solely on LLMs, rather than\nLLM judges (LLMs + templates). Our evaluation results reveal a significant negative correlation\n8"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_42",
+    "chunk_index": 42,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nbetween accuracy and the level of position bias. The underlying reason might be that an LLM judge\nwith stronger judging ability (higher Accboth) generally possesses a greater understanding ability,\nallowing for a more accurate and consistent selection from different response orders given the exact\nsame context.\n(a) TL;DR\n(b) HH-RLHF\n(c) TL;DR\n(d) HH-RLHF\nFigure 3: Position bias (top two) and length bias (bottom two) for TL;DR summarization and HH-RLHF-\nHelpfulness datasets.\n(a) TL;DR\n(b) HH-RLHF\n(c) TL;DR\n(d) HH-RLHF\nFigure 4: |PB| vs. Accboth (top two) and |LB| vs. Accboth (bottom two) for TL;DR summarization\nand HH-RLHF-Helpfulness datasets. |PB| and |LB| represent the absolute value of position bias and\nlength bias, respectively.\n9"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_43",
+    "chunk_index": 43,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nLength Bias Figure 3c and 3d display the (relative) length bias of all the judges across both datasets.\nPositive values indicate a stronger preference for longer responses compared to human evaluators,\nwhile negative values indicate a stronger preference for shorter responses. The figure shows that all\nthe tested LLM judges have stronger preferences for longer responses compared to human judges,\nwhich is consistent with previous studies (Zheng et al., 2024; Saito et al., 2023). Furthermore,\ncompared to the summarization task, LLM judges exhibit a greater degree of length bias on the\nmulti-turn conversation task (HH-RLHF-Helpfulness dataset).\nGenerally, longer responses tend to provide more detailed and comprehensive answers, which are\nmore favored by humans compared to shorter ones (Hart & Sarma, 2014; Harper et al., 2008).\nWe suspect that the length bias results from the over-alignment of commercial models with human"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_44",
+    "chunk_index": 44,
+    "text": "more favored by humans compared to shorter ones (Hart & Sarma, 2014; Harper et al., 2008).\nWe suspect that the length bias results from the over-alignment of commercial models with human\npreferences. Different from position bias, length bias does not have a negative correlation with\naccuracy (Please refer to Figure 4c and 4d).\n8\nLIMITATIONS AND FUTURE WORK\nIn this section, we discuss the limitations in this study and outline the directions for future research.\nFirst, our current studies focus on commercial LLMs (e.g., GPT-3.5, GPT-4o, and GPT-4o-mini)\nrather than open-source LLMs. This is due to the fact that commercial LLMs remain the predom-\ninant choice in LLM-as-a-judge methods used in LLM alignment studies, making their reliability\nevaluation more urgent compared to open-source LLMs.\nSecond, our evaluation studies concentrate on LLM-as-a-Judge methods, although open-source re-\nward models (RMs) also hold the potential to serve as judges on LLM alignment tasks (Wang et al.,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_45",
+    "chunk_index": 45,
+    "text": "Second, our evaluation studies concentrate on LLM-as-a-Judge methods, although open-source re-\nward models (RMs) also hold the potential to serve as judges on LLM alignment tasks (Wang et al.,\n2024b). Compared to general LLMs, which are primarily used for text generation, reward models\ndo not exhibit position bias and their judging results are consistently deterministic. Nevertheless, the\naccuracy and length bias metrics and evaluation framework we have introduced are still applicable\nfor assessing “RM-as-a-Judge” methods.\nIn the future, we plan to expand our evaluation study to include powerful open-source LLM models,\nsuch as Llama 3.1 (Dubey et al., 2024), and open-source reward models, such as Nemotron-4-340B-\nReward (Wang et al., 2024b), across a broader range of datasets, including RewardBench (Lambert\net al., 2024).\n9\nCONCLUSIONS\nIn this study, we introduced a set of reliability metrics, including accuracy, position bias, and length"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_46",
+    "chunk_index": 46,
+    "text": "et al., 2024).\n9\nCONCLUSIONS\nIn this study, we introduced a set of reliability metrics, including accuracy, position bias, and length\nbias, with improved theoretical interpretability. We explicitly modeled and measured the LLM in-\nternal self-inconsistency using flipping noise, and mitigate its impact on position bias and length\nbias. We developed a framework to evaluate, compare, and visualize the reliability of LLM judges\nand their human-preference alignment to provide informative observations that help choose LLM\njudges for alignment tasks. In the experiments, we demonstrated our framework by evaluating three\nadvanced commercial LLMs with diverse prompt templates on two datasets that are commonly used\nfor LLM alignment tasks. We reported the evaluation results and findings to provide a reference for\nchoosing appropriate LLM judges for LLM alignment studies in practice. In the future, we con-\nsider expanding our evaluation study to powerful open-source LLMs and reward models on more"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_47",
+    "chunk_index": 47,
+    "text": "choosing appropriate LLM judges for LLM alignment studies in practice. In the future, we con-\nsider expanding our evaluation study to powerful open-source LLMs and reward models on more\nalignment benchmark datasets.\nREFERENCES\nJosh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni Ale-\nman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4 technical\nreport. arXiv preprint arXiv:2303.08774, 2023.\nRohan Anil, Andrew M Dai, Orhan Firat, Melvin Johnson, Dmitry Lepikhin, Alexandre Passos,\nSiamak Shakeri, Emanuel Taropa, Paige Bailey, Zhifeng Chen, et al. Palm 2 technical report.\narXiv preprint arXiv:2305.10403, 2023.\n10"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_48",
+    "chunk_index": 48,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nYuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma, Dawn\nDrain, Stanislav Fort, Deep Ganguli, Tom Henighan, et al.\nTraining a helpful and harmless\nassistant with reinforcement learning from human feedback. arXiv preprint arXiv:2204.05862,\n2022.\nYushi Bai, Jiahao Ying, Yixin Cao, Xin Lv, Yuze He, Xiaozhi Wang, Jifan Yu, Kaisheng Zeng, Yijia\nXiao, Haozhe Lyu, et al. Benchmarking foundation models with language-model-as-an-examiner.\nAdvances in Neural Information Processing Systems, 36, 2024.\nYi Chen, Rui Wang, Haiyun Jiang, Shuming Shi, and Ruifeng Xu.\nExploring the use of large\nlanguage models for reference-free text quality evaluation: An empirical study. arXiv preprint\narXiv:2304.00723, 2023.\nPengyu Cheng, Yifan Yang, Jian Li, Yong Dai, and Nan Du. Adversarial preference optimization.\narXiv preprint arXiv:2311.08045, 2023."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_49",
+    "chunk_index": 49,
+    "text": "arXiv:2304.00723, 2023.\nPengyu Cheng, Yifan Yang, Jian Li, Yong Dai, and Nan Du. Adversarial preference optimization.\narXiv preprint arXiv:2311.08045, 2023.\nCheng-Han Chiang and Hung-yi Lee. Can large language models be an alternative to human evalu-\nations? arXiv preprint arXiv:2305.01937, 2023.\nWei-Lin Chiang, Lianmin Zheng, Ying Sheng, Anastasios Nikolas Angelopoulos, Tianle Li,\nDacheng Li, Hao Zhang, Banghua Zhu, Michael Jordan, Joseph E Gonzalez, et al. Chatbot arena:\nAn open platform for evaluating llms by human preference. arXiv preprint arXiv:2403.04132,\n2024.\nAbhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha\nLetman, Akhil Mathur, Alan Schelten, Amy Yang, Angela Fan, et al. The llama 3 herd of models.\narXiv preprint arXiv:2407.21783, 2024.\nYann Dubois, Bal´azs Galambosi, Percy Liang, and Tatsunori B Hashimoto. Length-controlled al-\npacaeval: A simple way to debias automatic evaluators. arXiv preprint arXiv:2404.04475, 2024a."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_50",
+    "chunk_index": 50,
+    "text": "Yann Dubois, Bal´azs Galambosi, Percy Liang, and Tatsunori B Hashimoto. Length-controlled al-\npacaeval: A simple way to debias automatic evaluators. arXiv preprint arXiv:2404.04475, 2024a.\nYann Dubois, Chen Xuechen Li, Rohan Taori, Tianyi Zhang, Ishaan Gulrajani, Jimmy Ba, Carlos\nGuestrin, Percy S Liang, and Tatsunori B Hashimoto. Alpacafarm: A simulation framework for\nmethods that learn from human feedback. Advances in Neural Information Processing Systems,\n36, 2024b.\nJiawei Gu, Xuhui Jiang, Zhichao Shi, Hexiang Tan, Xuehao Zhai, Chengjin Xu, Wei Li, Ying-\nhan Shen, Shengjie Ma, Honghao Liu, et al.\nA survey on llm-as-a-judge.\narXiv preprint\narXiv:2411.15594, 2024.\nShangmin Guo, Biao Zhang, Tianlin Liu, Tianqi Liu, Misha Khalman, Felipe Llinares, Alexandre\nRame, Thomas Mesnard, Yao Zhao, Bilal Piot, et al. Direct language model alignment from\nonline ai feedback. arXiv preprint arXiv:2402.04792, 2024."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_51",
+    "chunk_index": 51,
+    "text": "Rame, Thomas Mesnard, Yao Zhao, Bilal Piot, et al. Direct language model alignment from\nonline ai feedback. arXiv preprint arXiv:2402.04792, 2024.\nF Maxwell Harper, Daphne Raban, Sheizaf Rafaeli, and Joseph A Konstan. Predictors of answer\nquality in online q&a sites.\nIn Proceedings of the SIGCHI Conference on human factors in\ncomputing systems, pp. 865–874, 2008.\nKerry Hart and Anita Sarma. Perceptions of answer quality in an online technical question and\nanswer forum. In Proceedings of the 7th International Workshop on Cooperative and Human\nAspects of Software Engineering, pp. 103–106, 2014.\nNathan Lambert, Valentina Pyatkin, Jacob Morrison, LJ Miranda, Bill Yuchen Lin, Khyathi Chandu,\nNouha Dziri, Sachin Kumar, Tom Zick, Yejin Choi, et al. Rewardbench: Evaluating reward\nmodels for language modeling. arXiv preprint arXiv:2403.13787, 2024.\nHarrison Lee, Samrat Phatale, Hassan Mansoor, Kellie Lu, Thomas Mesnard, Colton Bishop, Victor"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_52",
+    "chunk_index": 52,
+    "text": "models for language modeling. arXiv preprint arXiv:2403.13787, 2024.\nHarrison Lee, Samrat Phatale, Hassan Mansoor, Kellie Lu, Thomas Mesnard, Colton Bishop, Victor\nCarbune, and Abhinav Rastogi. Rlaif: Scaling reinforcement learning from human feedback with\nai feedback. arXiv preprint arXiv:2309.00267, 2023.\nDawei Li, Bohan Jiang, Liangjie Huang, Alimohammad Beigi, Chengshuai Zhao, Zhen Tan, Amrita\nBhattacharjee, Yuxuan Jiang, Canyu Chen, Tianhao Wu, et al. From generation to judgment:\nOpportunities and challenges of llm-as-a-judge. arXiv preprint arXiv:2411.16594, 2024a.\n11"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_53",
+    "chunk_index": 53,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nHaitao Li, Qian Dong, Junjie Chen, Huixue Su, Yujia Zhou, Qingyao Ai, Ziyi Ye, and Yiqun\nLiu. Llms-as-judges: a comprehensive survey on llm-based evaluation methods. arXiv preprint\narXiv:2412.05579, 2024b.\nJunlong Li, Shichao Sun, Weizhe Yuan, Run-Ze Fan, Hai Zhao, and Pengfei Liu. Generative judge\nfor evaluating alignment. arXiv preprint arXiv:2310.05470, 2023.\nTianle Li, Wei-Lin Chiang, Evan Frick, Lisa Dunlap, Tianhao Wu, Banghua Zhu, Joseph E Gon-\nzalez, and Ion Stoica. From crowdsourced data to high-quality benchmarks: Arena-hard and\nbenchbuilder pipeline. arXiv preprint arXiv:2406.11939, 2024c.\nYang Liu, Dan Iter, Yichong Xu, Shuohang Wang, Ruochen Xu, and Chenguang Zhu. G-eval: Nlg\nevaluation using gpt-4 with better human alignment. arXiv preprint arXiv:2303.16634, 2023.\nAdian Liusie, Potsawee Manakul, and Mark JF Gales. Zero-shot nlg evaluation through pairware\ncomparisons with llms. arXiv preprint arXiv:2307.07889, 2023."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_54",
+    "chunk_index": 54,
+    "text": "Adian Liusie, Potsawee Manakul, and Mark JF Gales. Zero-shot nlg evaluation through pairware\ncomparisons with llms. arXiv preprint arXiv:2307.07889, 2023.\nViraj Mehta, Vikramjeet Das, Ojash Neopane, Yijia Dai, Ilija Bogunovic, Jeff Schneider, and Willie\nNeiswanger. Sample efficient reinforcement learning from human feedback via active exploration.\n2023.\nArjun Panickssery, Samuel R Bowman, and Shi Feng. Llm evaluators recognize and favor their own\ngenerations. arXiv preprint arXiv:2404.13076, 2024.\nRafael Rafailov, Joey Hejna, Ryan Park, and Chelsea Finn. From r to q: Your language model is\nsecretly a q-function. arXiv preprint arXiv:2404.12358, 2024a.\nRafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea\nFinn. Direct preference optimization: Your language model is secretly a reward model. Advances\nin Neural Information Processing Systems, 36, 2024b.\nKeita Saito, Akifumi Wachi, Koki Wataoka, and Youhei Akimoto. Verbosity bias in preference"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_55",
+    "chunk_index": 55,
+    "text": "in Neural Information Processing Systems, 36, 2024b.\nKeita Saito, Akifumi Wachi, Koki Wataoka, and Youhei Akimoto. Verbosity bias in preference\nlabeling by large language models. arXiv preprint arXiv:2310.10076, 2023.\nJ´er´emy Scheurer, Jon Ander Campos, Tomasz Korbak, Jun Shern Chan, Angelica Chen, Kyunghyun\nCho, and Ethan Perez. Training language models with language feedback at scale. arXiv preprint\narXiv:2303.16755, 2023.\nWei Shen, Xiaoying Zhang, Yuanshun Yao, Rui Zheng, Hongyi Guo, and Yang Liu.\nImprov-\ning reinforcement learning from human feedback using contrastive rewards.\narXiv preprint\narXiv:2403.07708, 2024.\nLin Shi, Weicheng Ma, and Soroush Vosoughi. Judging the judges: A systematic investigation of\nposition bias in pairwise comparative assessments by llms. arXiv preprint arXiv:2406.07791,\n2024.\nNisan Stiennon, Long Ouyang, Jeffrey Wu, Daniel Ziegler, Ryan Lowe, Chelsea Voss, Alec Radford,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_56",
+    "chunk_index": 56,
+    "text": "position bias in pairwise comparative assessments by llms. arXiv preprint arXiv:2406.07791,\n2024.\nNisan Stiennon, Long Ouyang, Jeffrey Wu, Daniel Ziegler, Ryan Lowe, Chelsea Voss, Alec Radford,\nDario Amodei, and Paul F Christiano. Learning to summarize with human feedback. Advances\nin Neural Information Processing Systems, 33:3008–3021, 2020.\nRickard Stureborg, Dimitris Alikaniotis, and Yoshi Suhara. Large language models are inconsistent\nand biased evaluators. arXiv preprint arXiv:2405.01724, 2024.\nAman Singh Thakur, Kartik Choudhary, Venkat Srinik Ramayapally, Sankaran Vaidyanathan, and\nDieuwke Hupkes. Judging the judges: Evaluating alignment and vulnerabilities in llms-as-judges.\narXiv preprint arXiv:2406.12624, 2024.\nHugo Touvron, Louis Martin, Kevin Stone, Peter Albert, Amjad Almahairi, Yasmine Babaei, Niko-\nlay Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti Bhosale, et al. Llama 2: Open founda-\ntion and fine-tuned chat models. arXiv preprint arXiv:2307.09288, 2023."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_57",
+    "chunk_index": 57,
+    "text": "lay Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti Bhosale, et al. Llama 2: Open founda-\ntion and fine-tuned chat models. arXiv preprint arXiv:2307.09288, 2023.\nMichael V¨olske, Martin Potthast, Shahbaz Syed, and Benno Stein. Tl; dr: Mining reddit to learn\nautomatic summarization. In Proceedings of the Workshop on New Frontiers in Summarization,\npp. 59–63, 2017.\n12"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_58",
+    "chunk_index": 58,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nBinghai Wang, Rui Zheng, Lu Chen, Yan Liu, Shihan Dou, Caishuang Huang, Wei Shen, Senjie Jin,\nEnyu Zhou, Chenyu Shi, et al. Secrets of rlhf in large language models part ii: Reward modeling.\narXiv preprint arXiv:2401.06080, 2024a.\nJiaan Wang, Yunlong Liang, Fandong Meng, Zengkui Sun, Haoxiang Shi, Zhixu Li, Jinan Xu,\nJianfeng Qu, and Jie Zhou. Is chatgpt a good nlg evaluator? a preliminary study. arXiv preprint\narXiv:2303.04048, 2023a.\nPeiyi Wang, Lei Li, Liang Chen, Zefan Cai, Dawei Zhu, Binghuai Lin, Yunbo Cao, Qi Liu,\nTianyu Liu, and Zhifang Sui. Large language models are not fair evaluators. arXiv preprint\narXiv:2305.17926, 2023b.\nYidong Wang, Zhuohao Yu, Zhengran Zeng, Linyi Yang, Cunxiang Wang, Hao Chen, Chaoya Jiang,\nRui Xie, Jindong Wang, Xing Xie, et al. Pandalm: An automatic evaluation benchmark for llm\ninstruction tuning optimization. arXiv preprint arXiv:2306.05087, 2023c."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_59",
+    "chunk_index": 59,
+    "text": "Rui Xie, Jindong Wang, Xing Xie, et al. Pandalm: An automatic evaluation benchmark for llm\ninstruction tuning optimization. arXiv preprint arXiv:2306.05087, 2023c.\nZhilin Wang, Yi Dong, Olivier Delalleau, Jiaqi Zeng, Gerald Shen, Daniel Egert, Jimmy J. Zhang,\nMakesh Narsimhan Sreedhar, and Oleksii Kuchaiev. Helpsteer2: Open-source dataset for training\ntop-performing reward models, 2024b.\nMinghao Wu and Alham Fikri Aji. Style over substance: Evaluation biases for large language\nmodels. arXiv preprint arXiv:2307.03025, 2023.\nFangyuan Xu, Yixiao Song, Mohit Iyyer, and Eunsol Choi. A critical evaluation of evaluations for\nlong-form question answering. arXiv preprint arXiv:2305.18201, 2023.\nDun Zeng, Yong Dai andPengyu Cheng, Tianhao Hu, Wanshun Chen, Nan Du, and Zenglin Xu. On\ndiversified preferences of large language model alignment. CoRR, abs/2312.07401, 2023. doi: 10.\n48550/ARXIV.2312.07401. URL https://doi.org/10.48550/arXiv.2312.07401."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_60",
+    "chunk_index": 60,
+    "text": "diversified preferences of large language model alignment. CoRR, abs/2312.07401, 2023. doi: 10.\n48550/ARXIV.2312.07401. URL https://doi.org/10.48550/arXiv.2312.07401.\nDun Zeng, Yong Dai, Pengyu Cheng, Longyue Wang, Tianhao Hu, Wanshun Chen, Nan Du, and\nZenglin Xu. On diversified preferences of large language model alignment, 2024.\nLianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang,\nZi Lin, Zhuohan Li, Dacheng Li, Eric Xing, et al. Judging llm-as-a-judge with mt-bench and\nchatbot arena. Advances in Neural Information Processing Systems, 36, 2024.\nLianghui Zhu, Xinggang Wang, and Xinlong Wang. Judgelm: Fine-tuned large language models\nare scalable judges, october 2023. URL http://arxiv. org/abs/2310.17631.\n13"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_61",
+    "chunk_index": 61,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nA\nAPPENDIX\nA.1\nLIST OF PROMPT TEMPLATES IN THIS STUDY\nTemplate Name\nPaper Link\nPublish Time\nguo (Guo et al., 2024)\nhttps://arxiv.org/pdf/2402.04792\n02/2024\nscheurer (Scheurer et al., 2023)\nhttps://arxiv.org/pdf/2303.16755\n02/2024\nliusie (Liusie et al., 2023)\nhttps://arxiv.org/pdf/2307.07889\n02/2024\nwang (Wang et al., 2024a)\nhttps://arxiv.org/pdf/2401.06080\n01/2024\nzheng (Zheng et al., 2024)\nhttps://arxiv.org/pdf/2306.05685\n12/2023\nwu (Wu & Aji, 2023)\nhttps://arxiv.org/pdf/2307.03025\n11/2023\nchen (Cheng et al., 2023)\nhttps://arxiv.org/pdf/2304.00723\n09/2023\nrafailov (Rafailov et al., 2024b)\nhttps://arxiv.org/pdf/2305.18290\n07/2023\nTable 2: Prompt templates used for the TL;DR summarization dataset.\nTemplate Name\nPaper Link\nPublication Time\ncheng (Cheng et al., 2023)\nhttps://arxiv.org/pdf/2311.08045\n06/2024\nzeng (Zeng et al., 2024)\nhttps://arxiv.org/pdf/2312.07401\n04/2024\nshen (Shen et al., 2024)\nhttps://arxiv.org/pdf/2403.07708v2"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_62",
+    "chunk_index": 62,
+    "text": "cheng (Cheng et al., 2023)\nhttps://arxiv.org/pdf/2311.08045\n06/2024\nzeng (Zeng et al., 2024)\nhttps://arxiv.org/pdf/2312.07401\n04/2024\nshen (Shen et al., 2024)\nhttps://arxiv.org/pdf/2403.07708v2\n02/2024\nguo (Guo et al., 2024)\nhttps://arxiv.org/pdf/2402.04792\n02/2024\nzheng (Zheng et al., 2024)\nhttps://arxiv.org/pdf/2306.05685\n12/2023\nmehta (Mehta et al., 2023)\nhttps://arxiv.org/pdf/2312.00267\n12/2023\nwu (Wu & Aji, 2023)\nhttps://arxiv.org/pdf/2307.03025\n11/2023\nbai (Bai et al., 2024)\nhttps://arxiv.org/pdf/2306.04181\n11/2023\nrafailov (Rafailov et al., 2024b)\nhttps://arxiv.org/pdf/2305.18290\n07/2023\nxu (Xu et al., 2023)\nhttps://arxiv.org/pdf/2305.18201\n05/2023\nTable 3: Prompt templates used for the HH-RLHF-Helpfulness dataset.\nExamples of Prompt Templates\n(TL;DR Summarization Dataset)\nTemplate from Rafailov et al. Rafailov et al. (2024b)\nWhich of the following summaries does a better job of summarizing\nthe most important points in the given forum post, without"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_63",
+    "chunk_index": 63,
+    "text": "Template from Rafailov et al. Rafailov et al. (2024b)\nWhich of the following summaries does a better job of summarizing\nthe most important points in the given forum post, without\nincluding unimportant or irrelevant details?\nA good summary is\nboth precise and concise.\nPost:\n<post>\nSummary A: <summary A>\nSummary B: <summary B>\nFIRST provide a one-sentence comparison of the two summaries,\nexplaining which you prefer and why.\nSECOND, on a new line, state\nonly \"A\" or \"B\" to indicate your choice.\nYour response should use\nthe format:\nComparison:\n<one-sentence comparison and explanation>\nPreferred:\n<\"A\" or \"B\">\nTemplate from Wang et al. Wang et al. (2024a)\nAs a neutral observer, your task is to assess the responses\nprovided by two TL;DR summarizations according to the same\nSUBREDDIT prompt shown below.\nBegin by comparing the two\nresponses and provide a brief explanation.\nAvoid any biases based\non position and ensure that the order in which the responses were"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_64",
+    "chunk_index": 64,
+    "text": "SUBREDDIT prompt shown below.\nBegin by comparing the two\nresponses and provide a brief explanation.\nAvoid any biases based\non position and ensure that the order in which the responses were\npresented does not influence your decision.\nDo not let the length\n14"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_65",
+    "chunk_index": 65,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nof the responses influence your evaluation.\nDo not favor certain\nnames of the assistants.\nStrive to be as objective as possible.\nYou need to choose only one of the two answers and respond by\neither A or B.\n{prompt}\nA. {answer a}\nB. {answer b}\nWhich one is better?\nA or B?\nExamples of Prompt Templates\n(HH-RLHF-Helpfulness Dataset)\nTemplate from Rafailov et al. Rafailov et al. (2024b)\nFor the following query to a chatbot, which response is more\nhelpful?\nQuery:\n{the user query}\nResponse A:\n{either the test method or baseline}\nResponse B:\n{the other response}\nFIRST provide a one-sentence comparison of the two responses and\nexplain which you feel is more helpful.\nSECOND, on a new line,\nstate only \"A\" or \"B\" to indicate which response is more helpful.\nYour response should use the format:\nComparison:\n<one-sentence comparison and explanation>\nMore helpful:\n<\"A\" or \"B\">\nTemplate from Shen et al. Shen et al. (2024)"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_66",
+    "chunk_index": 66,
+    "text": "Your response should use the format:\nComparison:\n<one-sentence comparison and explanation>\nMore helpful:\n<\"A\" or \"B\">\nTemplate from Shen et al. Shen et al. (2024)\nPlease act as an impartial judge and evaluate the quality of\nthe responses provided by two AI assistants to the user question\ndisplayed below.\nYou should choose the assistant that follows the\nuser’s instructions better and provides more tailored responses to\nthe user’s questions.\nA helpful response should directly address the human questions\nwithout going off-topic.\nA detailed response is only helpful when\nit always focuses on the question and does not provide irrelevant\ninformation.\nA helpful response should also be consistent with\nthe conversation context.\nFor example, if the human is going to close the conversation, then\na good response should tend to close the conversation, too, rather\nthan continuing to provide more information.\nIf the response is\ncut off, evaluate the response based on the existing content,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_67",
+    "chunk_index": 67,
+    "text": "a good response should tend to close the conversation, too, rather\nthan continuing to provide more information.\nIf the response is\ncut off, evaluate the response based on the existing content,\nand do not choose a response purely because it is not cut off.\nBegin your evaluation by comparing the two responses and provide\na short explanation.\nAvoid any positional biases and ensure\nthat the order in which the responses were presented does not\ninfluence your decision.\nDo not allow the length of the responses\nto influence your evaluation.\nDo not favor specific names of the\nassistants.\n15"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_68",
+    "chunk_index": 68,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nBe as objective as possible.\nAfter providing your explanation,\noutput your final verdict by strictly following this format:\n[[A]] if assistant A is better, [[B]] if assistant B is better.\nPlease make sure the last word is your choice.\n--User Question--\n{prompt}\n--The Start of Assistant A’s Answer--\n{response 1}\n--The End of Assistant A’s Answer--\n--The Start of Assistant B’s Answer--\n{response 2}\n--The End of Assistant B’s Answer--\nA.2\nHUMAN PREFERENCE DATA USED IN THIS STUDY\nDisclaimer: the examples may contain contents that are profane, vulgar, or offensive.\nExample from the TL;DR Summarization dataset\nPost:\n\"SUBREDDIT: r/relationship advice\nTITLE: [17/m] in a sticky situation with her [17/f], my Asian\nparents, and the school administration\nPOST: Over two years ago my girlfriend and I started dating in\nsecret.\nWe were in secret because my parents are (racist?)\nin\nthe way that they only want me to date people from an Asian"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_69",
+    "chunk_index": 69,
+    "text": "POST: Over two years ago my girlfriend and I started dating in\nsecret.\nWe were in secret because my parents are (racist?)\nin\nthe way that they only want me to date people from an Asian\nbackground like me, and she is white.\nEventually, because our\nschool is super small and rumors spread like crazy, the staff\nfound out maybe about a year ago.\nWe went and made sure they\nknew not to go to our parents, and they all agreed.\nFast forward\nto now and the principal and guidance counselor have called my\nparents and spilled the entire story to them.\nThey apparently\neven had to use generic words like \"girlfriend and her mom\"\ninstead of saying names to get around privacy rules.\nAfter\ntalking it over with some of our close friends, no one has any\ninsight or heard of anything that could cause them to do this, and\nit’s very uncharacteristic of them.\nMy parents have told me that\nthe school administration has said things such as, \"She’s in a"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_70",
+    "chunk_index": 70,
+    "text": "insight or heard of anything that could cause them to do this, and\nit’s very uncharacteristic of them.\nMy parents have told me that\nthe school administration has said things such as, \"She’s in a\nlower social class, he can do better,\" \"She’s bringing his grades\ndown\" (I have a 4.0 GPA), etc.\nWhile my parents have also said\nthings such as \"She’s white trash,\" and \"She’s a gold digger,\" I\nknow for sure that those are both incorrect.\nHeck, my parents\nhaven’t even spoken to her for more than 3 minutes.\nNow that\nthe jig is up, I’m not sure what to do.\nDo I secretly talk to\nher and risk losing everything except food and school supplies\nfor the next year if I get caught?\nDo I make arrangements to get\nback together in a year?\nOr Do I just give up and accept it as\nover?\nAll of this stress is really getting to me, and I have no\nidea what the best choice is.\nThanks for reading all of that, and\ngiving me any feedback!\nTL;DR: ’\nChosen Summary by Human Evaluators:"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_71",
+    "chunk_index": 71,
+    "text": "over?\nAll of this stress is really getting to me, and I have no\nidea what the best choice is.\nThanks for reading all of that, and\ngiving me any feedback!\nTL;DR: ’\nChosen Summary by Human Evaluators:\n\"[17/m] in a sticky situation with her [17/f], my Asian parents,\nand the school administration\"\nRejected Summary by Human Evaluators:\n\"My parents found out my girlfriend and I are dating and the\n16"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_72",
+    "chunk_index": 72,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nschool administration has told them she is ’white trash’ and ’a\ngold digger’\"\nExample from the HH-RLHF-Helpfulness dataset\nSingle-turn Conversation Example\nConversation:\n\"Human:\nWhat are the rules to basketball?\nAssistant:\n\"\nChosen Response by Human Evaluators:\n\"Well, it’s played by two teams of five people each.\nEach team\ntries to get the ball through the other team’s hoop.\nThe team\nthat scores more points than their opponent is the winner.\"\nRejected Response by Human Evaluators:\n\"The goal is to shoot the basketball through the hoop, in the most\nskillful way.\"\nMulti-turn Conversation Example\nConversation:\n\"Human:\nHave you heard of Santana?\nAssistant:\nYes!\n\"Evil Ways\", and \"Smooth\", right?\nHuman:\nI like \"Smooth\".\nHave you heard of it?\nAssistant:\nYes, it’s a great song!\nI like how the vocal is\nnice and slow at first, then faster at the end.\nIt’s one of my\nfavorite Santana songs.\nHuman:\nSomeone else sang the song.\nSantana played guitar"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_73",
+    "chunk_index": 73,
+    "text": "Yes, it’s a great song!\nI like how the vocal is\nnice and slow at first, then faster at the end.\nIt’s one of my\nfavorite Santana songs.\nHuman:\nSomeone else sang the song.\nSantana played guitar\naccompanying the song.\nDo you know the name of the singer?\nAssistant:\nOh yeah, I know who sang \"Smooth\".\nHe’s a great\nsinger.\nHis name is Chris Standring.\nHuman:\nBoth of your responses were inaccurate.\nThe singer who\nsang \"Smooth\" is Rob Thomas.\nAssistant:\n\"\nChosen Response by Human Evaluators:\n\"Oh, I’m sorry.\nI didn’t recognize Rob Thomas.\n\"Smooth\" is a\ngreat song.\nDid you know Rob Thomas was a cast member of the band\nOne Tree Hill?\"\nRejected Response by Human Evaluators:\n\"I thought Rob Thomas was a pop star?\nI thought he played guitar\nand drums.\"\nA.3\nADDITIONAL RESULTS\nTemperature Results\nRankings of Prompt Templates and LLM Judges\nTo facilitate selecting appropriate LLM judges for each LLM-alignment dataset (i.e. TL;DR sum-"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_74",
+    "chunk_index": 74,
+    "text": "and drums.\"\nA.3\nADDITIONAL RESULTS\nTemperature Results\nRankings of Prompt Templates and LLM Judges\nTo facilitate selecting appropriate LLM judges for each LLM-alignment dataset (i.e. TL;DR sum-\nmarization and HH-RLHF-Helpfulness), we rank all the prompt templates for each LLM used in our\nstudy (i.e. GPT-3.5-turbo, GPT-4o and GPT-4-mini) separately, as well as all the LLM-judges (LLM\n+ template) for each dataset. We display top five templates or LLM-judges and report their Accboth,\nAccrandom, position bias and length bias (Table 7 - 10 for TL;DR Summarization and Table 11 - 14\nfor HH-RLHF-Helpfulness). Specifically, the rankings are based on Accboth, which is because:\n17"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_75",
+    "chunk_index": 75,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nTL;DR Summarization\nHH-RLHF-Helpfulness\nTemperature\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\n0.0\n0.976\n0.972\n0.659 (0.002)\n0.973\n0.973\n0.585 (0.002)\n0.1\n0.972\n0.968\n0.660 (0.003)\n0.965\n0.966\n0.585 (0.003)\n0.3\n0.964\n0.963\n0.661 (0.006)\n0.947\n0.944\n0.586 (0.003)\n0.5\n0.954\n0.951\n0.655 (0.003)\n0.942\n0.926\n0.579 (0.009)\n0.7\n0.939\n0.941\n0.650 (0.004)\n0.924\n0.916\n0.578 (0.008)\nTable 4: Self-consistent rate (SCR) and accuracy (Acc) related to the tested temperatures for TL;DR\nsummarization and HH-RLHF-Helpfulness datasets. Results are demonstrated using GPT-4o and\nthe prompt template chen (Chen et al., 2023) for the summarization dataset and the template zeng\n(Zeng et al., 2023) for the HH-RLHF-Helpfulness dataset, respectively. The conclusions are the\nsame as those using prompt templates from the templates rafailov (Rafailov et al., 2024b) for both\ndatasets.\nTL;DR Summarization\nHH-RLHF-Helpfulness"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_76",
+    "chunk_index": 76,
+    "text": "same as those using prompt templates from the templates rafailov (Rafailov et al., 2024b) for both\ndatasets.\nTL;DR Summarization\nHH-RLHF-Helpfulness\nTemperature\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\n0.0\n0.989\n0.991\n0.631 (0.001)\n0.987\n0.990\n0.589 (0.003)\n0.1\n0.986\n0.985\n0.630 (0.001)\n0.983\n0.988\n0.591 (0.003)\n0.3\n0.974\n0.982\n0.627 (0.003)\n0.970\n0.968\n0.593 (0.003)\n0.5\n0.972\n0.978\n0.629 (0.004)\n0.965\n0.967\n0.587 (0.003)\n0.7\n0.961\n0.973\n0.622 (0.003)\n0.960\n0.957\n0.585 (0.006)\nTable 5: Self-consistent rate (SCR) and accuracy (Acc) related to the tested temperatures for TL;DR\nsummarization and HH-RLHF-Helpfulness datasets. Results are demonstrated using GPT-4o-mini\nand prompt templates rafailov (Rafailov et al., 2024b) for both datasets.\nTL;DR Summarization\nHH-RLHF-Helpfulness\nTemperature\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\n0.0\n0.948\n0.936\n0.554 (0.004)\n0.970\n0.951\n0.371 (0.003)\n0.1\n0.925\n0.907"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_77",
+    "chunk_index": 77,
+    "text": "HH-RLHF-Helpfulness\nTemperature\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\nSCR\n(yc, yr)\nSCR\n(yr, yc)\nAcc\n(Accboth)\n0.0\n0.948\n0.936\n0.554 (0.004)\n0.970\n0.951\n0.371 (0.003)\n0.1\n0.925\n0.907\n0.548 (0.008)\n0.964\n0.948\n0.369 (0.002)\n0.3\n0.876\n0.856\n0.538 (0.003)\n0.941\n0.906\n0.373 (0.006)\n0.5\n0.824\n0.807\n0.516 (0.008)\n0.925\n0.889\n0.375 (0.010)\n0.7\n0.780\n0.772\n0.498 (0.006)\n0.901\n0.853\n0.382 (0.008)\nTable 6: Self-consistent rate (SCR) and accuracy (Acc) related to the tested temperatures for the\nTL;DR summarization and HH-RLHF-Helpfulness datasets. Results are demonstrated using GPT-\n3.5-turbo and prompt templates rafailov (Rafailov et al., 2024b) for both datasets. GPT-3.5-turbo\nis much more sensitive to temperatures compared with GPT-4o and GPT-4o-mini.\n18"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_78",
+    "chunk_index": 78,
+    "text": "Published at Building Trust Workshop at ICLR 2025\n• While position and length biases are critical metrics for assessing the reliability of LLM-\nbased judges, accuracy is the metric that directly reflects their alignment with human pref-\nerences. Accuracy can be viewed as a measure of the reliability of the “win rate” derived\nfrom LLM-judge evaluation results in practice.\n• In the primary study, our findings indicate that Accboth more accurately represents the eval-\nuative capabilities of LLM judges compared to Accrandom.\nTL;DR Summarization (GPT-3.5-turbo)\nTemplate\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nguo\n0.566 (0.020)\n0.675 (0.019)\n-0.047 (0.017)\n0.174 (0.039)\nrafailov\n0.547 (0.022)\n0.668 (0.040)\n0.049 (0.018)\n0.152 (0.045)\nchen\n0.516 (0.028)\n0.652 (0.030)\n-0.291 (0.020)\n0.085 (0.050)\nliusie\n0.496 (0.044)\n0.654 (0.038)\n0.204 (0.032)\n0.237 (0.078)\nwang\n0.464 (0.023)\n0.640 (0.027)\n0.240 (0.039)\n0.089 (0.094)"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_79",
+    "chunk_index": 79,
+    "text": "0.152 (0.045)\nchen\n0.516 (0.028)\n0.652 (0.030)\n-0.291 (0.020)\n0.085 (0.050)\nliusie\n0.496 (0.044)\n0.654 (0.038)\n0.204 (0.032)\n0.237 (0.078)\nwang\n0.464 (0.023)\n0.640 (0.027)\n0.240 (0.039)\n0.089 (0.094)\nTable 7: Rankings of prompt templates for GPT-3.5-turbo on the TL;DR summarization dataset.\nTL;DR Summarization (GPT-4o)\nTemplate\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nrafailov\n0.667 (0.011)\n0.737 (0.014)\n0.022 (0.015)\n0.197 (0.031)\nchen\n0.658 (0.028)\n0.734 (0.029)\n-0.081 (0.023)\n0.117 (0.055)\nguo\n0.655 (0.011)\n0.733 (0.024)\n-0.140 (0.014)\n0.193 (0.038)\nliusie\n0.632 (0.023)\n0.724 (0.019)\n-0.154 (0.041)\n0.084 (0.056)\nwang\n0.601 (0.015)\n0.695 (0.016)\n0.108 (0.022)\n0.137 (0.066)\nTable 8: Rankings of prompt templates for GPT-4o on the TL;DR summarization dataset.\nTL;DR Summarization (GPT-4o-mini)\nTemplate\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nrafailov\n0.631 (0.014)\n0.701 (0.023)\n-0.060 (0.027)\n0.162 (0.038)\nguo\n0.619 (0.032)\n0.715 (0.010)\n0.090 (0.036)\n0.257 (0.068)\nchen"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_80",
+    "chunk_index": 80,
+    "text": "Template\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nrafailov\n0.631 (0.014)\n0.701 (0.023)\n-0.060 (0.027)\n0.162 (0.038)\nguo\n0.619 (0.032)\n0.715 (0.010)\n0.090 (0.036)\n0.257 (0.068)\nchen\n0.615 (0.021)\n0.692 (0.031)\n0.010 (0.014)\n0.104 (0.049)\nliusie\n0.563 (0.018)\n0.684 (0.026)\n-0.122 (0.030)\n0.169 (0.061)\nzheng\n0.516 (0.015)\n0.667 (0.020)\n0.280 (0.030)\n0.544 (0.086)\nTable 9: Rankings of prompt templates for GPT-4o-mini on the TL;DR summarization dataset.\nA.4\nDERIVATIONS, PROOFS, AND COMPUTATIONAL METHODS\nPosition Bias (PB)\n1) Proof: Position bias definition is intrinsically length bias-mitigated.\nIn this proof, we demonstrate that the impact of length bias has been effectively mitigated from the\nmeasurement of position bias using the definition in the main paper.\nTo prove this, we analyze two separate conditions: (1) the LLM judge prefers the first position,\n(2) the LLM judge prefers the second position. In each case, we first establish that the de-noising"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_81",
+    "chunk_index": 81,
+    "text": "To prove this, we analyze two separate conditions: (1) the LLM judge prefers the first position,\n(2) the LLM judge prefers the second position. In each case, we first establish that the de-noising\nprocess reduces the four possible outcome combinations in Table 15 into three as shown in Table 16.\nSubsequently, we demonstrate that the measurement of position bias, utilizing de-noised accuracy,\neffectively mitigates the length bias.\nFor the purpose of this proof, we assume that (noisy) outcomes are influenced by four factors:\nresponse quality, position bias, length bias, and flipping noise. This assumption will be relaxed at\nthe end of the proof. Additionally, we assume that human evaluators serve as the gold standard,\nconsistently selecting the response of higher quality.\nBefore formally prove the claim, we remind readers that the position bias is defined based on the\nsetting where the LLM judge decides on two reversed response orders for each data case: h =\n19"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_82",
+    "chunk_index": 82,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nTL;DR Summarization (All LLMs)\nTemplate / LLM\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nrafailov / gpt-4o\n0.667 (0.011)\n0.737 (0.014)\n0.022 (0.015)\n0.197 (0.031)\nchen / gpt-4o\n0.658 (0.028)\n0.734 (0.029)\n-0.081 (0.023)\n0.117 (0.055)\nguo / gpt-4o\n0.655 (0.011)\n0.733 (0.024)\n-0.140 (0.014)\n0.193 (0.038)\nliusie / gpt-4o\n0.632 (0.023)\n0.724 (0.019)\n-0.154 (0.041)\n0.084 (0.056)\nrafailov / gpt-4o-mini\n0.631 (0.014)\n0.701 (0.023)\n-0.060 (0.027)\n0.162 (0.038)\nTable 10: Rankings of LLM judges (model+prompt template) on the TL;DR summarization dataset.\nHH-RLHF-Helpfulness (GPT-3.5-turbo)\nTemplate\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nzeng\n0.536 (0.012)\n0.654 (0.023)\n0.013 (0.036)\n0.531 (0.044)\nguo\n0.506 (0.025)\n0.651 (0.016)\n0.029 (0.060)\n0.280 (0.062)\nbai\n0.458 (0.022)\n0.659 (0.032)\n0.317 (0.033)\n0.342 (0.043)\nzheng\n0.423 (0.018)\n0.594 (0.009)\n0.368 (0.035)\n0.581 (0.051)\nxu\n0.386 (0.027)\n0.622 (0.030)\n0.488 (0.037)\n0.309 (0.050)"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_83",
+    "chunk_index": 83,
+    "text": "0.280 (0.062)\nbai\n0.458 (0.022)\n0.659 (0.032)\n0.317 (0.033)\n0.342 (0.043)\nzheng\n0.423 (0.018)\n0.594 (0.009)\n0.368 (0.035)\n0.581 (0.051)\nxu\n0.386 (0.027)\n0.622 (0.030)\n0.488 (0.037)\n0.309 (0.050)\nTable 11: Rankings of prompt templates for GPT-3.5-turbo on the HH-RLHF-Helpfulness dataset.\nHH-RLHF-Helpfulness (GPT-4o)\nTemplate\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nguo\n0.618 (0.040)\n0.694 (0.030)\n-0.005 (0.013)\n0.135 (0.075)\nxu\n0.610 (0.025)\n0.702 (0.019)\n0.086 (0.010)\n0.029 (0.057)\nbai\n0.603 (0.027)\n0.697 (0.014)\n0.034 (0.017)\n0.255 (0.067)\ncheng\n0.589 (0.029)\n0.664 (0.029)\n0.049 (0.020)\n0.364 (0.082)\nzeng\n0.580 (0.034)\n0.674 (0.027)\n0.139 (0.023)\n0.402 (0.090)\nTable 12: Rankings of prompt templates for GPT-4o on the HH-RLHF-Helpfulness dataset.\nHH-RLHF-Helpfulness (GPT-4o-mini)\nTemplate\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nguo\n0.602 (0.036)\n0.681 (0.030)\n-0.028 (0.026)\n0.294 (0.059)\nrafailov\n0.594 (0.014)\n0.657 (0.019)\n0.047 (0.020)\n0.463 (0.039)\nzeng\n0.587 (0.031)"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_84",
+    "chunk_index": 84,
+    "text": "Template\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nguo\n0.602 (0.036)\n0.681 (0.030)\n-0.028 (0.026)\n0.294 (0.059)\nrafailov\n0.594 (0.014)\n0.657 (0.019)\n0.047 (0.020)\n0.463 (0.039)\nzeng\n0.587 (0.031)\n0.650 (0.029)\n0.032 (0.022)\n0.494 (0.061)\nxu\n0.580 (0.018)\n0.681 (0.017)\n0.036 (0.015)\n0.272 (0.065)\nbai\n0.576 (0.033)\n0.665 (0.022)\n-0.086 (0.010)\n0.397 (0.061)\nTable 13: Rankings of prompt templates for GPT-4o-mini on the HH-RLHF-Helpfulness dataset.\nHH-RLHF-Helpfulness (All LLMs)\nTemplate / LLM\nAccboth\nAccrandom\nPosition Bias\nLength Bias\nguo / gpt-4o\n0.618 (0.040)\n0.694 (0.030)\n-0.005 (0.013)\n0.135 (0.075)\nxu / gpt-4o\n0.610 (0.025)\n0.702 (0.019)\n0.086 (0.010)\n0.029 (0.057)\nbai / gpt-4o\n0.603 (0.027)\n0.697 (0.014)\n0.034 (0.017)\n0.255 (0.067)\nguo / gpt-4o-mini\n0.602 (0.036)\n0.681 (0.030)\n-0.028 (0.026)\n0.294 (0.059)\nrafailov / gpt-4o-mini\n0.594 (0.014)\n0.657 (0.019)\n0.047 (0.020)\n0.463 (0.039)\nTable 14: Rankings of LLM judges (model+prompt template) on HH-RLHF-Helpfulness dataset.\n20"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_85",
+    "chunk_index": 85,
+    "text": "Published at Building Trust Workshop at ICLR 2025\n(x, yc, yr) and h′ = (x, yr, yc), which results in two outcomes y and y′ (y, y′ ∈{yc, yr}). Table\n15 presents all possible combinations of outcomes resulting from the LLM-judge’s decisions, where\n✓and ✗indicate whether a particular response (yc or yr) is chosen or not by the LLM judge,\nrespectively.\ny\ny′\nyc\nyr\nyr\nyc\n✓\n✗\n✗\n✓\n✗\n✓\n✓\n✗\n✓\n✗\n✓\n✗\n✗\n✓\n✗\n✓\nTable 15: All possible outcomes from LLM judge decisions.\nFirst, we consider the case that the LLM judge demonstrates the position bias that prefers\nthe first position.\nConsequently, we can examine the likely causes for each outcome y, y′ =\n(yc, yr, yr, yc):\n• (✓✗✗✓): The LLM judge has selected the same response as human evaluators on both posi-\ntions, either by emphasizing the response quality or due to the length bias (e.g. yc is longer\nthan yr and the LLM judge prefers longer responses than human evaluators regardless of\nthe response quality)."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_86",
+    "chunk_index": 86,
+    "text": "than yr and the LLM judge prefers longer responses than human evaluators regardless of\nthe response quality).\n• (✗✓✓✗): The LLM-judge is primarily influenced by the length bias since it selects the\nresponse with lower quality yr for both response postions.\n• (✓✗✓✗): The LLM judge is predominantly influenced by positional bias, as length bias\nalone would only result in the LLM selecting a consistent response (either yc or yr, not\nboth) across different orders.\n• (✗✓✗✓): The primary cause of the observed outcome is likely the flipping noise, given our\nassumption that the LLM judge favors the first position. After the denoising process, this\noutcome is expected to revert to one of the initial three cases.\n• We also observe that the first three cases could arise from flipping noise. However, follow-\ning the de-noising process, these cases will remain among the first three, with no likelihood\nof transitioning to the fourth case."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_87",
+    "chunk_index": 87,
+    "text": "ing the de-noising process, these cases will remain among the first three, with no likelihood\nof transitioning to the fourth case.\nTherefore, if the LLM judge exhibits the position bias towards the first position, the outcomes of the\nLLM-judge decisions with no flipping noise on h and h′ are shown in Table 16a. Thus, the PB of\nthe LLM judge is computed as:\nPBfirst =p [X = 1|(yc, yr)] −p [X = 1|(yr, yc)]\n= lim\nN→∞\n1\nN\nN\nX\nn=1\n1\n\u0010\ny(n) =y(n)\nc\n\u0011\n−lim\nN→∞\n1\nN\nN\nX\nn=1\n1\n\u0010\ny′(n) =y(n)\nc\n\u0011\n= lim\nN→∞\n1\nN\nN\nX\nn=1\n[1(✓✗✗✓)+1 (✓✗✓✗)]−lim\nN→∞\n1\nN\nN\nX\nn=1\n1(✓✗✗✓)\n= lim\nN→∞\n1\nN\nN\nX\nn=1\n1(✓✗✓✗)\n= lim\nN→∞\n1\nN\nN\nX\nn=1\n1\n\u0010\ny(n) =y(n)\nc\n∧y′(n) =y(n)\nr\n\u0011\n.\nThis corresponds to the proportion of the third case (✓✗✓✗) in the de-noised judging set, which\nmay not be directly observable in the presence of flipping noise. It is important to note that this\ncase arises from position bias rather than length bias, as previously discussed. Therefore, PBfirst is\nlength-bias mitigated."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_88",
+    "chunk_index": 88,
+    "text": "case arises from position bias rather than length bias, as previously discussed. Therefore, PBfirst is\nlength-bias mitigated.\nFinally, if the observed outcomes are influenced by factors beyond response quality, positional bias,\nlength bias, and flipping noise, these factors can be categorized into two types: position-dependent\n21"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_89",
+    "chunk_index": 89,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nand position-independent. Position-dependent factors contribute to the positional bias, which has\nalready been accounted for. Conversely, position-independent factors, similar to length bias, have\nbeen addressed and removed from the position bias.\nSecond, we consider the case that the LLM judge demonstrates the position bias that prefers\nthe second position. In this context, we can employ the same analytical approach as in the first case\nto investigate the underlying reasons for each outcome and to derive the positional bias accordingly\nas follows.\nPBsecond = −lim\nN→∞\n1\nN\nN\nX\nn=1\n1\n\u0010\ny(n) =y(n)\nr\n∧y′(n) =y(n)\nc\n\u0011\n= −lim\nN→∞\n1\nN\nN\nX\nn=1\n1(✗✓✗✓)\nIn contrast to the first case, when the LLM judge prefers the second position, the third case is\nrepresented as (✗✓✗✓), rather than (✓✗✓✗), as illustrated in Table 16b. Same as the outcome\n(✓✗✓✗), the outcome (✗✓✗✓) arises from position bias, rather than length bias. Also, the negative"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_90",
+    "chunk_index": 90,
+    "text": "represented as (✗✓✗✓), rather than (✓✗✓✗), as illustrated in Table 16b. Same as the outcome\n(✓✗✓✗), the outcome (✗✓✗✓) arises from position bias, rather than length bias. Also, the negative\nsign arises because p [X = 1|(yc, yr)] is listed first in the definition.\ny\ny′\nyc\nyr\nyr\nyc\n✓\n✗\n✗\n✓\n✗\n✓\n✓\n✗\n✓\n✗\n✓\n✗\n(a) Prefer first position\ny\ny′\nyc\nyr\nyr\nyc\n✓\n✗\n✗\n✓\n✗\n✓\n✓\n✗\n✗\n✓\n✗\n✓\n(b) Prefer second position\nTable 16: De-noised outcomes of the LLM judge’s decision in cases where the LLM judge favors\nthe (a) first and (b) second responses, respectively. Here, ✓and ✗indicate whether a response (yc\nor yr) is chosen by the LLM judge or not.\n2) Derivations of de-noised position bias\nThe derivations related to the de-noising process of PB are provided as follows. As a reminder, Z is\nthe noisy observation of X; qcr and qrc are the probabilities that the LLM judge’s decision is flipped\nfor response order (yc, yr) and (yr, yc). Specifically,\nqcr = p [1 −X|X, (yc, yr)] ,\nqrc = p [1 −X|X, (yr, yc)] ."
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_91",
+    "chunk_index": 91,
+    "text": "for response order (yc, yr) and (yr, yc). Specifically,\nqcr = p [1 −X|X, (yc, yr)] ,\nqrc = p [1 −X|X, (yr, yc)] .\nIn this study, we assume the flipping probability does not depend on the value of X, which needs fur-\nther investigation. Based on this assumption, the relationship between the accuracy p [X = 1|(yc, yr)]\nand p [Z = 1|(yc, yr)] is derived as follows:\np [Z = 1|(yc, yr)] =\nX is not flipped\nz\n}|\n{\np [X|X, (yc, yr)] · p [X = 1|(yc, yr)]\n+ p [1 −X|X, (yc, yr)] · p [X = 0|(yc, yr)]\n|\n{z\n}\nX is flipped\n= (1−qcr)·p [X =1|(yc, yr)]\n+qcr·(1−p [X =1|(yc, yr)])\n= (1 −2 · qcr) · p [X = 1|(yc, yr)] + qcr\nTherefore,\np [X = 1|(yc, yr)] = p [Z = 1|(yc, yr)] −qcr\n1 −2 · qcr\n22"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_92",
+    "chunk_index": 92,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nAccordingly, the relationship between p [X = 1|(yr, yc)] and p [Z = 1|(yr, yc)] is:\np [X = 1|(yr, yc)] = p [Z = 1|(yr, yc)] −qrc\n1 −2 · qrc\n3) Position bias computation procedure\nGiven a dataset D = {hn|n = 1. . .N}, a practical method for computing the PB related to an LLM\njudge is described as follows:\nStep 1: Accuracy (based on Z) Computation\nSince LLM judge evaluation results consistently contain flipping noise, even with the temperature\nparameter set to 0.0, we first calculate the accuracy for both response positions (yc, yr) and (yr, yc).\nIn order to achieve this, we employ the LLM judge to generate judging result on each data in D by\nconsidering two response orders: h = (x, yc, yr) and h′ = (x, yr, yc). The judge then selects the\npreferred response y and y′ from each order h and h′, where y, y′ ∈{yc, yr}.\nBroadly, we denote the set of judging results as J = {sn|n = 1 . . . N}, where each result sn ="
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_93",
+    "chunk_index": 93,
+    "text": "preferred response y and y′ from each order h and h′, where y, y′ ∈{yc, yr}.\nBroadly, we denote the set of judging results as J = {sn|n = 1 . . . N}, where each result sn =\n(y(n), y′(n)) represents the selection outcome from both response orders, respectively, across all the\ndata cases in the dataset D. Then the accuracy for each position can be computed as follows:\nˆp [Z =1|(yc, yr)]= 1\nN\nN\nX\nn=1\n1\n\u0010\ny(n) =y(n)\nc\n\u0011\n,\nˆp [Z =1|(yr, yc)]= 1\nN\nN\nX\nn=1\n1\n\u0010\ny′(n) =y(n)\nc\n\u0011\n.\nStep 2: Flipping Probability Estimation\nRepeat the identical judging experiments in the Step 1 for extra K−1 times. These K repetitions of\nidentical judging experiments result in an extended judging result set J ′ = {s′\nn|n = 1 . . . N}, where\ns′\nn =\n\u0010\ny(n)\n1\n, y(n)\n2\n, ..., y(n)\nK , y′(n)\n1\n, y′(n)\n2\n, ..., y′(n)\nK\n\u0011\n. The flipping probabilities qcr and qrc for the position\norders (yc, yr) and (yr, yc) are then computed by:\nˆqcr = 1−1\nN\nN\nX\nn=1\n(\nk(n)\ncr\nK\n· k(n)\ncr −1\nK−1 + K−k(n)\ncr\nK\n· K−k(n)\ncr −1\nK−1\n)\n,"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_94",
+    "chunk_index": 94,
+    "text": "K\n\u0011\n. The flipping probabilities qcr and qrc for the position\norders (yc, yr) and (yr, yc) are then computed by:\nˆqcr = 1−1\nN\nN\nX\nn=1\n(\nk(n)\ncr\nK\n· k(n)\ncr −1\nK−1 + K−k(n)\ncr\nK\n· K−k(n)\ncr −1\nK−1\n)\n,\nˆqrc = 1−1\nN\nN\nX\nn=1\n(\nk(n)\nrc\nK\n· k(n)\nrc −1\nK−1 + K−k(n)\nrc\nK\n· K−k(n)\nrc −1\nK−1\n)\n.\nwhere k(n)\ncr = PK\nk=1 1(y(n)\nk\n= y(n)\nc\n) and k(n)\nrc = PK\nk=1 1(y′(n)\nk\n= y(n)\nr\n) are the numbers of choosing the\nfirst response in s′(n) for the orders (y(n)\nc\n, y(n)\nr ) and (y(n)\nr\n, y(n)\nc\n), respectively.\nStep 3: De-noising Process\nThe position bias is computed as follows:\nPB = ˆp [Z = 1|(yc, yr)] −ˆqcr\n1 −2 · ˆqcr\n−ˆp [Z = 1|(yr, yc)] −ˆqrc\n1 −2 · ˆqrc\nLength Bias (LB)\n23"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_95",
+    "chunk_index": 95,
+    "text": "Published at Building Trust Workshop at ICLR 2025\n1) Proof: Length bias measurement is entangled with position bias\nHere we demonstrate the entanglement between length bias (LB) and position bias (PB) in LB\nmeasurements.\nAssume the LLM judge exhibits position bias, namely PB = p [X =1|(yc, yr)]−p [X =1|(yr, yc)]̸=\n0. Let LBcr and LBrc be length biases measured for response order (yc, yr) and (yr, yc) in all the\ndata cases. Mathematically, they can be formulated as follows:\nLBcr =p [X =1|∆l> 0, (yc, yr)]−p [X =1|∆l≤0, (yc, yr)] ,\nLBrc =p [X =1|∆l> 0, (yr, yc)]−p [X =1|∆l≤0, (yr, yc)] .\nDue\nto\nthe\nposition\nbias,\np [X =1|∆l> 0, (yc, yr)]̸\n=\np [X =1|∆l> 0, (yr, yc)]\nand\np [X =1|∆l≤0, (yc, yr)]̸ = p [X =1|∆l≤0, (yr, yc)].\nThus, generally LBcr̸ = LBrc, and LB\nis dependent on the response order. The analysis above demonstrates that LB is generally entangled\nwith PB in its measurement. In the next part, we introduce a method to approximate accuracies"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_96",
+    "chunk_index": 96,
+    "text": "is dependent on the response order. The analysis above demonstrates that LB is generally entangled\nwith PB in its measurement. In the next part, we introduce a method to approximate accuracies\np [X =1|∆l> 0)] and p [X =1|∆l≤0)] by mitigating the effect of PB.\n2) Accuracy defintion selection\nPrevious work Zheng et al. (2024); Wang et al. (2023b) suggests both Accboth and Accrandom (refer\nto the main paper for the definitions) can effectively mitigate the position bias in accuracy measure-\nment. Here, we demonstrate that Accboth is the better choice than Accrandom in terms of mitigating\nthe influence of position bias for length bias measurement.\nWithout loss of generality, we assume the LLM judge has the position bias favoring the first re-\nsponse. The possible outcomes of y′ and y′ after the de-noising process can be thus found in Ta-\nble 16a.\nWhen Accboth is used for accuracy, it only depends on the proportion of the first case (✓✗✗✓) in"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_97",
+    "chunk_index": 97,
+    "text": "ble 16a.\nWhen Accboth is used for accuracy, it only depends on the proportion of the first case (✓✗✗✓) in\nTable 16a. As discussed previously in the proof section of position bias , this case is not affected by\nthe position bias. Consequently, employing this measure for accuracy helps mitigate the influence\nof positional bias in the assessment of length bias.\nWhen Accrandom is used for accuracy, it depends on the proportion of both the first and the third case\nin Table 16a (the second case is not considered as it does not contribute to accuracy). This is because\nAccrandom randomly selects y and y′ with a 50% probability, giving the third case a 50% chance of\ncontributing to the correct selection for accuracy.\nAs previously discussed, the third case is primarily attributed to position bias and thus cannot\nfully mitigate the influence of positional bias, unlike Accboth. Thus, in our study, Accboth is used"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_98",
+    "chunk_index": 98,
+    "text": "As previously discussed, the third case is primarily attributed to position bias and thus cannot\nfully mitigate the influence of positional bias, unlike Accboth. Thus, in our study, Accboth is used\nto compute accuracy p [X =1|∆l> 0)] and p [X =1|∆l≤0)] in our length bias computation\nprocedures.\n3) Length bias computation procedure\nGiven a dataset D = {hn|n = 1. . .N}, a practical method for computing LB related to an LLM\njudge is described as follows:\nStep 1: Accuracy (based on Z) Estimation\nFirst, we use the same way as for computing position bias to generate the judging result set J . Then\nin order to compute the length bias, we divide the dataset D into two subsets of D: D∆l>0 ={h|∆l >\n0, h ∈D}, and D∆l≤0 ={h|∆l ≤0, h ∈D} and also divide the judging result set J into two subsets\nof J : J∆l>0 = {s|∆l > 0, s ∈J } and J∆l≤0 = {s|∆l ≤0, s ∈J }. The accuracy based on Z can\n24"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_99",
+    "chunk_index": 99,
+    "text": "Published at Building Trust Workshop at ICLR 2025\nthen be computed as follows:\nˆp [Z =1|∆l>0]=\n1\n|J∆l>0|\nX\ns∈J∆l>0\n1(y=yc∧y′ =yc) ,\nˆp [Z =1|∆l≤0]=\n1\n|J∆l≤0|\nX\ns∈J∆l≤0\n1(y=yc∧y′ =yc) .\nStep 2: Flipping Probability Estimation\nAnalogous to the PB computation procedure, we repeat the identical judging experiments for\nextra K −1 times to get the extended judging set J ′ = {s′\nn|n\n=\n1 . . . N}, where s′\nn\n=\n\u0010\ny(n)\n1\n, y(n)\n2\n, ..., y(n)\nK , y′(n)\n1\n, y′(n)\n2\n, ..., y′(n)\nK\n\u0011\n. Subsequently, we divide J ′ into two subsets: J ′\n∆l>0 =\n{s′|∆l > 0, s′ ∈J ′} and J ′\n∆l≤0 = {s′|∆l ≤0, s′ ∈J ′}. The flipping probabilities q∆l>0 and q∆l≤0\nis then computed as follows:\nˆq∆>0 = 1−1\nN+\nX\ns′∈J ′\n∆l>0\n\u001aks′\nK · ks′ −1\nK−1 + K−ks′\nK\n·K−ks′ −1\nK−1\n\u001b\n,\nˆq∆≤0 = 1−1\nN−\nX\ns′∈J ′\n∆l≤0\n\u001aks′\nK · ks′ −1\nK−1 + K−ks′\nK\n·K−ks′ −1\nK−1\n\u001b\n,\nwhere N+ =|J ′\n∆l>0| and N−=\n\f\fJ ′\n∆l≤0\n\f\f. Additionally, ks′ =PK\nk=1 1 (yk =yc∧y′\nk =yc) represents the"
+  },
+  {
+    "paper_id": "2408.13006v2",
+    "chunk_id": "2408.13006v2_chunk_100",
+    "chunk_index": 100,
+    "text": "·K−ks′ −1\nK−1\n\u001b\n,\nˆq∆≤0 = 1−1\nN−\nX\ns′∈J ′\n∆l≤0\n\u001aks′\nK · ks′ −1\nK−1 + K−ks′\nK\n·K−ks′ −1\nK−1\n\u001b\n,\nwhere N+ =|J ′\n∆l>0| and N−=\n\f\fJ ′\n∆l≤0\n\f\f. Additionally, ks′ =PK\nk=1 1 (yk =yc∧y′\nk =yc) represents the\nnumber of times that the LLM judge chooses yc in both position orders for any s′ ∈J ′, respectively.\nStep 3: De-noising Process\nThe length bias is computed as follows:\nLB = ˆp [Z = 1|∆l> 0] −ˆq∆l>0\n1 −2 · ˆq∆l>0\n−ˆp [Z = 1|∆l≤0] −ˆq∆l≤0\n1 −2 · ˆq∆l≤0\n25"
+  }
+]

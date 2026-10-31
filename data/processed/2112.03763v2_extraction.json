@@ -1,34 +1,44 @@
 {
   "methods": [
     {
-      "name": "Imitation Learning",
+      "name": "imitation learning",
       "entity_type": "Method",
-      "description": "Learning from human demonstrations to instill intelligent behavioural priors in agents."
+      "description": "Learning from expert demonstrations to instill agents with a behavioral prior."
     },
     {
-      "name": "Self-Supervised Learning",
+      "name": "self-supervised learning",
       "entity_type": "Method",
-      "description": "Auxiliary training objective used in conjunction with imitation learning to improve performance."
+      "description": "Auxiliary training losses used alongside imitation learning to improve agent performance."
     },
     {
-      "name": "Behavioural Cloning (BC)",
+      "name": "behavioural cloning",
       "entity_type": "Method",
-      "description": "Sequence learning technique used for imitation learning from trajectories of human behaviour."
+      "description": "A sequence learning imitation learning technique framing behavioral copying as supervised learning."
     },
     {
-      "name": "Contrastive Self-Supervised Learning",
+      "name": "contrastive self-supervised representation learning",
       "entity_type": "Method",
-      "description": "Contrastive representation learning technique involving cross-modality matching between vision and language."
+      "description": "An auxiliary training loss involving cross-modality matching between vision and language embeddings."
     },
     {
-      "name": "Hierarchical Action Selection",
+      "name": "hierarchical action selection",
       "entity_type": "Method",
-      "description": "Architectural technique that improves agent performance, implemented via a hierarchical movement policy."
+      "description": "An architectural and algorithmic technique improving agent performance."
+    },
+    {
+      "name": "ResNet",
+      "entity_type": "Method",
+      "description": "Convolutional blocks used to downsample incoming images for vision processing."
+    },
+    {
+      "name": "multi-modal transformer",
+      "entity_type": "Method",
+      "description": "A transformer processing visual and language embeddings."
     }
   ],
   "datasets": [
     {
-      "name": "Playhouse Dataset",
+      "name": "Playhouse dataset",
       "entity_type": "Dataset",
       "description": "Dataset collected in the Playhouse environment comprising 275,676 train episodes and 34,399 test episodes."
     }
@@ -36,51 +46,46 @@
   "metrics": [],
   "concepts": [
     {
-      "name": "MIA (Multimodal Interactive Agent)",
+      "name": "MIA",
       "entity_type": "Concept",
-      "description": "A multimodal interactive agent that interacts naturally with humans in a simulated world."
+      "description": "Multimodal Interactive Agent designed to interact naturally with humans in a simulated world."
     },
     {
       "name": "Playhouse",
       "entity_type": "Concept",
-      "description": "A 3D virtual multi-room environment based on the Unity game engine for studying natural interactions."
+      "description": "A 3D virtual multi-room environment with randomized rooms and interactable items based on the Unity game engine."
     },
     {
-      "name": "Language Games",
+      "name": "language games",
       "entity_type": "Concept",
-      "description": "A collection of prompted interaction-types and free-form instructions centering Playhouse interactions."
+      "description": "A collection of prompted interaction-types and free-form instructions used to center Playhouse interactions."
     }
   ],
   "findings": [
     {
-      "name": "Agent Success Rate",
+      "name": "MIA success rate",
       "entity_type": "Finding",
       "description": "MIA successfully interacts with non-adversarial humans 75% of the time."
+    },
+    {
+      "name": "behavioral prior efficacy",
+      "entity_type": "Finding",
+      "description": "Imitation of multi-modal, real-time human behavior provides a straightforward and effective means of imbuing agents with a rich behavioral prior."
     }
   ],
   "relationships": [
     {
-      "source": "MIA (Multimodal Interactive Agent)",
-      "relation": "interacts with",
+      "source": "MIA",
+      "relation": "interacts in",
       "target": "Playhouse"
     },
     {
-      "source": "MIA (Multimodal Interactive Agent)",
-      "relation": "trained using",
-      "target": "Behavioural Cloning (BC)"
+      "source": "behavioural cloning",
+      "relation": "is a type of",
+      "target": "imitation learning"
     },
     {
-      "source": "MIA (Multimodal Interactive Agent)",
-      "relation": "uses",
-      "target": "Hierarchical Action Selection"
-    },
-    {
-      "source": "Contrastive Self-Supervised Learning",
-      "relation": "applied to",
-      "target": "MIA (Multimodal Interactive Agent)"
-    },
-    {
-      "source": "Playhouse Dataset",
+      "source": "Playhouse dataset",
       "relation": "collected in",
       "target": "Playhouse"
     }

@@ -1,0 +1,177 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {},
+  "nodes": [
+    {
+      "name": "Systematic Evaluation of LLM-as-a-Judge in LLM Alignment Tasks: Explainable Metrics and Diverse Prompt Templates",
+      "node_type": "Paper",
+      "paper_id": "2408.13006v2",
+      "id": "paper::2408.13006v2"
+    },
+    {
+      "name": "LLM-as-a-Judge",
+      "node_type": "Method",
+      "description": "Using commercial LLMs as surrogates for human evaluators to perform pairwise evaluation on LLM alignment tasks.",
+      "id": "method::llm_as_a_judge"
+    },
+    {
+      "name": "stratified sampling strategy",
+      "node_type": "Method",
+      "description": "Sampling strategy employed to ensure that the subset maintains the same proportion of different conditions as the original dataset.",
+      "id": "method::stratified_sampling_strategy"
+    },
+    {
+      "name": "TL;DR Summarization",
+      "node_type": "Dataset",
+      "description": "A common alignment dataset used in experiments to evaluate LLM judges.",
+      "id": "dataset::tl_dr_summarization"
+    },
+    {
+      "name": "HH-RLHF-Helpfulness",
+      "node_type": "Dataset",
+      "description": "A common alignment dataset used in experiments to evaluate LLM judges regarding helpfulness.",
+      "id": "dataset::hh_rlhf_helpfulness"
+    },
+    {
+      "name": "Accboth",
+      "node_type": "Metric",
+      "description": "Accuracy metric evaluated by considering both response orders.",
+      "id": "metric::accboth"
+    },
+    {
+      "name": "Accrandom",
+      "node_type": "Metric",
+      "description": "Accuracy metric evaluated by randomly choosing the response order with a probability of 0.5.",
+      "id": "metric::accrandom"
+    },
+    {
+      "name": "Position Bias (PB)",
+      "node_type": "Metric",
+      "description": "Metric measuring LLM-judge's systematic preference for a specific response position.",
+      "id": "metric::position_bias_pb"
+    },
+    {
+      "name": "Length Bias (LB)",
+      "node_type": "Metric",
+      "description": "Metric measuring the relative length bias of LLM-judges compared with human evaluators.",
+      "id": "metric::length_bias_lb"
+    },
+    {
+      "name": "LLM alignment",
+      "node_type": "Concept",
+      "description": "Techniques and tasks like RLHF and DPO used to align LLMs with human preferences.",
+      "id": "concept::llm_alignment"
+    },
+    {
+      "name": "flipping noise",
+      "node_type": "Concept",
+      "description": "Discrepancy between the LLM judge's actual decision and its original decision caused by self-inconsistency.",
+      "id": "concept::flipping_noise"
+    },
+    {
+      "name": "self-inconsistency",
+      "node_type": "Concept",
+      "description": "Inconsistent judgments produced by LLM judges even when presented with identical prompts, also referred to as system noise.",
+      "id": "concept::self_inconsistency"
+    },
+    {
+      "name": "Significant impact of prompt templates",
+      "node_type": "Finding",
+      "description": "Prompt templates have a significant impact on LLM judge performance.",
+      "id": "finding::significant_impact_of_prompt_templates"
+    },
+    {
+      "name": "Mediocre human alignment",
+      "node_type": "Finding",
+      "description": "There is a mediocre alignment level between the tested LLM judges and human evaluators.",
+      "id": "finding::mediocre_human_alignment"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "method::llm_as_a_judge",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "method::stratified_sampling_strategy",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "dataset::tl_dr_summarization",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "dataset::hh_rlhf_helpfulness",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "metric::accboth",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "metric::accrandom",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "metric::position_bias_pb",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "metric::length_bias_lb",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "concept::llm_alignment",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "concept::flipping_noise",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "concept::self_inconsistency",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "finding::significant_impact_of_prompt_templates",
+      "key": 0
+    },
+    {
+      "relation": "contains",
+      "source": "paper::2408.13006v2",
+      "target": "finding::mediocre_human_alignment",
+      "key": 0
+    },
+    {
+      "relation": "is entangled with",
+      "source": "metric::length_bias_lb",
+      "target": "metric::position_bias_pb",
+      "key": 0
+    }
+  ]
+}
