@@ -253,7 +253,7 @@ Responsibilities:
 
 4. Combine the extracted pages into `full_text`.
 
-5. Save the result as `data/processed/\<paper_id>.json`.
+5. Save the result as `data/processed/<paper_id>.json`.
 
 The saved JSON contains:
 
@@ -294,7 +294,7 @@ Each chunk contains:
 
 - `text`
 
-Chunk records are saved to `data/chunks/\<paper_id>_chunks.json`.
+Chunk records are saved to `data/chunks/<paper_id>_chunks.json`.
 
 ### 6.4 `processing/embeddings.py`
 **Purpose:** Convert text into numerical vectors for semantic search.
@@ -463,7 +463,7 @@ The summarizer uses the extracted paper text and instructs the model not to inve
 
 Summaries are saved to:
 
-`data/processed/\<paper_id>_summary.json`
+`data/processed/<paper_id>_summary.json`
 
 ### 6.11 `agents/qa_agent.py`
 **Purpose:** Answer research questions using retrieved text and knowledge graph context.
@@ -813,13 +813,13 @@ The main output files are:
 |---|---|
 | Downloaded PDFs | `data/papers/` |
 | arXiv metadata | `data/processed/papers.json` |
-| Extracted paper text | `data/processed/\<paper_id>.json` |
-| Chunk records | `data/chunks/\<paper_id>_chunks.json` |
+| Extracted paper text | `data/processed/<paper_id>.json` |
+| Chunk records | `data/chunks/<paper_id>_chunks.json` |
 | Vector database | `data/chroma_db/` |
-| Knowledge extraction | `data/processed/\<paper_id>_extraction.json` |
-| Paper summary | `data/processed/\<paper_id>_summary.json` |
-| Knowledge graph | `data/graph/\<paper_id>_graph.json` |
-| Interactive graph HTML | `data/graph/\<paper_id>_graph.html` |
+| Knowledge extraction | `data/processed/<paper_id>_extraction.json` |
+| Paper summary | `data/processed/<paper_id>_summary.json` |
+| Knowledge graph | `data/graph/<paper_id>_graph.json` |
+| Interactive graph HTML | `data/graph/<paper_id>_graph.html` |
 
 The vector database is persistent. Re-running ingestion should use the same chunk IDs to upsert existing chunks instead of creating duplicate records.
 
