@@ -693,7 +693,7 @@ uv run python -m research_assistant.ui.app
 
 Open the local URL printed by Gradio, typically:
 
-`http\://127.0.0.1:7860`
+`http://127.0.0.1:7860`
 
 ### 9.2 Use the application
 1. In **Discover Papers**, enter a topic or arXiv query and choose the maximum number of results.
@@ -967,3 +967,215 @@ The project transforms a scientific paper into multiple useful research artifact
 **Research paper → Extracted text → Text chunks → Embeddings and vector index → Structured knowledge → Entity resolution → Knowledge graph → Q&A, summarization, and visualization**
 
 The result is an interactive research assistant that combines semantic retrieval, explicit knowledge relationships, and LLM-based generation to help users explore scientific literature.
+
+## 17. Docker Containerization and AWS EC2 Deployment
+
+The application is containerized using Docker and deployed on an AWS EC2 Ubuntu instance. The application runs as a single Docker container; a separate backend service or Docker Compose configuration is not required.
+
+### 17.1 Docker Architecture
+
+The Docker deployment consists of:
+
+- **Base Image:** Python 3.11 Slim
+- **Dependency Management:** uv
+- **Application:** Gradio-based Research Assistant
+- **Application Port:** 7860
+- **Container Runtime:** Docker Engine
+- **Deployment Platform:** AWS EC2 Ubuntu
+
+The container runs the complete application, including paper ingestion, summarization, knowledge extraction, vector retrieval, graph construction and Q&A.
+
+### 17.2 Dockerfile
+
+The Dockerfile defines the application environment and startup command.
+
+Key instructions:
+
+| Instruction | Purpose |
+|---|---|
+| `FROM python:3.11-slim` | Uses a lightweight Python 3.11 base image |
+| `WORKDIR /app` | Sets the application working directory |
+| `RUN pip install uv` | Installs the uv package manager |
+| `COPY . .` | Copies project files into the image |
+| `RUN uv sync --frozen --no-dev` | Installs locked production dependencies |
+| `EXPOSE 7860` | Documents the application port |
+| `CMD` | Starts the Gradio application |
+
+### 17.3 Prerequisites
+
+The following are required:
+
+- Docker Engine installed on the EC2 instance.
+- AWS EC2 Ubuntu instance.
+- Project source code available on the instance.
+- Valid Google Gemini API key.
+- Internet connectivity for Gemini API requests and arXiv downloads.
+
+### 17.4 Environment Configuration
+
+Create a `.env` file in the project root using the environment variable template.
+
+Example:
+
+```dotenv
+GOOGLE_API_KEY=your_google_api_key
+GEMINI_MODEL=your_model_name
+```
+
+Use a valid Gemini API key.
+
+The `.env` file is supplied to the container at runtime using Docker's `--env-file` option.
+
+**Security:** Never commit the actual `.env` file or expose API credentials in source code or logs.
+
+### 17.5 Build the Docker Image
+
+Navigate to the project root directory:
+
+```bash
+cd research-paper-knowledge-graph
+```
+
+Build the Docker image:
+
+```bash
+docker build -t research-assistant:latest .
+```
+
+Verify the image:
+
+```bash
+docker images | grep research-assistant
+```
+
+### 17.6 Run the Docker Container
+
+Start the application:
+
+```bash
+docker run -d \
+  --name research-assistant \
+  -p 7860:7860 \
+  --env-file .env \
+  -v "$(pwd)/data:/app/data" \
+  --restart unless-stopped \
+  research-assistant:latest
+```
+
+**Configuration explanation:**
+
+| Option | Purpose |
+|---|---|
+| `-d` | Runs the container in detached mode |
+| `--name` | Assigns a name to the container |
+| `-p 7860:7860` | Maps EC2 host port 7860 to container port 7860 |
+| `--env-file .env` | Supplies environment variables |
+| `-v` | Mounts the EC2 data directory into the container |
+| `--restart unless-stopped` | Automatically restarts the container unless manually stopped |
+
+### 17.7 Persistent Data Storage
+
+The application uses local storage for its generated artifacts.
+
+The following directories are maintained under the project `data/` directory:
+
+- `data/papers/` – Downloaded research papers.
+- `data/processed/` – Extracted paper text, summaries and knowledge extraction outputs.
+- `data/chunks/` – Generated text chunks.
+- `data/chroma_db/` – Persistent ChromaDB vector database.
+- `data/graph/` – Knowledge graph JSON files and interactive graph HTML files.
+
+The Docker volume mapping:
+
+```bash
+-v "$(pwd)/data:/app/data"
+```
+
+ensures that application data is stored on the EC2 host rather than only inside the container.
+
+This allows the data to persist when the container is stopped, removed or recreated.
+
+### 17.8 Accessing the Application
+
+Once the container starts, access the Gradio application using:
+
+```text
+http://<EC2-PUBLIC-IP>:7860
+```
+
+Ensure that the EC2 security group permits inbound traffic on TCP port `7860` from the intended users or networks.
+
+### 17.9 Container Management
+
+**Check running containers:**
+
+```bash
+docker ps
+```
+
+**View application logs:**
+
+```bash
+docker logs research-assistant
+```
+
+**Follow application logs:**
+
+```bash
+docker logs -f research-assistant
+```
+
+**Stop the application:**
+
+```bash
+docker stop research-assistant
+```
+
+**Start the application:**
+
+```bash
+docker start research-assistant
+```
+
+**Remove the container:**
+
+```bash
+docker rm -f research-assistant
+```
+
+**Rebuild the image after source-code changes:**
+
+```bash
+docker build -t research-assistant:latest .
+```
+
+Recreate the container after rebuilding to run the updated image.
+
+### 17.10 Automatic Startup on EC2 Reboot
+
+Docker Engine is configured as an enabled system service on the EC2 instance.
+
+The application container uses the restart policy:
+
+```text
+unless-stopped
+```
+
+When the EC2 instance reboots:
+
+1. Docker Engine starts automatically.
+2. Docker restarts the Research Assistant container.
+3. The Gradio application starts inside the container.
+4. The application becomes accessible on port 7860.
+
+The previous systemd service used to launch the application directly through the Python environment has been disabled. Docker now manages the application lifecycle.
+
+**Note:** The EC2 instance itself must be running for the application to be accessible.
+
+### 17.11 Deployment Summary
+
+The application is deployed as a single Docker container on AWS EC2.
+
+Docker manages application startup and restart, while the EC2 host maintains persistent research data through volume mounting. Gemini API credentials are supplied through environment variables at runtime.
+
+This provides a consistent, containerized deployment without requiring a separate backend service or Docker Compose.
