@@ -1,4 +1,4 @@
-# Autonomous Research Paper Summarization & Knowledge Graph Builder
+# AIET Cohort 9 - Group 5 Capstone Project - Autonomous Research Paper Summarization & Knowledge Graph Builder
 ## 1. Project Overview
 The **Autonomous Research Paper Summarization & Knowledge Graph Builder** is an AI-powered application that ingests scientific research papers, extracts structured knowledge, builds knowledge graphs, and answers questions using Retrieval-Augmented Generation (RAG).
 
